@@ -1,5 +1,3 @@
-'use client';
-
 import styled from 'styled-components';
 
 const StyledPage = styled.div`
@@ -7,7 +5,7 @@ const StyledPage = styled.div`
   }
 `;
 
-export default async function Index() {
+export function Index() {
   /*
    * Replace the elements below with your own.
    *
@@ -421,3 +419,5 @@ export default async function Index() {
     </StyledPage>
   );
 }
+
+export default Index;

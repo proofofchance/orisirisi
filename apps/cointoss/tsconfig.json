@@ -18,15 +18,7 @@
     ],
     "types": ["jest", "node"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "../../apps/cointoss/.next/types/**/*.ts",
-    "../../dist/apps/cointoss/.next/types/**/*.ts",
-    "next-env.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
   "exclude": [
     "node_modules",
     "jest.config.ts",
