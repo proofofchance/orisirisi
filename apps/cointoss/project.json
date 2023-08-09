@@ -1,7 +1,7 @@
 {
-  "name": "cointoss",
+  "name": "cointoss-web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/cointoss",
+  "sourceRoot": "apps/cointoss-web",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,11 +9,11 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/cointoss"
+        "outputPath": "dist/apps/cointoss-web"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/cointoss"
+          "outputPath": "apps/cointoss-web"
         },
         "production": {}
       }
@@ -22,16 +22,16 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "cointoss:build",
+        "buildTarget": "cointoss-web:build",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "cointoss:build:development",
+          "buildTarget": "cointoss-web:build:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "cointoss:build:production",
+          "buildTarget": "cointoss-web:build:production",
           "dev": false
         }
       }
@@ -39,14 +39,14 @@
     "export": {
       "executor": "@nx/next:export",
       "options": {
-        "buildTarget": "cointoss:build:production"
+        "buildTarget": "cointoss-web:build:production"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/cointoss/jest.config.ts",
+        "jestConfig": "apps/cointoss-web/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -60,7 +60,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/cointoss/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/cointoss-web/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },
