@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'cointoss',
+  displayName: 'cointoss-web',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/next/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/apps/cointoss',
+  coverageDirectory: '../../coverage/apps/cointoss-web',
 };
