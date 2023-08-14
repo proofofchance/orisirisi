@@ -1,7 +1,14 @@
 import { SHA256 } from 'crypto-js';
-import { CoinSide } from './coin';
+import { CoinSide, coinSideToString } from './coin';
 import { Player } from './';
 
+/** Cointoss Move Crypto */
+class Crypto {
+  static getRandomString(): string {
+    const array = new Uint32Array(24);
+    return window!.crypto.getRandomValues(array).toString();
+  }
+}
 export class Move {
   public revealedSecret: string | null = null;
   private revealableSecret: string;
@@ -11,8 +18,13 @@ export class Move {
     public readonly player: Player,
     public readonly coinSide: CoinSide
   ) {
-    this.revealableSecret =
-      'to be computed using Systems random generator. e.g https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues for web browsers, + DateTime in User timezone + public address of player + coinSide';
+    this.revealableSecret = `
+      Seed: ${Crypto.getRandomString()}
+      Player's Address: ${player.address}
+      Coin Side: ${coinSideToString(coinSide)}
+
+      Timestamp: ${new Date().toString()}
+    `;
 
     this.hashedValue = Move.hash(this.revealableSecret, coinSide);
   }
@@ -24,6 +36,12 @@ export class Move {
   }
 
   secret = () => this.revealedSecret;
+
+  secret_size = () =>
+    this.revealedSecret!.split('').reduce(
+      (size, secret_char) => size + secret_char.charCodeAt(0),
+      0
+    );
 
   isRevealed = () => !!this.revealedSecret;
 
@@ -68,10 +86,7 @@ export class Moves {
       .map((move) => move.player);
 
   public totalSizeOfSecrets = () =>
-    this.value.reduce(
-      (sizeSoFar, move) => sizeSoFar + move.secret()!.length,
-      0
-    );
+    this.value.reduce((sizeSoFar, move) => sizeSoFar + move.secret_size(), 0);
 
   private remainingMovesLeft = () => this.maxAllowed - this.value.length;
   private isFull = () => this.maxAllowed == this.value.length;
