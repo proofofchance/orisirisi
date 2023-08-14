@@ -24,5 +24,5 @@ export function coinSideToString(coinSide: CoinSide): string {
 }
 
 export function totalCoinSides(): number {
-  return Object.keys(CoinSide).length;
+  return Object.keys(CoinSide).length / 2;
 }

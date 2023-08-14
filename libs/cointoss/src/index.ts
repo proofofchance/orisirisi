@@ -34,7 +34,7 @@ class Game {
     this.moves = new Moves(this.numberOfPlayers);
   }
 
-  play(player: Player, coinSide: CoinSide, secret: string) {
+  play(player: Player, coinSide: CoinSide) {
     if (player.address.chain !== this.chain) {
       throw new Error(
         `Player:${player.address} cannot play game in ChainID:${this.chain}`
@@ -49,23 +49,21 @@ class Game {
       );
     }
 
-    const move = new Move(player, coinSide, secret);
+    const move = new Move(player, coinSide);
 
     this.moves.make(move);
 
     return move;
   }
 
-  proveMove(move: Move, secret: string): Game {
-    this.moves = this.moves.proveMove(move, secret);
+  revealMove(move: Move): Game {
+    this.moves = this.moves.revealMove(move);
 
     return this;
   }
 
   withResult(): Game {
-    console.log('Moves ', this.moves);
-
-    if (!this.moves.allProven())
+    if (!this.moves.allRevelead())
       throw new Error('All moves must be proven before populating result');
 
     this.result = this.moves.totalSizeOfSecrets() % totalCoinSides();

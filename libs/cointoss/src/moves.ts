@@ -3,42 +3,38 @@ import { CoinSide } from './coin';
 import { Player } from './';
 
 export class Move {
-  private revealedSecret: string | null = null;
+  public revealedSecret: string | null = null;
+  private revealableSecret: string;
   public readonly hashedValue: string;
 
   constructor(
     public readonly player: Player,
-    public readonly coinSide: CoinSide,
-    readonly revealableSecret: string
+    public readonly coinSide: CoinSide
   ) {
-    this.hashedValue = this.hash(revealableSecret, coinSide);
+    this.revealableSecret =
+      'to be computed using Systems random generator. e.g https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues for web browsers, + DateTime in User timezone + public address of player + coinSide';
+
+    this.hashedValue = Move.hash(this.revealableSecret, coinSide);
   }
 
-  prove(secret: string): Move {
-    if (this.hash(secret, this.coinSide) !== this.hashedValue)
-      throw new Error('Secret mismatch');
-
-    this.revealedSecret = secret;
+  reveal(): Move {
+    this.revealedSecret = this.revealableSecret;
 
     return this;
   }
 
   secret = () => this.revealedSecret;
 
-  isProven = () => !!this.revealableSecret;
+  isRevealed = () => !!this.revealedSecret;
 
-  private hash = (secret: string, coinSide: CoinSide) =>
+  private static hash = (secret: string, coinSide: CoinSide) =>
     SHA256(secret + coinSide).toString();
 }
 
 export class Moves {
   private value: Move[] = [];
-  private readonly maxAllowed: number;
 
-  constructor(private readonly numberOfPlayers: number) {
-    // This will evolve if we support multiple rounds
-    this.maxAllowed = this.numberOfPlayers;
-  }
+  constructor(private readonly maxAllowed: number) {}
 
   make(move: Move) {
     if (this.isFull())
@@ -47,10 +43,10 @@ export class Moves {
     this.value.push(move);
   }
 
-  proveMove(move: Move, secret: string) {
+  revealMove(move: Move) {
     this.value = this.value.map((_move) => {
       if (_move.hashedValue == move.hashedValue) {
-        return move.prove(secret);
+        return move.reveal();
       }
 
       return _move;
@@ -64,7 +60,7 @@ export class Moves {
   public allMatch = (coinSide: CoinSide) =>
     this.value.every((move) => move.coinSide === coinSide);
 
-  public allProven = () => this.value.every((move) => move.isProven());
+  public allRevelead = () => this.value.every((move) => move.isRevealed());
 
   public playersWithCoinSide = (coinSide: CoinSide) =>
     this.value
