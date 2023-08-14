@@ -1,2 +1,2 @@
 packages:
-  - 'libs/cointoss-contracts'
+  - 'libs/cointoss-evm'

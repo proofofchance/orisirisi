@@ -1,17 +1,17 @@
 {
-  "name": "cointoss-contracts",
+  "name": "cointoss-evm",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/cointoss-contracts/src",
+  "sourceRoot": "libs/cointoss-evm/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/cointoss-contracts",
-        "main": "libs/cointoss-contracts/src/index.ts",
-        "tsConfig": "libs/cointoss-contracts/tsconfig.lib.json",
-        "assets": ["libs/cointoss-contracts/*.md"]
+        "outputPath": "dist/libs/cointoss-evm",
+        "main": "libs/cointoss-evm/src/index.ts",
+        "tsConfig": "libs/cointoss-evm/tsconfig.lib.json",
+        "assets": ["libs/cointoss-evm/*.md"]
       }
     },
     "lint": {
@@ -19,8 +19,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/cointoss-contracts/**/*.ts",
-          "libs/cointoss-contracts/package.json"
+          "libs/cointoss-evm/**/*.ts",
+          "libs/cointoss-evm/package.json"
         ]
       }
     },
@@ -28,7 +28,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/cointoss-contracts/jest.config.ts",
+        "jestConfig": "libs/cointoss-evm/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

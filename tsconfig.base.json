@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@orisirisi/cointoss": ["libs/cointoss/src/index.ts"],
-      "@orisirisi/cointoss-contracts": ["libs/cointoss-contracts/src/index.ts"]
+      "@orisirisi/cointoss-evm": ["libs/cointoss-evm/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
