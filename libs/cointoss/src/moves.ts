@@ -1,6 +1,6 @@
 import { SHA256 } from 'crypto-js';
 import { CoinSide } from './coin';
-import { Player } from './cointoss';
+import { Player } from './';
 
 export class Move {
   private revealedSecret: string | null = null;
