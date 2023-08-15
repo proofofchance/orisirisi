@@ -1,11 +1,24 @@
 {
   "name": "@orisirisi/cointoss-evm",
   "version": "0.0.1",
-  "dependencies": {
-    "tslib": "^2.3.0"
+  "scripts": {
+    "test": "hardhat test --parallel"
   },
-  "devDependencies": {
-    "hardhat": "^2.17.1"
+  "dependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@typechain/hardhat": "^8.0.0",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "chai": "^4.3.7",
+    "ethers": "^6.4.0",
+    "hardhat": "^2.12.2",
+    "hardhat-deploy": "^0.11.29"
   },
   "type": "commonjs",
   "main": "./src/index.js",

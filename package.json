@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev:cointoss-web": "nx serve cointoss-web --port 2000"
+    "dev:cointoss-web": "nx serve cointoss-web --port 2000",
+    "test:cointoss-evm": "cd libs/cointoss-evm && pnpm test"
   },
   "private": true,
   "dependencies": {
