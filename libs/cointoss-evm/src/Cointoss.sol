@@ -11,8 +11,8 @@ library Coin {
 library Moves {
   struct GameMove {
     address player;
-    string secret;
     Coin.Side coinSide;
+    bytes32 proofOfChance;
     bytes32 moveHash;
   }
 
@@ -22,21 +22,21 @@ library Moves {
   ) internal view returns (GameMove memory) {
     return
       GameMove({
-        secret: '',
         player: msg.sender,
         coinSide: coinSide,
+        proofOfChance: '',
         moveHash: moveHash
       });
   }
 
   function isRevealed(GameMove memory gameMove) internal pure returns (bool) {
-    return bytes(gameMove.secret).length > 0;
+    return gameMove.proofOfChance != 0;
   }
 }
 
 contract Cointoss {
-  type GameID is uint256;
   type Wager is uint256;
+  type GameID is uint256;
   type GameMoveID is uint16;
 
   enum GameStatus {
@@ -48,8 +48,9 @@ contract Cointoss {
     Wager wager;
     Coin.Side result;
     GameStatus status;
-    GameMoveID maxGameMoves;
-    GameMoveID gameMovesCount;
+    uint16 maxGameMovesCount;
+    uint16 gameMovesCount;
+    mapping(Coin.Side coinSide => bool) coinSidesSoFar;
     mapping(GameMoveID move_id => Moves.GameMove move) moves;
   }
 
@@ -59,6 +60,11 @@ contract Cointoss {
 
   modifier mustBeValidGame(GameID gameID) {
     require(GameID.unwrap(gameID) <= gamesCount, 'Non-existent GameID');
+
+    require(
+      games[gameID].gameMovesCount <= games[gameID].maxGameMovesCount,
+      'Game can no longer take new moves'
+    );
 
     _;
   }
@@ -81,29 +87,42 @@ contract Cointoss {
     _;
   }
 
-  GameMoveID constant FIRST_GAME_MOVE_ID = GameMoveID.wrap(0);
+  modifier mustAvoidAllGameMovesMatching(GameID gameID, Coin.Side coinSide) {
+    uint16 gameMovesLeft = games[gameID].maxGameMovesCount -
+      games[gameID].gameMovesCount;
 
+    if (gameMovesLeft == 1) {
+      require(
+        games[gameID].coinSidesSoFar[Coin.Side.Head] &&
+          games[gameID].coinSidesSoFar[Coin.Side.Tail],
+        'At least one move must contain the opposite coin side'
+      );
+    }
+
+    _;
+  }
+
+  /// @dev Creates a new game
+  /// @param moveHash Keccak256 hash of `secretLuckProof` that would
+  /// be later uploaded
   function createGame(
-    GameMoveID maxGameMoves,
+    uint16 maxGameMovesCount,
     Coin.Side coinSide,
     bytes32 moveHash
   ) external payable {
     require(
-      GameMoveID.unwrap(maxGameMoves) >= Coin.TOTAL_SIDES_COUNT,
-      'Game must allow at least total coin sides moves'
+      maxGameMovesCount >= Coin.TOTAL_SIDES_COUNT,
+      'Game must allow at least total coin sides'
     );
 
     GameID newGameID = GameID.wrap(gamesCount);
 
-    games[newGameID].moves[FIRST_GAME_MOVE_ID] = Moves.newMove(
-      coinSide,
-      moveHash
-    );
+    createGameMove(newGameID, coinSide, moveHash);
 
     games[newGameID].wager = Wager.wrap(msg.value);
-    games[newGameID].maxGameMoves = maxGameMoves;
 
-    incrementGameMovesCount(newGameID, FIRST_GAME_MOVE_ID);
+    games[newGameID].maxGameMovesCount = maxGameMovesCount;
+
     gamesCount++;
   }
 
@@ -117,20 +136,21 @@ contract Cointoss {
     mustBeValidGame(gameID)
     mustBeOngoingGame(gameID)
     mustPayGameWager(gameID)
+    mustAvoidAllGameMovesMatching(gameID, coinSide)
   {
-    GameMoveID gameMoveID = games[gameID].gameMovesCount;
-
-    games[gameID].moves[gameMoveID] = Moves.newMove(coinSide, moveHash);
-
-    incrementGameMovesCount(gameID, gameMoveID);
+    createGameMove(gameID, coinSide, moveHash);
   }
 
-  function incrementGameMovesCount(
+  function createGameMove(
     GameID gameID,
-    GameMoveID latestGameMoveID
+    Coin.Side coinSide,
+    bytes32 moveHash
   ) internal {
-    games[gameID].gameMovesCount = GameMoveID.wrap(
-      GameMoveID.unwrap(latestGameMoveID) + 1
-    );
+    GameMoveID gameMoveID = GameMoveID.wrap(games[gameID].gameMovesCount);
+
+    games[gameID].moves[gameMoveID] = Moves.newMove(coinSide, moveHash);
+    games[gameID].coinSidesSoFar[coinSide] = true;
+
+    games[gameID].gameMovesCount = GameMoveID.unwrap(gameMoveID) + 1;
   }
 }
