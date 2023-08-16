@@ -1,11 +1,11 @@
 import { SHA256 } from 'crypto-js';
-import { CoinSide, coinSideToString } from './coin';
+import { CoinSide } from './coin';
 import { Player } from './';
 
 /** Cointoss Move Crypto */
 class Crypto {
   static getRandomString(): string {
-    const array = new Uint32Array(24);
+    const array = new Uint8Array(24);
     return window!.crypto.getRandomValues(array).toString();
   }
 }
@@ -18,13 +18,8 @@ export class Move {
     public readonly player: Player,
     public readonly coinSide: CoinSide
   ) {
-    this.revealableSecret = `
-      Seed: ${Crypto.getRandomString()}
-      Player's Address: ${player.address}
-      Coin Side: ${coinSideToString(coinSide)}
-
-      Timestamp: ${new Date().toString()}
-    `;
+    // TODO: Update to be input from user
+    this.revealableSecret = Crypto.getRandomString();
 
     this.hashedValue = Move.hash(this.revealableSecret, coinSide);
   }
