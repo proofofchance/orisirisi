@@ -7,10 +7,18 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "declaration": true,
+    "composite": true
   },
-  "files": [],
-  "include": [],
+  "files": ["./hardhat.config.ts"],
+  "include": [
+    "src/**/*",
+    "tasks/**/*",
+    "tests/**/*",
+    "deploy/**/*",
+    "typechain-types/"
+  ],
   "references": [
     {
       "path": "./tsconfig.lib.json"
