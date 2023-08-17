@@ -3,11 +3,12 @@ pragma solidity ^0.8.18;
 
 import './Coin.sol';
 import './GameMoves.sol';
+import './WalletEnabled.sol';
 import './ServiceCharged.sol';
 
-contract Coinflip is ServiceCharged {
-  type Wager is uint256;
-  type GameID is uint256;
+contract Coinflip is ServiceCharged, WalletEnabled {
+  type Wager is uint;
+  type GameID is uint;
   type GameMoveID is uint16;
 
   enum GameStatus {
@@ -15,6 +16,7 @@ contract Coinflip is ServiceCharged {
     Concluded
   }
 
+  // TODO: Decouple into GameStatuses GameWagers, GameMoves
   struct Game {
     GameStatus status;
     // Wager concerns
@@ -32,7 +34,7 @@ contract Coinflip is ServiceCharged {
 
   mapping(GameID => Game) games;
 
-  uint256 gamesCount;
+  uint gamesCount;
 
   modifier mustBeValidGame(GameID gameID) {
     require(GameID.unwrap(gameID) <= gamesCount, 'Non-existent GameID');
@@ -197,28 +199,35 @@ contract Coinflip is ServiceCharged {
     if (allProofsAreUploaded) {
       games[gameID].status = GameStatus.Concluded;
 
-      payPlayersThatPlayedOutcome(gameID);
+      creditPlayersThatPlayedOutcome(gameID);
     }
   }
 
-  function payPlayersThatPlayedOutcome(GameID gameID) private {
+  function creditPlayersThatPlayedOutcome(GameID gameID) private {
     GameMoves.Player[] memory playersThatPlayedOutcome = games[gameID]
       .playedCoinSides[games[gameID].outcome];
 
     // TODO: Remove charges before this
     // Solidity rounds towards zero. So implicit 'floor' happens here
-    uint256 amountToPayEachPlayer = Wager.unwrap(games[gameID].wager) /
+    uint totalWagerAmount = Wager.unwrap(games[gameID].totalWagersFromPlayers);
+
+    uint serviceChargeAmount = (totalWagerAmount * getServiceChargePercent()) /
+      100;
+
+    uint totalWagerLeft = totalWagerAmount - serviceChargeAmount;
+
+    uint amountToPayEachPlayer = totalWagerLeft /
       playersThatPlayedOutcome.length;
+
+    uint maybeLeftOver = totalWagerLeft -
+      (amountToPayEachPlayer * playersThatPlayedOutcome.length);
+
+    creditWallet(serviceProvider(), serviceChargeAmount + maybeLeftOver);
 
     for (uint16 i = 0; i <= playersThatPlayedOutcome.length; i++) {
       GameMoves.Player player = playersThatPlayedOutcome[i];
 
-      pay(payable(GameMoves.Player.unwrap(player)), amountToPayEachPlayer);
+      creditWallet(GameMoves.Player.unwrap(player), amountToPayEachPlayer);
     }
-  }
-
-  function pay(address payable to, uint256 amount) private {
-    (bool sent, ) = to.call{value: amount}('');
-    require(sent, 'Failed to send payment');
   }
 }
