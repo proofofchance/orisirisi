@@ -1,215 +1,135 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
-import './Coin.sol';
-import './GameMoves.sol';
-import './WalletEnabled.sol';
-import './ServiceCharged.sol';
+import {Coin} from './Coinflip/Coin.sol';
+import {Game} from './Coinflip/Game.sol';
+import {UsingGamePlays} from './Coinflip/GamePlays.sol';
+import {UsingGameWagers} from './Coinflip/GameWagers.sol';
+import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
-contract Coinflip is ServiceCharged, WalletEnabled {
-  type Wager is uint;
-  type GameID is uint;
-  type GameMoveID is uint16;
+import {WalletEnabled} from './WalletEnabled.sol';
+import {ServiceCharged} from './ServiceCharged.sol';
 
-  enum GameStatus {
-    Ongoing,
-    Concluded
-  }
-
-  // TODO: Decouple into GameStatuses GameWagers, GameMoves
-  struct Game {
-    GameStatus status;
-    // Wager concerns
-    Wager wager;
-    Wager totalWagersFromPlayers;
-    // CoinSide concerns
-    Coin.Side outcome;
-    mapping(Coin.Side coinSide => GameMoves.Player[]) playedCoinSides;
-    // GameMoves Concerns
-    GameMoveID proofOfChanceCount;
-    GameMoveID gameMovesCount;
-    GameMoveID maxGameMovesCount;
-    mapping(GameMoveID move_id => GameMoves.GameMove move) moves;
-  }
-
-  mapping(GameID => Game) games;
-
+contract Coinflip is
+  UsingGamePlays,
+  UsingGameWagers,
+  UsingGameStatuses,
+  WalletEnabled,
+  ServiceCharged
+{
+  mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
 
-  modifier mustBeValidGame(GameID gameID) {
-    require(GameID.unwrap(gameID) <= gamesCount, 'Non-existent GameID');
+  modifier mustBeValidGame(Game.ID gameID) {
+    require(Game.ID.unwrap(gameID) <= gamesCount, 'Non-existent GameID');
 
     require(
-      GameMoveID.unwrap(games[gameID].gameMovesCount) <=
-        GameMoveID.unwrap(games[gameID].maxGameMovesCount),
-      'Game can no longer take new moves'
+      Game.PlayID.unwrap(playCounts[gameID]) <=
+        Game.PlayID.unwrap(maxPlayCounts[gameID]),
+      'Game can no longer take new plays'
     );
-
-    _;
-  }
-
-  modifier mustBeOngoingGame(GameID gameID) {
-    require(
-      games[gameID].status == GameStatus.Ongoing,
-      'Game needs to be Ongoing'
-    );
-
-    _;
-  }
-
-  modifier mustPayGameWager(GameID gameID) {
-    require(
-      Wager.unwrap(games[gameID].wager) <= msg.value,
-      'Must pay Game wager'
-    );
-
-    _;
-  }
-
-  modifier mustAvoidAllGameMovesMatching(GameID gameID, Coin.Side coinSide) {
-    uint16 gameMovesLeft = GameMoveID.unwrap(games[gameID].maxGameMovesCount) -
-      GameMoveID.unwrap(games[gameID].gameMovesCount);
-
-    if (gameMovesLeft == 1) {
-      require(
-        games[gameID].playedCoinSides[Coin.Side.Head].length > 0 &&
-          games[gameID].playedCoinSides[Coin.Side.Tail].length > 0,
-        'At least one move must contain the opposite coin side'
-      );
-    }
 
     _;
   }
 
   /// @dev Creates a new game
-  /// @param moveHash Keccak256 hash of `secretLuckProof` that would
+  /// @param playHash Keccak256 hash of `secretLuckProof` that would
   /// be later uploaded
   function createGame(
     uint16 maxGameMovesCount,
     Coin.Side coinSide,
-    bytes32 moveHash
+    bytes32 playHash
   ) external payable {
     require(
       maxGameMovesCount >= Coin.TOTAL_SIDES_COUNT,
       'Game must allow at least total coin sides'
     );
 
-    GameID newGameID = GameID.wrap(gamesCount);
-    createGameMove(newGameID, coinSide, moveHash);
-    games[newGameID].wager = Wager.wrap(msg.value);
-    updateTotalWagers(newGameID);
-    games[newGameID].maxGameMovesCount = GameMoveID.wrap(maxGameMovesCount);
+    Game.ID newGameID = Game.ID.wrap(gamesCount);
+    createGamePlay(newGameID, coinSide, playHash);
+    createGameWager(newGameID, msg.value);
+    updateTotalWagers(newGameID, msg.value);
+    setMaxGamePlayCount(newGameID, maxGameMovesCount);
     gamesCount++;
   }
 
-  function play(
-    GameID gameID,
+  function playGame(
+    Game.ID gameID,
     Coin.Side coinSide,
-    bytes32 moveHash
+    bytes32 playHash
   )
     external
     payable
     mustBeValidGame(gameID)
     mustBeOngoingGame(gameID)
     mustPayGameWager(gameID)
-    mustAvoidAllGameMovesMatching(gameID, coinSide)
+    mustAvoidAllGamePlayMatching(gameID, coinSide)
   {
-    updateTotalWagers(gameID);
+    updateTotalWagers(gameID, msg.value);
 
-    createGameMove(gameID, coinSide, moveHash);
+    createGamePlay(gameID, coinSide, playHash);
   }
 
   /// @dev Uploads the proof of chance to prove a game move
   /// @param proofOfChance should contain 32 words. First 24 should be
   /// from the user system's entropy + Last 8 digits of current
   /// timestamp.
-  function proveGameMove(
-    GameID gameID,
-    GameMoveID gameMoveID,
+  function proveGamePlay(
+    Game.ID gameID,
+    Game.PlayID gamePlayID,
     bytes32 proofOfChance
   ) external {
     require(
       keccak256(abi.encodePacked(proofOfChance)) ==
-        games[gameID].moves[gameMoveID].moveHash,
+        plays[gameID][gamePlayID].playHash,
       'Invalid Proof of chance'
     );
 
-    createProofOfChance(gameID, gameMoveID, proofOfChance);
+    createProofOfChance(gameID, gamePlayID, proofOfChance);
 
     updateGameOutcome(gameID, proofOfChance);
 
     maybeConcludeGame(gameID);
   }
 
-  function createGameMove(
-    GameID gameID,
-    Coin.Side coinSide,
-    bytes32 moveHash
-  ) private {
-    GameMoveID gameMoveID = games[gameID].gameMovesCount;
-    games[gameID].moves[gameMoveID] = GameMoves.newMove(coinSide, moveHash);
-    games[gameID].playedCoinSides[coinSide].push(
-      GameMoves.Player.wrap(msg.sender)
-    );
-    games[gameID].gameMovesCount = GameMoveID.wrap(
-      GameMoveID.unwrap(games[gameID].gameMovesCount) + 1
-    );
-  }
-
-  function updateTotalWagers(GameID gameID) private {
-    games[gameID].totalWagersFromPlayers = Wager.wrap(msg.value);
-  }
-
   function createProofOfChance(
-    GameID gameID,
-    GameMoveID gameMoveID,
+    Game.ID gameID,
+    Game.PlayID gamePlayID,
     bytes32 proofOfChance
   ) private {
-    games[gameID].moves[gameMoveID].proofOfChance = proofOfChance;
-    games[gameID].proofOfChanceCount = GameMoveID.wrap(
-      GameMoveID.unwrap(games[gameID].proofOfChanceCount) + 1
+    playProofs[gameID][gamePlayID] = proofOfChance;
+    playProofCounts[gameID] = Game.PlayID.wrap(
+      Game.PlayID.unwrap(playProofCounts[gameID]) + 1
     );
   }
 
-  function updateGameOutcome(GameID gameID, bytes32 proofOfChance) private {
-    uint16 entropy = getEntropyFromProofOfChance(proofOfChance);
+  function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
+    uint16 entropy = Game.getEntropy(proofOfChance);
 
-    games[gameID].outcome = Coin.flip(entropy);
+    outcomes[gameID] = Coin.flip(entropy);
   }
 
-  function getEntropyFromProofOfChance(
-    bytes32 proofOfChance
-  ) private pure returns (uint16) {
-    uint16 sum = 0;
+  function maybeConcludeGame(Game.ID gameID) private {
+    assert(statuses[gameID] == Game.Status.Ongoing);
 
-    for (uint8 i = 0; i < 32; i++) {
-      sum += uint8(proofOfChance[i]);
-    }
-
-    return sum;
-  }
-
-  function maybeConcludeGame(GameID gameID) private {
-    assert(games[gameID].status == GameStatus.Ongoing);
-
-    bool allProofsAreUploaded = GameMoveID.unwrap(
-      games[gameID].proofOfChanceCount
-    ) == GameMoveID.unwrap(games[gameID].gameMovesCount);
+    bool allProofsAreUploaded = Game.PlayID.unwrap(playProofCounts[gameID]) ==
+      Game.PlayID.unwrap(playCounts[gameID]);
 
     if (allProofsAreUploaded) {
-      games[gameID].status = GameStatus.Concluded;
+      statuses[gameID] = Game.Status.Concluded;
 
       creditPlayersThatPlayedOutcome(gameID);
     }
   }
 
-  function creditPlayersThatPlayedOutcome(GameID gameID) private {
-    GameMoves.Player[] memory playersThatPlayedOutcome = games[gameID]
-      .playedCoinSides[games[gameID].outcome];
+  function creditPlayersThatPlayedOutcome(Game.ID gameID) private {
+    Game.Player[] memory playersThatPlayedOutcome = players[gameID][
+      outcomes[gameID]
+    ];
 
     // TODO: Remove charges before this
     // Solidity rounds towards zero. So implicit 'floor' happens here
-    uint totalWagerAmount = Wager.unwrap(games[gameID].totalWagersFromPlayers);
+    uint totalWagerAmount = Game.Wager.unwrap(totalWagers[gameID]);
 
     uint serviceChargeAmount = (totalWagerAmount * getServiceChargePercent()) /
       100;
@@ -225,9 +145,9 @@ contract Coinflip is ServiceCharged, WalletEnabled {
     creditWallet(serviceProvider(), serviceChargeAmount + maybeLeftOver);
 
     for (uint16 i = 0; i <= playersThatPlayedOutcome.length; i++) {
-      GameMoves.Player player = playersThatPlayedOutcome[i];
+      Game.Player player = playersThatPlayedOutcome[i];
 
-      creditWallet(GameMoves.Player.unwrap(player), amountToPayEachPlayer);
+      creditWallet(Game.Player.unwrap(player), amountToPayEachPlayer);
     }
   }
 }
