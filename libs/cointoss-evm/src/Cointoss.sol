@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
+pragma solidity ^0.8.18;
+
 library Coin {
   enum Side {
     Head,
@@ -6,11 +8,17 @@ library Coin {
   }
 
   uint8 public constant TOTAL_SIDES_COUNT = 2;
+
+  function flip(uint16 entropy) internal pure returns (Side) {
+    return Side(entropy % (TOTAL_SIDES_COUNT - 1));
+  }
 }
 
 library Moves {
+  type Player is address;
+
   struct GameMove {
-    address player;
+    Player player;
     Coin.Side coinSide;
     bytes32 proofOfChance;
     bytes32 moveHash;
@@ -22,7 +30,7 @@ library Moves {
   ) internal view returns (GameMove memory) {
     return
       GameMove({
-        player: msg.sender,
+        player: Player.wrap(msg.sender),
         coinSide: coinSide,
         proofOfChance: '',
         moveHash: moveHash
@@ -30,7 +38,7 @@ library Moves {
   }
 
   function isRevealed(GameMove memory gameMove) internal pure returns (bool) {
-    return gameMove.proofOfChance != 0;
+    return gameMove.proofOfChance.length != 0;
   }
 }
 
@@ -46,11 +54,13 @@ contract Cointoss {
 
   struct Game {
     Wager wager;
-    Coin.Side result;
+    Wager totalWagersFromPlayers;
+    Coin.Side outcome;
     GameStatus status;
-    uint16 maxGameMovesCount;
+    uint16 proofOfChanceCount;
     uint16 gameMovesCount;
-    mapping(Coin.Side coinSide => bool) coinSidesSoFar;
+    uint16 maxGameMovesCount;
+    mapping(Coin.Side coinSide => Moves.Player[]) playedCoinSides;
     mapping(GameMoveID move_id => Moves.GameMove move) moves;
   }
 
@@ -93,8 +103,8 @@ contract Cointoss {
 
     if (gameMovesLeft == 1) {
       require(
-        games[gameID].coinSidesSoFar[Coin.Side.Head] &&
-          games[gameID].coinSidesSoFar[Coin.Side.Tail],
+        games[gameID].playedCoinSides[Coin.Side.Head].length > 0 &&
+          games[gameID].playedCoinSides[Coin.Side.Tail].length > 0,
         'At least one move must contain the opposite coin side'
       );
     }
@@ -116,17 +126,14 @@ contract Cointoss {
     );
 
     GameID newGameID = GameID.wrap(gamesCount);
-
     createGameMove(newGameID, coinSide, moveHash);
-
     games[newGameID].wager = Wager.wrap(msg.value);
-
+    updateTotalWagers(newGameID);
     games[newGameID].maxGameMovesCount = maxGameMovesCount;
-
     gamesCount++;
   }
 
-  function participate(
+  function play(
     GameID gameID,
     Coin.Side coinSide,
     bytes32 moveHash
@@ -138,19 +145,106 @@ contract Cointoss {
     mustPayGameWager(gameID)
     mustAvoidAllGameMovesMatching(gameID, coinSide)
   {
+    updateTotalWagers(gameID);
+
     createGameMove(gameID, coinSide, moveHash);
+  }
+
+  /// @dev Uploads the proof of chance to prove a game move
+  /// @param proofOfChance should contain 32 words. First 24 should be
+  /// from the user system's entropy + Last 8 digits of current
+  /// timestamp.
+  function proveGameMove(
+    GameID gameID,
+    GameMoveID gameMoveID,
+    bytes32 proofOfChance
+  ) external {
+    require(
+      keccak256(abi.encodePacked(proofOfChance)) ==
+        games[gameID].moves[gameMoveID].moveHash,
+      'Invalid Proof of chance'
+    );
+
+    createProofOfChance(gameID, gameMoveID, proofOfChance);
+
+    updateGameOutcome(gameID, proofOfChance);
+
+    maybeConcludeGame(gameID);
   }
 
   function createGameMove(
     GameID gameID,
     Coin.Side coinSide,
     bytes32 moveHash
-  ) internal {
+  ) private {
     GameMoveID gameMoveID = GameMoveID.wrap(games[gameID].gameMovesCount);
-
     games[gameID].moves[gameMoveID] = Moves.newMove(coinSide, moveHash);
-    games[gameID].coinSidesSoFar[coinSide] = true;
+    games[gameID].playedCoinSides[coinSide].push(Moves.Player.wrap(msg.sender));
+    games[gameID].gameMovesCount++;
+  }
 
-    games[gameID].gameMovesCount = GameMoveID.unwrap(gameMoveID) + 1;
+  function updateTotalWagers(GameID gameID) private {
+    games[gameID].totalWagersFromPlayers = Wager.wrap(msg.value);
+  }
+
+  function createProofOfChance(
+    GameID gameID,
+    GameMoveID gameMoveID,
+    bytes32 proofOfChance
+  ) private {
+    games[gameID].moves[gameMoveID].proofOfChance = proofOfChance;
+    games[gameID].proofOfChanceCount++;
+  }
+
+  function updateGameOutcome(GameID gameID, bytes32 proofOfChance) private {
+    uint16 entropy = getEntropyFromProofOfChance(proofOfChance);
+
+    games[gameID].outcome = Coin.flip(entropy);
+  }
+
+  function getEntropyFromProofOfChance(
+    bytes32 proofOfChance
+  ) private pure returns (uint16) {
+    uint16 sum = 0;
+
+    for (uint8 i = 0; i < 32; i++) {
+      sum += uint8(proofOfChance[i]);
+    }
+
+    return sum;
+  }
+
+  function maybeConcludeGame(GameID gameID) private {
+    assert(games[gameID].status == GameStatus.Ongoing);
+
+    bool allProofsAreUploaded = games[gameID].proofOfChanceCount ==
+      games[gameID].gameMovesCount;
+
+    if (allProofsAreUploaded) {
+      games[gameID].status = GameStatus.Concluded;
+
+      payPlayersThatPlayedOutcome(gameID);
+    }
+  }
+
+  function payPlayersThatPlayedOutcome(GameID gameID) private {
+    Moves.Player[] memory playersThatPlayedOutcome = games[gameID]
+      .playedCoinSides[games[gameID].outcome];
+
+    // TODO: Remove charges before this
+    // Solidity rounds towards zero. So implicit 'floor' happens here
+    uint256 amountToPayEachPlayer = Wager.unwrap(games[gameID].wager) /
+      playersThatPlayedOutcome.length;
+
+    for (uint16 i = 0; i <= playersThatPlayedOutcome.length; i++) {
+      Moves.Player player = playersThatPlayedOutcome[i];
+
+      pay(payable(Moves.Player.unwrap(player)), amountToPayEachPlayer);
+    }
+  }
+
+  function pay(address payable to, uint256 amount) private {
+    (bool sent, ) = to.call{value: amount}('');
+    require(sent, 'Failed to send payment');
   }
 }
