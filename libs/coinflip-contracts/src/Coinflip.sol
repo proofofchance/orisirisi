@@ -42,7 +42,7 @@ library Moves {
   }
 }
 
-contract Cointoss {
+contract Coinflip {
   type Wager is uint256;
   type GameID is uint256;
   type GameMoveID is uint16;

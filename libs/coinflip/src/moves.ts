@@ -2,7 +2,7 @@ import { SHA256 } from 'crypto-js';
 import { CoinSide } from './coin';
 import { Player } from './';
 
-/** Cointoss Move Crypto */
+/** Coinflip Move Crypto */
 class Crypto {
   static getRandomString(): string {
     const array = new Uint8Array(24);

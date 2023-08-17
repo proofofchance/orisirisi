@@ -15,8 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@orisirisi/cointoss": ["libs/cointoss/src/index.ts"],
-      "@orisirisi/cointoss-evm": ["libs/cointoss-evm/src/index.ts"]
+      "@orisirisi/coinflip": ["libs/coinflip/src/index.ts"],
+      "@orisirisi/coinflip-contracts": ["libs/coinflip-contracts/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

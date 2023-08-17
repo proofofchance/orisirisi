@@ -1,5 +1,5 @@
 {
-  "name": "@orisirisi/cointoss-evm",
+  "name": "@orisirisi/coinflip-contracts",
   "version": "0.0.1",
   "scripts": {
     "test": "hardhat test --parallel"
