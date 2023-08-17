@@ -1,48 +1,11 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
-library Coin {
-  enum Side {
-    Head,
-    Tail
-  }
+import './Coin.sol';
+import './GameMoves.sol';
+import './ServiceCharged.sol';
 
-  uint8 public constant TOTAL_SIDES_COUNT = 2;
-
-  function flip(uint16 entropy) internal pure returns (Side) {
-    return Side(entropy % (TOTAL_SIDES_COUNT - 1));
-  }
-}
-
-library Moves {
-  type Player is address;
-
-  struct GameMove {
-    Player player;
-    Coin.Side coinSide;
-    bytes32 proofOfChance;
-    bytes32 moveHash;
-  }
-
-  function newMove(
-    Coin.Side coinSide,
-    bytes32 moveHash
-  ) internal view returns (GameMove memory) {
-    return
-      GameMove({
-        player: Player.wrap(msg.sender),
-        coinSide: coinSide,
-        proofOfChance: '',
-        moveHash: moveHash
-      });
-  }
-
-  function isRevealed(GameMove memory gameMove) internal pure returns (bool) {
-    return gameMove.proofOfChance.length != 0;
-  }
-}
-
-contract Coinflip {
+contract Coinflip is ServiceCharged {
   type Wager is uint256;
   type GameID is uint256;
   type GameMoveID is uint16;
@@ -53,15 +16,18 @@ contract Coinflip {
   }
 
   struct Game {
+    GameStatus status;
+    // Wager concerns
     Wager wager;
     Wager totalWagersFromPlayers;
+    // CoinSide concerns
     Coin.Side outcome;
-    GameStatus status;
-    uint16 proofOfChanceCount;
-    uint16 gameMovesCount;
-    uint16 maxGameMovesCount;
-    mapping(Coin.Side coinSide => Moves.Player[]) playedCoinSides;
-    mapping(GameMoveID move_id => Moves.GameMove move) moves;
+    mapping(Coin.Side coinSide => GameMoves.Player[]) playedCoinSides;
+    // GameMoves Concerns
+    GameMoveID proofOfChanceCount;
+    GameMoveID gameMovesCount;
+    GameMoveID maxGameMovesCount;
+    mapping(GameMoveID move_id => GameMoves.GameMove move) moves;
   }
 
   mapping(GameID => Game) games;
@@ -72,7 +38,8 @@ contract Coinflip {
     require(GameID.unwrap(gameID) <= gamesCount, 'Non-existent GameID');
 
     require(
-      games[gameID].gameMovesCount <= games[gameID].maxGameMovesCount,
+      GameMoveID.unwrap(games[gameID].gameMovesCount) <=
+        GameMoveID.unwrap(games[gameID].maxGameMovesCount),
       'Game can no longer take new moves'
     );
 
@@ -98,8 +65,8 @@ contract Coinflip {
   }
 
   modifier mustAvoidAllGameMovesMatching(GameID gameID, Coin.Side coinSide) {
-    uint16 gameMovesLeft = games[gameID].maxGameMovesCount -
-      games[gameID].gameMovesCount;
+    uint16 gameMovesLeft = GameMoveID.unwrap(games[gameID].maxGameMovesCount) -
+      GameMoveID.unwrap(games[gameID].gameMovesCount);
 
     if (gameMovesLeft == 1) {
       require(
@@ -129,7 +96,7 @@ contract Coinflip {
     createGameMove(newGameID, coinSide, moveHash);
     games[newGameID].wager = Wager.wrap(msg.value);
     updateTotalWagers(newGameID);
-    games[newGameID].maxGameMovesCount = maxGameMovesCount;
+    games[newGameID].maxGameMovesCount = GameMoveID.wrap(maxGameMovesCount);
     gamesCount++;
   }
 
@@ -177,10 +144,14 @@ contract Coinflip {
     Coin.Side coinSide,
     bytes32 moveHash
   ) private {
-    GameMoveID gameMoveID = GameMoveID.wrap(games[gameID].gameMovesCount);
-    games[gameID].moves[gameMoveID] = Moves.newMove(coinSide, moveHash);
-    games[gameID].playedCoinSides[coinSide].push(Moves.Player.wrap(msg.sender));
-    games[gameID].gameMovesCount++;
+    GameMoveID gameMoveID = games[gameID].gameMovesCount;
+    games[gameID].moves[gameMoveID] = GameMoves.newMove(coinSide, moveHash);
+    games[gameID].playedCoinSides[coinSide].push(
+      GameMoves.Player.wrap(msg.sender)
+    );
+    games[gameID].gameMovesCount = GameMoveID.wrap(
+      GameMoveID.unwrap(games[gameID].gameMovesCount) + 1
+    );
   }
 
   function updateTotalWagers(GameID gameID) private {
@@ -193,7 +164,9 @@ contract Coinflip {
     bytes32 proofOfChance
   ) private {
     games[gameID].moves[gameMoveID].proofOfChance = proofOfChance;
-    games[gameID].proofOfChanceCount++;
+    games[gameID].proofOfChanceCount = GameMoveID.wrap(
+      GameMoveID.unwrap(games[gameID].proofOfChanceCount) + 1
+    );
   }
 
   function updateGameOutcome(GameID gameID, bytes32 proofOfChance) private {
@@ -217,8 +190,9 @@ contract Coinflip {
   function maybeConcludeGame(GameID gameID) private {
     assert(games[gameID].status == GameStatus.Ongoing);
 
-    bool allProofsAreUploaded = games[gameID].proofOfChanceCount ==
-      games[gameID].gameMovesCount;
+    bool allProofsAreUploaded = GameMoveID.unwrap(
+      games[gameID].proofOfChanceCount
+    ) == GameMoveID.unwrap(games[gameID].gameMovesCount);
 
     if (allProofsAreUploaded) {
       games[gameID].status = GameStatus.Concluded;
@@ -228,7 +202,7 @@ contract Coinflip {
   }
 
   function payPlayersThatPlayedOutcome(GameID gameID) private {
-    Moves.Player[] memory playersThatPlayedOutcome = games[gameID]
+    GameMoves.Player[] memory playersThatPlayedOutcome = games[gameID]
       .playedCoinSides[games[gameID].outcome];
 
     // TODO: Remove charges before this
@@ -237,9 +211,9 @@ contract Coinflip {
       playersThatPlayedOutcome.length;
 
     for (uint16 i = 0; i <= playersThatPlayedOutcome.length; i++) {
-      Moves.Player player = playersThatPlayedOutcome[i];
+      GameMoves.Player player = playersThatPlayedOutcome[i];
 
-      pay(payable(Moves.Player.unwrap(player)), amountToPayEachPlayer);
+      pay(payable(GameMoves.Player.unwrap(player)), amountToPayEachPlayer);
     }
   }
 
