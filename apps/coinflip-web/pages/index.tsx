@@ -3,9 +3,9 @@ import {
   Address,
   Chain,
   CoinSide,
-  CoinToss,
+  CoinFlip,
   Player,
-} from '@orisirisi/cointoss';
+} from '@orisirisi/coinflip';
 import { useEffect } from 'react';
 
 const StyledPage = styled.div`
@@ -15,7 +15,7 @@ const StyledPage = styled.div`
 
 export function Index() {
   useEffect(() => {
-    const game = new CoinToss(2, Chain.Ethereum);
+    const game = new CoinFlip(2, Chain.Ethereum);
 
     // player 1
     const player1 = new Player(

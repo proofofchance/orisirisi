@@ -87,11 +87,11 @@ class Game {
 }
 
 /**
- * A game where players toss coin and the side shown determines
+ * A game where players flip coin and the side shown determines
  * the winner of the game. The winner takes all the wagers.
  *
  * In simple terms, a player makes a move with their revealable secret and the coin side.
- * The other player does the same. The coin toss output is then determined by both players'
+ * The other player does the same. The coin flip output is then determined by both players'
  * secrets lengths when added. Players need to reveal their secrets. If they don't, we will
  * have to auto-return their wagers (minus our charges)
  *
@@ -100,4 +100,4 @@ class Game {
  * In the case of tie breakers (0 losers), the game will be replayed. When we support rounds, an
  * extra round will be played instead.
  */
-export { Game as CoinToss };
+export { Game as CoinFlip };

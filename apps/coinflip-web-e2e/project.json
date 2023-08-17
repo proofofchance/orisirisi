@@ -1,19 +1,19 @@
 {
-  "name": "cointoss-web-e2e",
+  "name": "coinflip-web-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/cointoss-web-e2e/src",
+  "sourceRoot": "apps/coinflip-web-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nx/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/cointoss-web-e2e/cypress.config.ts",
-        "devServerTarget": "cointoss-web:serve:development",
+        "cypressConfig": "apps/coinflip-web-e2e/cypress.config.ts",
+        "devServerTarget": "coinflip-web:serve:development",
         "testingType": "e2e"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "cointoss-web:serve:production"
+          "devServerTarget": "coinflip-web:serve:production"
         }
       }
     },
@@ -21,10 +21,10 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/cointoss-web-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/coinflip-web-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["cointoss-web"]
+  "implicitDependencies": ["coinflip-web"]
 }
