@@ -23,6 +23,10 @@ contract GameWagers {
   function updateTotalWagers(Game.ID gameID, uint wager) public {
     totalWagers[gameID] = Game.Wager.wrap(wager);
   }
+
+  function getTotalWagerAmount(Game.ID gameID) public view returns (uint) {
+    return Game.Wager.unwrap(totalWagers[gameID]);
+  }
 }
 
 contract UsingGameWagers is GameWagers {}
