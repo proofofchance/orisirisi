@@ -6,6 +6,10 @@ import {UsingReentrancyGuard} from './Wallet/ReentrancyGuard.sol';
 contract Wallets is UsingReentrancyGuard {
   mapping(address owner => uint balance) wallet;
 
+  receive() external payable {
+    creditWallet(msg.sender, msg.value);
+  }
+
   function creditWallet(address owner, uint amount) public {
     wallet[owner] += amount;
   }

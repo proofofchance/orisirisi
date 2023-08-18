@@ -21,8 +21,12 @@ contract Coinflip is
 
   Wallets public wallets;
 
-  constructor(address _wallets) {
+  constructor(address payable _wallets) {
     wallets = Wallets(_wallets);
+  }
+
+  receive() external payable {
+    wallets.creditWallet(msg.sender, msg.value);
   }
 
   /// @dev Creates a new game
