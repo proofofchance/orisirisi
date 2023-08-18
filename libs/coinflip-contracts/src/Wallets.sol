@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
-import {UsingReentrancyGuard} from './ReentrancyGuard.sol';
+import {UsingReentrancyGuard} from './Wallet/ReentrancyGuard.sol';
 
 contract Wallets is UsingReentrancyGuard {
   mapping(address owner => uint balance) wallet;
