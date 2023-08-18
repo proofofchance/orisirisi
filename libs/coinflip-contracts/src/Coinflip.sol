@@ -7,18 +7,23 @@ import {UsingGamePlays} from './Coinflip/GamePlays.sol';
 import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
-import {WalletEnabled} from './WalletEnabled.sol';
-import {ServiceCharged} from './ServiceCharged.sol';
+import {Wallets} from './Wallets.sol';
+import {UsingServiceProvider} from './ServiceProvider.sol';
 
 contract Coinflip is
   UsingGamePlays,
   UsingGameWagers,
   UsingGameStatuses,
-  WalletEnabled,
-  ServiceCharged
+  UsingServiceProvider
 {
   mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
+
+  Wallets public wallets;
+
+  constructor(address _wallets) {
+    wallets = Wallets(_wallets);
+  }
 
   /// @dev Creates a new game
   /// @param playHash Keccak256 hash of `secretLuckProof` that would
@@ -107,7 +112,7 @@ contract Coinflip is
         winners.length
       );
 
-    creditWallet(serviceProvider(), serviceChargeAmount);
+    payServiceCharge(serviceChargeAmount);
     creditPlayers(winners, amountForEachWinner);
     setGameStatusAsConcluded(gameID);
   }
@@ -129,7 +134,7 @@ contract Coinflip is
         playCount
       );
 
-    creditWallet(serviceProvider(), serviceChargeAmount);
+    payServiceCharge(serviceChargeAmount);
     creditPlayers(headPlayers, amountForEachPlayer);
     creditPlayers(tailPlayers, amountForEachPlayer);
     setGameStatusAsConcluded(gameID);
@@ -139,9 +144,13 @@ contract Coinflip is
     outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
   }
 
+  function payServiceCharge(uint serviceChargeAmount) private {
+    wallets.creditWallet(getServiceProviderWallet(), serviceChargeAmount);
+  }
+
   function creditPlayers(Game.Player[] memory players, uint amount) private {
     for (uint16 i = 0; i <= players.length; i++) {
-      creditWallet(Game.Player.unwrap(players[i]), amount);
+      wallets.creditWallet(Game.Player.unwrap(players[i]), amount);
     }
   }
 }

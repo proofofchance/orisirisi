@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import './Ownable.sol';
 
-contract ServiceCharged is Ownable {
+contract ServiceProvider is Ownable {
   uint8 private serviceChargePercent = 2; // in percentage
 
   function setServiceChargePercent(
@@ -27,7 +27,7 @@ contract ServiceCharged is Ownable {
   /**
    * @dev Returns the service provider wallet owner
    */
-  function serviceProvider() public view returns (address) {
+  function getServiceProviderWallet() public view returns (address) {
     return owner();
   }
 
@@ -51,3 +51,5 @@ contract ServiceCharged is Ownable {
     return (_amountForEach, _serviceChargeAmount);
   }
 }
+
+contract UsingServiceProvider is ServiceProvider {}
