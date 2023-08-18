@@ -19,6 +19,8 @@ library Game {
 
   enum Status {
     Ongoing,
+    Expired,
+    WinnersUnresolved,
     Concluded
   }
 

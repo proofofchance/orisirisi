@@ -14,7 +14,17 @@ contract GamePlays {
   mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 proofOfChance)) playProofs;
   mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
-  modifier mustAvoidAllGamePlayMatching(Game.ID gameID, Coin.Side coinSide) {
+  modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
+    require(
+      Game.PlayID.unwrap(playCounts[gameID]) <=
+        Game.PlayID.unwrap(maxPlayCounts[gameID]),
+      'Game can no longer take new plays'
+    );
+
+    _;
+  }
+
+  modifier mustAvoidAllGamePlaysMatching(Game.ID gameID, Coin.Side coinSide) {
     uint16 playsLeft = Game.PlayID.unwrap(maxPlayCounts[gameID]) -
       Game.PlayID.unwrap(playCounts[gameID]);
 
