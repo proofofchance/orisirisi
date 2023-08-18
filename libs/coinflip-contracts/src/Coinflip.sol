@@ -8,13 +8,13 @@ import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {Wallets} from './Wallets.sol';
-import {ServiceCharged} from './ServiceCharged.sol';
+import {UsingServiceProvider} from './ServiceProvider.sol';
 
 contract Coinflip is
   UsingGamePlays,
   UsingGameWagers,
   UsingGameStatuses,
-  ServiceCharged
+  UsingServiceProvider
 {
   mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
@@ -112,7 +112,7 @@ contract Coinflip is
         winners.length
       );
 
-    wallets.creditWallet(serviceProvider(), serviceChargeAmount);
+    payServiceCharge(serviceChargeAmount);
     creditPlayers(winners, amountForEachWinner);
     setGameStatusAsConcluded(gameID);
   }
@@ -134,7 +134,7 @@ contract Coinflip is
         playCount
       );
 
-    wallets.creditWallet(serviceProvider(), serviceChargeAmount);
+    payServiceCharge(serviceChargeAmount);
     creditPlayers(headPlayers, amountForEachPlayer);
     creditPlayers(tailPlayers, amountForEachPlayer);
     setGameStatusAsConcluded(gameID);
@@ -142,6 +142,10 @@ contract Coinflip is
 
   function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
     outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
+  }
+
+  function payServiceCharge(uint serviceChargeAmount) private {
+    wallets.creditWallet(getServiceProviderWallet(), serviceChargeAmount);
   }
 
   function creditPlayers(Game.Player[] memory players, uint amount) private {
