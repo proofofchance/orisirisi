@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {Game} from './Game.sol';
 
-contract GameStatuses {
+contract GameStatus {
   mapping(Game.ID => Game.Status) statuses;
 
   modifier mustBeOngoingGame(Game.ID gameID) {
@@ -16,4 +16,4 @@ contract GameStatuses {
   }
 }
 
-contract UsingGameStatuses is GameStatuses {}
+contract UsingGameStatus is GameStatus {}
