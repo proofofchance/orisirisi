@@ -47,6 +47,23 @@ contract GamePlays {
     );
   }
 
+  function createGamePlayProof(
+    Game.ID gameID,
+    Game.PlayID gamePlayID,
+    bytes32 playProof
+  ) public {
+    playProofs[gameID][gamePlayID] = playProof;
+    playProofCounts[gameID] = Game.PlayID.wrap(
+      Game.PlayID.unwrap(playProofCounts[gameID]) + 1
+    );
+  }
+
+  function allProofsAreUploaded(Game.ID gameID) public view returns (bool) {
+    return
+      Game.PlayID.unwrap(playProofCounts[gameID]) ==
+      Game.PlayID.unwrap(playCounts[gameID]);
+  }
+
   function setMaxGamePlayCount(
     Game.ID gameID,
     uint16 maxGameMovesCount

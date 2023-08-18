@@ -85,22 +85,11 @@ contract Coinflip is
       'Invalid Proof of chance'
     );
 
-    createProofOfChance(gameID, gamePlayID, proofOfChance);
+    createGamePlayProof(gameID, gamePlayID, proofOfChance);
 
     updateGameOutcome(gameID, proofOfChance);
 
     maybeConcludeGame(gameID);
-  }
-
-  function createProofOfChance(
-    Game.ID gameID,
-    Game.PlayID gamePlayID,
-    bytes32 proofOfChance
-  ) private {
-    playProofs[gameID][gamePlayID] = proofOfChance;
-    playProofCounts[gameID] = Game.PlayID.wrap(
-      Game.PlayID.unwrap(playProofCounts[gameID]) + 1
-    );
   }
 
   function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
@@ -112,10 +101,7 @@ contract Coinflip is
   function maybeConcludeGame(Game.ID gameID) private {
     assert(statuses[gameID] == Game.Status.Ongoing);
 
-    bool allProofsAreUploaded = Game.PlayID.unwrap(playProofCounts[gameID]) ==
-      Game.PlayID.unwrap(playCounts[gameID]);
-
-    if (allProofsAreUploaded) {
+    if (allProofsAreUploaded(gameID)) {
       statuses[gameID] = Game.Status.Concluded;
 
       creditPlayersThatPlayedOutcome(gameID);
