@@ -5,13 +5,9 @@ import {Game} from './Game.sol';
 
 contract GameWagers {
   mapping(Game.ID gameID => Game.Wager wager) wagers;
-  mapping(Game.ID gameID => Game.Wager totalWager) totalWagers;
 
-  modifier mustPayGameWager(Game.ID gameID) {
-    require(
-      Game.Wager.unwrap(wagers[gameID]) <= msg.value,
-      'Must pay Game wager'
-    );
+  modifier mustBeValidWager() {
+    require(msg.value > 0, 'Wager must be greater than 0');
 
     _;
   }
@@ -20,12 +16,8 @@ contract GameWagers {
     wagers[gameID] = Game.Wager.wrap(wager);
   }
 
-  function updateTotalWagers(Game.ID gameID, uint wager) public {
-    totalWagers[gameID] = Game.Wager.wrap(wager);
-  }
-
-  function getTotalWagerAmount(Game.ID gameID) public view returns (uint) {
-    return Game.Wager.unwrap(totalWagers[gameID]);
+  function getGameWager(Game.ID gameID) public view returns (uint) {
+    return Game.Wager.unwrap(wagers[gameID]);
   }
 }
 
