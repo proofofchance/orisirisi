@@ -1,30 +1,26 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
-contract WalletEnabled {
-  mapping(address owner => uint balance) balances;
+import {UsingReentrancyGuard} from './ReentrancyGuard.sol';
+
+contract Wallets is UsingReentrancyGuard {
+  mapping(address owner => uint balance) wallet;
 
   function creditWallet(address owner, uint amount) public {
-    balances[owner] += amount;
+    wallet[owner] += amount;
   }
 
-  function debitWallet(address owner, uint amount) public {
-    require(balances[owner] < amount, 'Insufficient funds');
-
-    balances[owner] -= amount;
-  }
-
-  function withdrawAll() public {
-    uint balance = balances[msg.sender];
+  function withdrawAll() public nonReentrant {
+    uint balance = wallet[msg.sender];
     require(balance > 0);
 
     pay(payable(msg.sender), balance);
 
-    balances[msg.sender] = 0;
+    wallet[msg.sender] = 0;
   }
 
   function getWalletBalance(address owner) public view returns (uint) {
-    return balances[owner];
+    return wallet[owner];
   }
 
   function getTotalBalance() public view returns (uint) {
