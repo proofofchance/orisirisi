@@ -5,7 +5,7 @@ import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
 import {UsingGamePlays} from './Coinflip/GamePlays.sol';
 import {UsingGameWagers} from './Coinflip/GameWagers.sol';
-import {UsingGameStatus} from './Coinflip/GameStatus.sol';
+import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {WalletEnabled} from './WalletEnabled.sol';
 import {ServiceCharged} from './ServiceCharged.sol';
@@ -13,7 +13,7 @@ import {ServiceCharged} from './ServiceCharged.sol';
 contract Coinflip is
   UsingGamePlays,
   UsingGameWagers,
-  UsingGameStatus,
+  UsingGameStatuses,
   WalletEnabled,
   ServiceCharged
 {
