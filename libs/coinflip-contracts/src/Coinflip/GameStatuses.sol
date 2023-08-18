@@ -36,7 +36,6 @@ contract GameStatuses {
 
   modifier mustBeWinnersUnresolvedOrExpiredGame(Game.ID gameID) {
     Game.Status gameStatus = getGameStatus(gameID);
-
     require(
       gameStatus == Game.Status.WinnersUnresolved ||
         gameStatus == Game.Status.Expired,
@@ -62,7 +61,6 @@ contract GameStatuses {
 
   function setGameStatusAsConcluded(Game.ID gameID) public {
     Game.Status gameStatus = getGameStatus(gameID);
-
     assert(
       gameStatus == Game.Status.WinnersUnresolved ||
         gameStatus == Game.Status.Expired
@@ -81,7 +79,6 @@ contract GameStatuses {
     if (expiry_timestamps[gameID] < block.timestamp) {
       return Game.Status.Expired;
     }
-
     return statuses[gameID];
   }
 }

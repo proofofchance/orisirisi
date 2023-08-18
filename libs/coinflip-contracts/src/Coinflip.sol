@@ -56,7 +56,6 @@ contract Coinflip is
     mustAvoidAllGamePlaysMatching(gameID, coinSide)
   {
     updateTotalWagers(gameID, msg.value);
-
     createGamePlay(gameID, coinSide, playHash);
   }
 
@@ -76,7 +75,6 @@ contract Coinflip is
     );
 
     createGamePlayProof(gameID, gamePlayID, proofOfChance);
-
     updateGameOutcome(gameID, proofOfChance);
 
     if (allProofsAreUploaded(gameID)) {
@@ -110,9 +108,7 @@ contract Coinflip is
       );
 
     creditWallet(serviceProvider(), serviceChargeAmount);
-
     creditPlayers(winners, amountForEachWinner);
-
     setGameStatusAsConcluded(gameID);
   }
 
@@ -134,25 +130,18 @@ contract Coinflip is
       );
 
     creditWallet(serviceProvider(), serviceChargeAmount);
-
     creditPlayers(headPlayers, amountForEachPlayer);
-
     creditPlayers(tailPlayers, amountForEachPlayer);
-
     setGameStatusAsConcluded(gameID);
   }
 
   function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
-    uint16 entropy = Game.getEntropy(proofOfChance);
-
-    outcomes[gameID] = Coin.flip(entropy);
+    outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
   }
 
   function creditPlayers(Game.Player[] memory players, uint amount) private {
     for (uint16 i = 0; i <= players.length; i++) {
-      Game.Player player = players[i];
-
-      creditWallet(Game.Player.unwrap(player), amount);
+      creditWallet(Game.Player.unwrap(players[i]), amount);
     }
   }
 }
