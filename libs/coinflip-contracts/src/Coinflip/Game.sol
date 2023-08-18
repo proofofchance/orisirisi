@@ -17,6 +17,22 @@ library Game {
     bytes32 playHash;
   }
 
+  struct CreateParams {
+    Player player;
+    uint wager;
+    uint16 maxGameMovesCount;
+    uint expiryTimestamp;
+    Coin.Side coinSide;
+    bytes32 playHash;
+  }
+
+  struct PlayParams {
+    Player player;
+    ID gameID;
+    Coin.Side coinSide;
+    bytes32 playHash;
+  }
+
   enum Status {
     Ongoing,
     Expired,

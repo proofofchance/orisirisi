@@ -40,18 +40,19 @@ contract GamePlays {
   }
 
   function createGamePlay(
+    Game.Player player,
     Game.ID gameID,
     Coin.Side coinSide,
     bytes32 playHash
   ) public {
     Game.PlayID gamePlayID = playCounts[gameID];
     plays[gameID][gamePlayID] = Game.Play({
-      player: Game.Player.wrap(msg.sender),
+      player: player,
       coinSide: coinSide,
       proofOfChance: '',
       playHash: playHash
     });
-    players[gameID][coinSide].push(Game.Player.wrap(msg.sender));
+    players[gameID][coinSide].push(player);
     playCounts[gameID] = Game.PlayID.wrap(
       Game.PlayID.unwrap(playCounts[gameID]) + 1
     );
