@@ -8,24 +8,25 @@ import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {MaybeOperational} from './MaybeOperational.sol';
-import {UsingServiceProvider} from './ServiceProvider.sol';
+import {ServiceProvider} from './ServiceProvider.sol';
 import {Wallets, UsingCanPayWallet} from './Wallets.sol';
 
 contract Coinflip is
   UsingGamePlays,
   UsingGameWagers,
   UsingGameStatuses,
-  UsingServiceProvider,
   UsingCanPayWallet,
   MaybeOperational
 {
   mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
 
-  Wallets public wallets;
+  Wallets private wallets;
+  ServiceProvider private serviceProvider;
 
-  constructor(address payable _wallets) {
+  constructor(address payable _wallets, address _serviceProvider) {
     wallets = Wallets(_wallets);
+    serviceProvider = ServiceProvider(_serviceProvider);
   }
 
   receive() external payable {
@@ -129,10 +130,8 @@ contract Coinflip is
     Game.Player[] memory winners = players[gameID][outcomes[gameID]];
     uint totalWagerAmount = getGameWager(gameID) * winners.length;
 
-    (
-      uint amountForEachWinner,
-      uint serviceChargeAmount
-    ) = getAmountForEachAndServiceCharge(totalWagerAmount, winners.length);
+    (uint amountForEachWinner, uint serviceChargeAmount) = serviceProvider
+      .getAmountForEachAndServiceCharge(totalWagerAmount, winners.length);
 
     payServiceCharge(serviceChargeAmount);
     creditPlayers(winners, amountForEachWinner);
@@ -149,10 +148,8 @@ contract Coinflip is
     assert(headPlayers.length + tailPlayers.length == playCount);
     uint totalWagerAmount = getGameWager(gameID) * playCount;
 
-    (
-      uint amountForEachPlayer,
-      uint serviceChargeAmount
-    ) = getAmountForEachAndServiceCharge(totalWagerAmount, playCount);
+    (uint amountForEachPlayer, uint serviceChargeAmount) = serviceProvider
+      .getAmountForEachAndServiceCharge(totalWagerAmount, playCount);
 
     payServiceCharge(serviceChargeAmount);
     creditPlayers(headPlayers, amountForEachPlayer);
@@ -181,7 +178,10 @@ contract Coinflip is
   }
 
   function payServiceCharge(uint serviceChargeAmount) private {
-    wallets.creditWallet(getServiceProviderWallet(), serviceChargeAmount);
+    wallets.creditWallet(
+      serviceProvider.getServiceProviderWallet(),
+      serviceChargeAmount
+    );
   }
 
   function creditPlayers(Game.Player[] memory players, uint amount) private {
