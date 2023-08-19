@@ -7,7 +7,7 @@ import {UsingGamePlays} from './Coinflip/GamePlays.sol';
 import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
-import {AfterCreditWalletCallback, Wallets, UsingCanPayWallet} from './Wallets.sol';
+import {Wallets, UsingCanPayWallet} from './Wallets.sol';
 import {UsingServiceProvider} from './ServiceProvider.sol';
 
 contract Coinflip is
@@ -15,8 +15,7 @@ contract Coinflip is
   UsingGameWagers,
   UsingGameStatuses,
   UsingServiceProvider,
-  UsingCanPayWallet,
-  AfterCreditWalletCallback
+  UsingCanPayWallet
 {
   mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
@@ -33,151 +32,57 @@ contract Coinflip is
     wallets.creditWallet(msg.sender, msg.value);
   }
 
-  modifier mustHaveGameWager(Game.ID gameID, Game.Player player) {
+  modifier mustHaveGameWager(Game.ID gameID) {
     require(
-      getGameWager(gameID) <=
-        wallets.getWalletBalance(Game.Player.unwrap(player)),
+      getGameWager(gameID) <= wallets.getWalletBalance(msg.sender),
       'Must pay Game wager'
     );
 
     _;
   }
 
-  uint8 constant CREATE_GAME_FUNCTION_ID = 1;
-  uint8 constant PLAY_GAME_FUNCTION_ID = 2;
-
-  mapping(bytes32 callbackID => Game.CreateParams createParams) createGameParamsList;
-  mapping(bytes32 callbackID => Game.PlayParams playParams) playGameParamsList;
-
-  function afterCreditWallet(uint8 functionID, bytes32 callBackID) external {
-    if (functionID == CREATE_GAME_FUNCTION_ID) {
-      Game.CreateParams memory createParams = createGameParamsList[callBackID];
-
-      createGame(
-        createParams.player,
-        createParams.wager,
-        createParams.maxGameMovesCount,
-        createParams.expiryTimestamp,
-        createParams.coinSide,
-        createParams.playHash
-      );
-    } else if (functionID == PLAY_GAME_FUNCTION_ID) {
-      Game.PlayParams memory playParams = playGameParamsList[callBackID];
-
-      playGame(
-        playParams.player,
-        playParams.gameID,
-        playParams.coinSide,
-        playParams.playHash
-      );
-    }
-  }
-
-  function createGameForMe(
-    uint wager,
-    uint16 maxGameMovesCount,
-    uint expiryTimestamp,
-    Coin.Side coinSide,
-    bytes32 playHash
-  ) external payable mustBeValidWager {
-    bytes32 callbackID = keccak256(
-      abi.encode(
-        msg.sender,
-        wager,
-        maxGameMovesCount,
-        expiryTimestamp,
-        coinSide,
-        playHash,
-        block.timestamp
-      )
-    );
-
-    createGameParamsList[callbackID] = Game.CreateParams({
-      player: Game.Player.wrap(msg.sender),
-      wager: wager,
-      maxGameMovesCount: maxGameMovesCount,
-      expiryTimestamp: expiryTimestamp,
-      coinSide: coinSide,
-      playHash: playHash
-    });
-
-    AfterCreditWalletCallback callback = this;
-    wallets.creditWallet(
-      msg.sender,
-      msg.value,
-      CREATE_GAME_FUNCTION_ID,
-      callbackID,
-      callback
-    );
-  }
-
   /// @dev Creates a new game
   /// @param playHash Keccak256 hash of `secretLuckProof` that would
   /// be later uploaded
-  /// Exposed so that players can play using their wallet instead of paying directly here  */
   function createGame(
-    Game.Player player,
     uint wager,
     uint16 maxGameMovesCount,
     uint expiryTimestamp,
     Coin.Side coinSide,
     bytes32 playHash
-  ) public {
+  ) external payable {
+    maybePayGameWager();
     require(
       maxGameMovesCount >= Coin.TOTAL_SIDES_COUNT,
       'Game must allow at least total coin sides'
     );
-
+    require(wager <= myBalance(), 'Must pay Game wager');
+    debitGameWager(wager);
     Game.ID newGameID = Game.ID.wrap(gamesCount);
-    createGamePlay(player, newGameID, coinSide, playHash);
+    createGamePlay(newGameID, coinSide, playHash);
     createGameWager(newGameID, wager);
     setMaxGamePlayCount(newGameID, maxGameMovesCount);
     setGameStatusAsOngoing(newGameID, expiryTimestamp);
-    payGameWager(player, wager);
     gamesCount++;
-  }
-
-  function playGameForMe(
-    Game.ID gameID,
-    Coin.Side coinSide,
-    bytes32 playHash
-  ) external payable {
-    bytes32 callbackID = keccak256(
-      abi.encode(msg.sender, gameID, coinSide, playHash, block.timestamp)
-    );
-
-    playGameParamsList[callbackID] = Game.PlayParams({
-      player: Game.Player.wrap(msg.sender),
-      gameID: gameID,
-      coinSide: coinSide,
-      playHash: playHash
-    });
-
-    AfterCreditWalletCallback callback = this;
-    wallets.creditWallet(
-      msg.sender,
-      msg.value,
-      PLAY_GAME_FUNCTION_ID,
-      callbackID,
-      callback
-    );
   }
 
   /// Exposed so that players can play using their wallet instead of paying directly here  */
   function playGame(
-    Game.Player player,
     Game.ID gameID,
     Coin.Side coinSide,
     bytes32 playHash
   )
-    public
+    external
+    payable
     mustBeOngoingGame(gameID)
     mustAvoidGameWithMaxedOutPlays(gameID)
-    mustHaveGameWager(gameID, player)
+    mustHaveGameWager(gameID)
     mustAvoidAllGamePlaysMatching(gameID, coinSide)
   {
-    createGamePlay(player, gameID, coinSide, playHash);
-    payGameWager(player, getGameWager(gameID));
+    maybePayGameWager();
+    require(getGameWager(gameID) <= myBalance(), 'Must pay Game wager');
+    debitGameWager(getGameWager(gameID));
+    createGamePlay(gameID, coinSide, playHash);
   }
 
   /// @dev Uploads the proof of chance to prove a game move
@@ -252,10 +157,20 @@ contract Coinflip is
     setGameStatusAsConcluded(gameID);
   }
 
-  function payGameWager(Game.Player player, uint wager) private {
-    address owner = Game.Player.unwrap(player);
+  function maybePayGameWager() private {
+    if (msg.value > 0) {
+      payWallet(msg.sender, msg.value);
+    }
+  }
 
-    wallets.debitWallet(owner, wager);
+  function myBalance() private view returns (uint) {
+    return wallets.getWalletBalance(msg.sender);
+  }
+
+  function debitGameWager(uint wager) private {
+    bool debited = wallets.debitWallet(msg.sender, wager);
+
+    require(debited, 'GameWager debit failed');
   }
 
   function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
