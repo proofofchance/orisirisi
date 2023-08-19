@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
-import {UsingReentrancyGuard} from './Wallet/ReentrancyGuard.sol';
-
-interface AfterCreditWalletCallback {
-  function afterCreditWallet(uint8 functionID, bytes32 callBackID) external;
-}
+import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 
 contract CanPayWallet {
-  function payWallet(address payable to, uint256 amount) public {
+  function payWallet(address to, uint256 amount) public payable {
     (bool sent, ) = to.call{value: amount}('');
     require(sent, 'Failed to send payment');
   }
@@ -20,32 +16,34 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet {
   mapping(address owner => uint balance) wallets;
 
   receive() external payable {
-    creditWallet(msg.sender, msg.value);
-  }
-
-  function creditWallet(address owner, uint amount) public nonReentrant {
-    wallets[owner] += amount;
+    _creditWallet(msg.sender, msg.value);
   }
 
   function creditWallet(
     address owner,
-    uint amount,
-    uint8 functionID,
-    bytes32 callbackID,
-    AfterCreditWalletCallback callback
-  ) public nonReentrant {
-    wallets[owner] += amount;
+    uint amount
+  ) external nonReentrant returns (bool) {
+    _creditWallet(owner, amount);
 
-    callback.afterCreditWallet(functionID, callbackID);
+    return true;
   }
 
-  function debitWallet(address owner, uint amount) public nonReentrant {
+  function _creditWallet(address owner, uint amount) private {
+    wallets[owner] += amount;
+  }
+
+  function debitWallet(
+    address owner,
+    uint amount
+  ) external nonReentrant returns (bool) {
     require(getWalletBalance(owner) >= amount, 'Insufficient funds');
 
     wallets[owner] -= amount;
+
+    return true;
   }
 
-  function withdrawAll() public nonReentrant {
+  function withdrawAll() external nonReentrant {
     uint balance = wallets[msg.sender];
 
     require(balance > 0);
@@ -59,7 +57,7 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet {
     return wallets[owner];
   }
 
-  function getTotalBalance() public view returns (uint) {
+  function getTotalBalance() external view returns (uint) {
     return address(this).balance;
   }
 }
