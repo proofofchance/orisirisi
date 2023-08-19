@@ -36,7 +36,7 @@ contract ServiceProvider is Ownable {
   function getAmountForEachAndServiceCharge(
     uint amount,
     uint places
-  ) public view returns (uint amountForEach, uint serviceChargeAmount) {
+  ) internal view returns (uint amountForEach, uint serviceChargeAmount) {
     uint _serviceChargeAmountSoFar = (amount * getServiceChargePercent()) / 100;
 
     uint amountAfterDeductingServiceCharge = amount - serviceChargeAmount;

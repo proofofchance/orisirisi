@@ -12,11 +12,11 @@ contract GameWagers {
     _;
   }
 
-  function createGameWager(Game.ID gameID, uint wager) public {
+  function createGameWager(Game.ID gameID, uint wager) internal {
     wagers[gameID] = Game.Wager.wrap(wager);
   }
 
-  function getGameWager(Game.ID gameID) public view returns (uint) {
+  function getGameWager(Game.ID gameID) internal view returns (uint) {
     return Game.Wager.unwrap(wagers[gameID]);
   }
 }

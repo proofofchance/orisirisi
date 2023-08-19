@@ -48,7 +48,7 @@ contract GameStatuses {
   function setGameStatusAsOngoing(
     Game.ID gameID,
     uint expiry_timestamp
-  ) public {
+  ) internal {
     require(
       expiry_timestamp > block.timestamp,
       'Expiry timestamp must be in the future'
@@ -59,7 +59,7 @@ contract GameStatuses {
     expiry_timestamps[gameID] = expiry_timestamp;
   }
 
-  function setGameStatusAsConcluded(Game.ID gameID) public {
+  function setGameStatusAsConcluded(Game.ID gameID) internal {
     Game.Status gameStatus = getGameStatus(gameID);
     assert(
       gameStatus == Game.Status.WinnersUnresolved ||
@@ -69,13 +69,13 @@ contract GameStatuses {
     statuses[gameID] = Game.Status.Concluded;
   }
 
-  function setGameStatusAsWinnersUnresolved(Game.ID gameID) public {
+  function setGameStatusAsWinnersUnresolved(Game.ID gameID) internal {
     assert(statuses[gameID] == Game.Status.Ongoing);
 
     statuses[gameID] = Game.Status.WinnersUnresolved;
   }
 
-  function getGameStatus(Game.ID gameID) public view returns (Game.Status) {
+  function getGameStatus(Game.ID gameID) internal view returns (Game.Status) {
     if (expiry_timestamps[gameID] < block.timestamp) {
       return Game.Status.Expired;
     }

@@ -43,7 +43,7 @@ contract GamePlays {
     Game.ID gameID,
     Coin.Side coinSide,
     bytes32 playHash
-  ) public {
+  ) internal {
     Game.PlayID gamePlayID = playCounts[gameID];
     Game.Player player = Game.Player.wrap(msg.sender);
 
@@ -63,14 +63,14 @@ contract GamePlays {
     Game.ID gameID,
     Game.PlayID gamePlayID,
     bytes32 playProof
-  ) public {
+  ) internal {
     playProofs[gameID][gamePlayID] = playProof;
     playProofCounts[gameID] = Game.PlayID.wrap(
       Game.PlayID.unwrap(playProofCounts[gameID]) + 1
     );
   }
 
-  function allProofsAreUploaded(Game.ID gameID) public view returns (bool) {
+  function allProofsAreUploaded(Game.ID gameID) internal view returns (bool) {
     return
       Game.PlayID.unwrap(playProofCounts[gameID]) ==
       Game.PlayID.unwrap(playCounts[gameID]);
@@ -79,7 +79,7 @@ contract GamePlays {
   function setMaxGamePlayCount(
     Game.ID gameID,
     uint16 maxGameMovesCount
-  ) public {
+  ) internal {
     maxPlayCounts[gameID] = Game.PlayID.wrap(maxGameMovesCount);
   }
 }
