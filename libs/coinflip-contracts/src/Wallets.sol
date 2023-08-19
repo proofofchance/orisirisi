@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
+import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 
 contract CanPayWallet {
@@ -12,7 +13,7 @@ contract CanPayWallet {
 
 contract UsingCanPayWallet is CanPayWallet {}
 
-contract Wallets is UsingReentrancyGuard, UsingCanPayWallet {
+contract Wallets is UsingReentrancyGuard, UsingCanPayWallet, Ownable {
   mapping(address owner => uint balance) wallets;
 
   receive() external payable {
@@ -22,20 +23,16 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet {
   function creditWallet(
     address owner,
     uint amount
-  ) external nonReentrant returns (bool) {
+  ) external nonReentrant onlyOwner returns (bool) {
     _creditWallet(owner, amount);
 
     return true;
   }
 
-  function _creditWallet(address owner, uint amount) private {
-    wallets[owner] += amount;
-  }
-
   function debitWallet(
     address owner,
     uint amount
-  ) external nonReentrant returns (bool) {
+  ) external nonReentrant onlyOwner returns (bool) {
     require(getWalletBalance(owner) >= amount, 'Insufficient funds');
 
     wallets[owner] -= amount;
@@ -59,5 +56,9 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet {
 
   function getTotalBalance() external view returns (uint) {
     return address(this).balance;
+  }
+
+  function _creditWallet(address owner, uint amount) private {
+    wallets[owner] += amount;
   }
 }
