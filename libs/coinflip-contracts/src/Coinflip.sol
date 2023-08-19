@@ -7,15 +7,17 @@ import {UsingGamePlays} from './Coinflip/GamePlays.sol';
 import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
-import {Wallets, UsingCanPayWallet} from './Wallets.sol';
+import {MaybeOperational} from './MaybeOperational.sol';
 import {UsingServiceProvider} from './ServiceProvider.sol';
+import {Wallets, UsingCanPayWallet} from './Wallets.sol';
 
 contract Coinflip is
   UsingGamePlays,
   UsingGameWagers,
   UsingGameStatuses,
   UsingServiceProvider,
-  UsingCanPayWallet
+  UsingCanPayWallet,
+  MaybeOperational
 {
   mapping(Game.ID => Coin.Side) outcomes;
   uint gamesCount;
@@ -50,7 +52,7 @@ contract Coinflip is
     uint expiryTimestamp,
     Coin.Side coinSide,
     bytes32 playHash
-  ) external payable {
+  ) external payable mustBeOperational {
     maybePayGameWager();
     require(
       maxGameMovesCount >= Coin.TOTAL_SIDES_COUNT,
@@ -74,6 +76,7 @@ contract Coinflip is
   )
     external
     payable
+    mustBeOperational
     mustBeOngoingGame(gameID)
     mustAvoidGameWithMaxedOutPlays(gameID)
     mustHaveGameWager(gameID)
@@ -93,7 +96,7 @@ contract Coinflip is
     Game.ID gameID,
     Game.PlayID gamePlayID,
     bytes32 proofOfChance
-  ) external mustBeOngoingGame(gameID) {
+  ) external mustBeOperational mustBeOngoingGame(gameID) {
     require(
       keccak256(abi.encodePacked(proofOfChance)) ==
         plays[gameID][gamePlayID].playHash,
@@ -110,7 +113,7 @@ contract Coinflip is
 
   function creditGamePlayers(
     Game.ID gameID
-  ) external mustBeWinnersUnresolvedOrExpiredGame(gameID) {
+  ) external mustBeOperational mustBeWinnersUnresolvedOrExpiredGame(gameID) {
     Game.Status gameStatus = getGameStatus(gameID);
 
     if (gameStatus == Game.Status.WinnersUnresolved) {
