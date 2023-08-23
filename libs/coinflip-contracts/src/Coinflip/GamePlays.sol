@@ -14,6 +14,7 @@ contract GamePlays {
     mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 proofOfChance)) playProofs;
     mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
+    error InvalidPlayProof();
     error MaxedOutPlaysError(Game.ID gameID);
     error allMatchingPlaysError(Game.ID gameID);
 
@@ -68,6 +69,13 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         bytes32 playProof
     ) internal {
+        if (
+            keccak256(abi.encodePacked(playProof)) !=
+            plays[gameID][gamePlayID].playHash
+        ) {
+            revert InvalidPlayProof();
+        }
+
         playProofs[gameID][gamePlayID] = playProof;
         playProofCounts[gameID] = Game.PlayID.wrap(
             Game.PlayID.unwrap(playProofCounts[gameID]) + 1

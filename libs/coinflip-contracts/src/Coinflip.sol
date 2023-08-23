@@ -25,7 +25,6 @@ contract Coinflip is
     ServiceProvider private serviceProvider;
 
     error InsufficientWalletBalance();
-    error InvalidProofOfChance();
     error MinimumPlayCountError();
 
     constructor(address payable _wallets, address _serviceProvider) {
@@ -57,13 +56,10 @@ contract Coinflip is
         Coin.Side coinSide,
         bytes32 playHash
     ) external payable mustBeOperational {
-        maybePayGameWager();
         if (maxGamePlayCount < Coin.TOTAL_SIDES_COUNT) {
             revert MinimumPlayCountError();
         }
-        if (wager > myBalance()) {
-            revert InsufficientWalletBalance();
-        }
+        maybePayGameWager();
         debitGameWager(wager);
         Game.ID newGameID = Game.ID.wrap(gamesCount);
         createGamePlay(newGameID, coinSide, playHash);
@@ -88,9 +84,6 @@ contract Coinflip is
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
     {
         maybePayGameWager();
-        if (getGameWager(gameID) > myBalance()) {
-            revert InsufficientWalletBalance();
-        }
         debitGameWager(getGameWager(gameID));
         createGamePlay(gameID, coinSide, playHash);
     }
@@ -104,13 +97,6 @@ contract Coinflip is
         Game.PlayID gamePlayID,
         bytes32 proofOfChance
     ) external mustBeOperational mustBeOngoingGame(gameID) {
-        if (
-            keccak256(abi.encodePacked(proofOfChance)) !=
-            plays[gameID][gamePlayID].playHash
-        ) {
-            revert InvalidProofOfChance();
-        }
-
         createGamePlayProof(gameID, gamePlayID, proofOfChance);
         updateGameOutcome(gameID, proofOfChance);
 
@@ -173,6 +159,10 @@ contract Coinflip is
     }
 
     function debitGameWager(uint wager) private {
+        if (wager > myBalance()) {
+            revert InsufficientWalletBalance();
+        }
+
         bool debited = wallets.debitWallet(msg.sender, wager);
 
         require(debited);
