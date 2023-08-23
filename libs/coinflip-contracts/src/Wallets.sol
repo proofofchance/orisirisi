@@ -7,7 +7,7 @@ import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 contract CanPayWallet {
     function payWallet(address to, uint256 amount) public payable {
         (bool sent, ) = to.call{value: amount}('');
-        require(sent, 'Failed to send payment');
+        require(sent);
     }
 }
 
@@ -16,15 +16,26 @@ contract UsingCanPayWallet is CanPayWallet {}
 contract Wallets is UsingReentrancyGuard, UsingCanPayWallet, Ownable {
     mapping(address owner => uint balance) wallets;
 
+    error InsufficientFunds();
+
     receive() external payable {
         _creditWallet(msg.sender, msg.value);
     }
 
-    function creditWallet(
-        address owner,
+    function transfer(
+        address to,
         uint amount
     ) external nonReentrant onlyOwner returns (bool) {
-        _creditWallet(owner, amount);
+        if (to == address(0)) {
+            revert InvalidAddress();
+        }
+
+        if (getWalletBalance(msg.sender) > amount) {
+            revert InsufficientFunds();
+        }
+
+        _debitWallet(msg.sender, amount);
+        _creditWallet(to, amount);
 
         return true;
     }
@@ -33,9 +44,15 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet, Ownable {
         address owner,
         uint amount
     ) external nonReentrant onlyOwner returns (bool) {
-        require(getWalletBalance(owner) >= amount, 'Insufficient funds');
+        if (owner == address(0)) {
+            revert InvalidAddress();
+        }
 
-        wallets[owner] -= amount;
+        if (getWalletBalance(owner) > amount) {
+            revert InsufficientFunds();
+        }
+
+        _debitWallet(owner, amount);
 
         return true;
     }
@@ -43,7 +60,9 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet, Ownable {
     function withdrawAll() external nonReentrant {
         uint balance = wallets[msg.sender];
 
-        require(balance > 0);
+        if (balance == 0) {
+            revert InsufficientFunds();
+        }
 
         wallets[msg.sender] = 0;
 
@@ -60,5 +79,9 @@ contract Wallets is UsingReentrancyGuard, UsingCanPayWallet, Ownable {
 
     function _creditWallet(address owner, uint amount) private {
         wallets[owner] += amount;
+    }
+
+    function _debitWallet(address owner, uint amount) private {
+        wallets[owner] -= amount;
     }
 }

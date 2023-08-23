@@ -24,6 +24,10 @@ contract Coinflip is
     Wallets private wallets;
     ServiceProvider private serviceProvider;
 
+    error InsufficientWalletBalance();
+    error InvalidProofOfChance();
+    error MinimumPlayCountError();
+
     constructor(address payable _wallets, address _serviceProvider) {
         wallets = Wallets(_wallets);
         serviceProvider = ServiceProvider(_serviceProvider);
@@ -32,14 +36,13 @@ contract Coinflip is
     receive() external payable {
         payWallet(payable(address(wallets)), msg.value);
 
-        wallets.creditWallet(msg.sender, msg.value);
+        wallets.transfer(msg.sender, msg.value);
     }
 
     modifier mustHaveGameWager(Game.ID gameID) {
-        require(
-            getGameWager(gameID) <= wallets.getWalletBalance(msg.sender),
-            'Must pay Game wager'
-        );
+        if (getGameWager(gameID) > wallets.getWalletBalance(msg.sender)) {
+            revert InsufficientWalletBalance();
+        }
 
         _;
     }
@@ -49,22 +52,23 @@ contract Coinflip is
     /// be later uploaded
     function createGame(
         uint wager,
-        uint16 maxGameMovesCount,
+        uint16 maxGamePlayCount,
         uint expiryTimestamp,
         Coin.Side coinSide,
         bytes32 playHash
     ) external payable mustBeOperational {
         maybePayGameWager();
-        require(
-            maxGameMovesCount >= Coin.TOTAL_SIDES_COUNT,
-            'Game must allow at least total coin sides'
-        );
-        require(wager <= myBalance(), 'Must pay Game wager');
+        if (maxGamePlayCount < Coin.TOTAL_SIDES_COUNT) {
+            revert MinimumPlayCountError();
+        }
+        if (wager > myBalance()) {
+            revert InsufficientWalletBalance();
+        }
         debitGameWager(wager);
         Game.ID newGameID = Game.ID.wrap(gamesCount);
         createGamePlay(newGameID, coinSide, playHash);
         createGameWager(newGameID, wager);
-        setMaxGamePlayCount(newGameID, maxGameMovesCount);
+        setMaxGamePlayCount(newGameID, maxGamePlayCount);
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
     }
@@ -84,7 +88,9 @@ contract Coinflip is
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
     {
         maybePayGameWager();
-        require(getGameWager(gameID) <= myBalance(), 'Must pay Game wager');
+        if (getGameWager(gameID) > myBalance()) {
+            revert InsufficientWalletBalance();
+        }
         debitGameWager(getGameWager(gameID));
         createGamePlay(gameID, coinSide, playHash);
     }
@@ -98,11 +104,12 @@ contract Coinflip is
         Game.PlayID gamePlayID,
         bytes32 proofOfChance
     ) external mustBeOperational mustBeOngoingGame(gameID) {
-        require(
-            keccak256(abi.encodePacked(proofOfChance)) ==
-                plays[gameID][gamePlayID].playHash,
-            'Invalid Proof of chance'
-        );
+        if (
+            keccak256(abi.encodePacked(proofOfChance)) !=
+            plays[gameID][gamePlayID].playHash
+        ) {
+            revert InvalidProofOfChance();
+        }
 
         createGamePlayProof(gameID, gamePlayID, proofOfChance);
         updateGameOutcome(gameID, proofOfChance);
@@ -130,10 +137,9 @@ contract Coinflip is
         Game.Player[] memory winners = players[gameID][outcomes[gameID]];
         uint totalWagerAmount = getGameWager(gameID) * winners.length;
 
-        (uint amountForEachWinner, uint serviceChargeAmount) = serviceProvider
-            .getAmountForEachAndServiceCharge(totalWagerAmount, winners.length);
+        uint amountForEachWinner = serviceProvider
+            .splitAfterRemovingServiceCharge(totalWagerAmount, winners.length);
 
-        payServiceCharge(serviceChargeAmount);
         creditPlayers(winners, amountForEachWinner);
         setGameStatusAsConcluded(gameID);
     }
@@ -148,10 +154,9 @@ contract Coinflip is
         assert(headPlayers.length + tailPlayers.length == playCount);
         uint totalWagerAmount = getGameWager(gameID) * playCount;
 
-        (uint amountForEachPlayer, uint serviceChargeAmount) = serviceProvider
-            .getAmountForEachAndServiceCharge(totalWagerAmount, playCount);
+        uint amountForEachPlayer = serviceProvider
+            .splitAfterRemovingServiceCharge(totalWagerAmount, playCount);
 
-        payServiceCharge(serviceChargeAmount);
         creditPlayers(headPlayers, amountForEachPlayer);
         creditPlayers(tailPlayers, amountForEachPlayer);
         setGameStatusAsConcluded(gameID);
@@ -170,23 +175,16 @@ contract Coinflip is
     function debitGameWager(uint wager) private {
         bool debited = wallets.debitWallet(msg.sender, wager);
 
-        require(debited, 'GameWager debit failed');
+        require(debited);
     }
 
     function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
         outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
     }
 
-    function payServiceCharge(uint serviceChargeAmount) private {
-        wallets.creditWallet(
-            serviceProvider.getServiceProviderWallet(),
-            serviceChargeAmount
-        );
-    }
-
     function creditPlayers(Game.Player[] memory players, uint amount) private {
         for (uint16 i = 0; i <= players.length; i++) {
-            wallets.creditWallet(Game.Player.unwrap(players[i]), amount);
+            wallets.transfer(Game.Player.unwrap(players[i]), amount);
         }
     }
 }

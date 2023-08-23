@@ -9,6 +9,9 @@ abstract contract Ownable {
         address indexed newOwner
     );
 
+    error InvalidAddress();
+    error NotOwner();
+
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
@@ -35,7 +38,9 @@ abstract contract Ownable {
      * @dev Throws if the sender is not the owner.
      */
     function _checkOwner() internal view {
-        require(owner() == msg.sender, 'Ownable: caller is not the owner');
+        if (owner() != msg.sender) {
+            revert NotOwner();
+        }
     }
 
     /**
@@ -43,10 +48,10 @@ abstract contract Ownable {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) public onlyOwner {
-        require(
-            newOwner != address(0),
-            'Ownable: new owner is the zero address'
-        );
+        if (newOwner == address(0)) {
+            revert InvalidAddress();
+        }
+
         _transferOwnership(newOwner);
     }
 

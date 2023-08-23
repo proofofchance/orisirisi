@@ -5,58 +5,81 @@ import {Game} from './Game.sol';
 
 contract GameStatuses {
     mapping(Game.ID => Game.Status) statuses;
-    mapping(Game.ID => uint) expiry_timestamps;
+    mapping(Game.ID => uint) expiryTimestamps;
+
+    error InvalidGameStatus(Game.ID, Game.Status expected, Game.Status actual);
+    error InvalidGameStatus2(
+        Game.ID,
+        Game.Status expected1,
+        Game.Status expected2,
+        Game.Status actual
+    );
+
+    error InvalidExpiryTimestamp();
 
     modifier mustBeOngoingGame(Game.ID gameID) {
-        require(
-            getGameStatus(gameID) == Game.Status.Ongoing,
-            'Game must to be Ongoing'
-        );
+        Game.Status gameStatus = getGameStatus(gameID);
+
+        if (gameStatus != Game.Status.Ongoing) {
+            revert InvalidGameStatus(gameID, Game.Status.Ongoing, gameStatus);
+        }
 
         _;
     }
 
     modifier mustBeWinnersUnresolvedGame(Game.ID gameID) {
-        require(
-            getGameStatus(gameID) == Game.Status.WinnersUnresolved,
-            'Game must to be WinnersUnresolved'
-        );
+        Game.Status gameStatus = getGameStatus(gameID);
+
+        if (gameStatus != Game.Status.WinnersUnresolved) {
+            revert InvalidGameStatus(
+                gameID,
+                Game.Status.WinnersUnresolved,
+                gameStatus
+            );
+        }
 
         _;
     }
 
     modifier mustBeExpiredGame(Game.ID gameID) {
-        require(
-            getGameStatus(gameID) == Game.Status.Expired,
-            'Game must to be Expired'
-        );
+        Game.Status gameStatus = getGameStatus(gameID);
+
+        if (gameStatus != Game.Status.Expired) {
+            revert InvalidGameStatus(gameID, Game.Status.Expired, gameStatus);
+        }
 
         _;
     }
 
     modifier mustBeWinnersUnresolvedOrExpiredGame(Game.ID gameID) {
         Game.Status gameStatus = getGameStatus(gameID);
-        require(
-            gameStatus == Game.Status.WinnersUnresolved ||
-                gameStatus == Game.Status.Expired,
-            'Game must to be WinnersUnresolved or Expired'
-        );
+
+        if (
+            gameStatus != Game.Status.WinnersUnresolved ||
+            gameStatus != Game.Status.Expired
+        ) {
+            revert InvalidGameStatus2(
+                gameID,
+                Game.Status.WinnersUnresolved,
+                Game.Status.Expired,
+                gameStatus
+            );
+        }
 
         _;
     }
 
     function setGameStatusAsOngoing(
         Game.ID gameID,
-        uint expiry_timestamp
+        uint expiryTimestamp
     ) internal {
-        require(
-            expiry_timestamp > block.timestamp,
-            'Expiry timestamp must be in the future'
-        );
+        if (expiryTimestamp <= block.timestamp) {
+            revert InvalidExpiryTimestamp();
+        }
 
         assert(statuses[gameID] == Game.Status.Ongoing);
 
-        expiry_timestamps[gameID] = expiry_timestamp;
+        expiryTimestamps[gameID] = expiryTimestamp;
     }
 
     function setGameStatusAsConcluded(Game.ID gameID) internal {
@@ -76,7 +99,7 @@ contract GameStatuses {
     }
 
     function getGameStatus(Game.ID gameID) internal view returns (Game.Status) {
-        if (expiry_timestamps[gameID] < block.timestamp) {
+        if (expiryTimestamps[gameID] < block.timestamp) {
             return Game.Status.Expired;
         }
         return statuses[gameID];
