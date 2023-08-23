@@ -9,13 +9,13 @@ import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {MaybeOperational} from './MaybeOperational.sol';
 import {ServiceProvider} from './ServiceProvider.sol';
-import {Wallets, UsingCanPayWallet} from './Wallets.sol';
+import {Wallets} from './Wallets.sol';
+import {Payments} from './Payments.sol';
 
 contract Coinflip is
     UsingGamePlays,
     UsingGameWagers,
     UsingGameStatuses,
-    UsingCanPayWallet,
     MaybeOperational
 {
     mapping(Game.ID => Coin.Side) outcomes;
@@ -33,9 +33,7 @@ contract Coinflip is
     }
 
     receive() external payable {
-        payWallet(payable(address(wallets)), msg.value);
-
-        wallets.transfer(msg.sender, msg.value);
+        payGameWager();
     }
 
     modifier mustHaveGameWager(Game.ID gameID) {
@@ -123,9 +121,10 @@ contract Coinflip is
         Game.Player[] memory winners = players[gameID][outcomes[gameID]];
         uint totalWagerAmount = getGameWager(gameID) * winners.length;
 
-        uint amountForEachWinner = serviceProvider
-            .splitAfterRemovingServiceCharge(totalWagerAmount, winners.length);
+        (uint amountForEachWinner, uint serviceChargeAmount) = serviceProvider
+            .getAmountForEachAndServiceCharge(totalWagerAmount, winners.length);
 
+        payServiceCharge(serviceChargeAmount);
         creditPlayers(winners, amountForEachWinner);
         setGameStatusAsConcluded(gameID);
     }
@@ -140,9 +139,10 @@ contract Coinflip is
         assert(headPlayers.length + tailPlayers.length == playCount);
         uint totalWagerAmount = getGameWager(gameID) * playCount;
 
-        uint amountForEachPlayer = serviceProvider
-            .splitAfterRemovingServiceCharge(totalWagerAmount, playCount);
+        (uint amountForEachPlayer, uint serviceChargeAmount) = serviceProvider
+            .getAmountForEachAndServiceCharge(totalWagerAmount, playCount);
 
+        payServiceCharge(serviceChargeAmount);
         creditPlayers(headPlayers, amountForEachPlayer);
         creditPlayers(tailPlayers, amountForEachPlayer);
         setGameStatusAsConcluded(gameID);
@@ -150,16 +150,17 @@ contract Coinflip is
 
     function maybePayGameWager() private {
         if (msg.value > 0) {
-            payWallet(msg.sender, msg.value);
+            payGameWager();
         }
     }
 
-    function myBalance() private view returns (uint) {
-        return wallets.getWalletBalance(msg.sender);
+    function payGameWager() private {
+        Payments.pay(address(wallets), msg.value);
+        wallets.transfer(msg.sender, msg.value);
     }
 
     function debitGameWager(uint wager) private {
-        if (wager > myBalance()) {
+        if (wager > wallets.getWalletBalance(msg.sender)) {
             revert InsufficientWalletBalance();
         }
 
@@ -170,6 +171,13 @@ contract Coinflip is
 
     function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
         outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
+    }
+
+    function payServiceCharge(uint serviceChargeAmount) private {
+        wallets.transfer(
+            serviceProvider.getServiceProviderWallet(),
+            serviceChargeAmount
+        );
     }
 
     function creditPlayers(Game.Player[] memory players, uint amount) private {
