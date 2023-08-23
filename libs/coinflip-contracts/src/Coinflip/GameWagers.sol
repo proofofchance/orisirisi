@@ -4,21 +4,21 @@ pragma solidity ^0.8.18;
 import {Game} from './Game.sol';
 
 contract GameWagers {
-  mapping(Game.ID gameID => Game.Wager wager) wagers;
+    mapping(Game.ID gameID => Game.Wager wager) wagers;
 
-  modifier mustBeValidWager() {
-    require(msg.value > 0, 'Wager must be greater than 0');
+    modifier mustBeValidWager() {
+        require(msg.value > 0, 'Wager must be greater than 0');
 
-    _;
-  }
+        _;
+    }
 
-  function createGameWager(Game.ID gameID, uint wager) internal {
-    wagers[gameID] = Game.Wager.wrap(wager);
-  }
+    function createGameWager(Game.ID gameID, uint wager) internal {
+        wagers[gameID] = Game.Wager.wrap(wager);
+    }
 
-  function getGameWager(Game.ID gameID) internal view returns (uint) {
-    return Game.Wager.unwrap(wagers[gameID]);
-  }
+    function getGameWager(Game.ID gameID) internal view returns (uint) {
+        return Game.Wager.unwrap(wagers[gameID]);
+    }
 }
 
 contract UsingGameWagers is GameWagers {}

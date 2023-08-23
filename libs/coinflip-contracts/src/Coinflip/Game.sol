@@ -17,6 +17,9 @@ library Game {
     bytes32 playHash;
   }
 
+  error MaxedOutPlaysError(ID gameID);
+  error allMatchingPlaysError(ID gameID);
+
   enum Status {
     Ongoing,
     Expired,
