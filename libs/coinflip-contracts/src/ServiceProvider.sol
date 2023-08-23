@@ -34,10 +34,10 @@ contract ServiceProvider is Ownable {
 
     // TODO: Use Openzeppelin
     // Solidity rounds towards zero. So implicit 'floor' happens here
-    function splitAfterRemovingServiceCharge(
+    function getAmountForEachAndServiceCharge(
         uint amount,
         uint places
-    ) external view returns (uint amountForEach) {
+    ) external view returns (uint amountForEach, uint serviceChargeAmount) {
         uint _serviceChargeAmountSoFar = (amount * serviceChargePercent) / 100;
 
         uint amountAfterDeductingServiceCharge = amount -
@@ -45,6 +45,12 @@ contract ServiceProvider is Ownable {
 
         uint _amountForEach = amountAfterDeductingServiceCharge / places;
 
-        return _amountForEach;
+        uint maybeLeftOverAmount = amountAfterDeductingServiceCharge -
+            (amountForEach * places);
+
+        uint _serviceChargeAmount = _serviceChargeAmountSoFar +
+            maybeLeftOverAmount;
+
+        return (_amountForEach, _serviceChargeAmount);
     }
 }
