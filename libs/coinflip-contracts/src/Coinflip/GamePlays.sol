@@ -14,12 +14,16 @@ contract GamePlays {
     mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 proofOfChance)) playProofs;
     mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
+    error MaxedOutPlaysError(Game.ID gameID);
+    error allMatchingPlaysError(Game.ID gameID);
+
     modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
-        require(
-            Game.PlayID.unwrap(playCounts[gameID]) <=
-                Game.PlayID.unwrap(maxPlayCounts[gameID]),
-            'Game can no longer take new plays'
-        );
+        if (
+            Game.PlayID.unwrap(playCounts[gameID]) ==
+            Game.PlayID.unwrap(maxPlayCounts[gameID])
+        ) {
+            revert MaxedOutPlaysError(gameID);
+        }
 
         _;
     }
@@ -30,10 +34,10 @@ contract GamePlays {
 
         if (
             playsLeft == 1 &&
-            players[gameID][Coin.Side.Head].length > 0 &&
-            players[gameID][Coin.Side.Head].length > 0
+            (players[gameID][Coin.Side.Head].length == 0 ||
+                players[gameID][Coin.Side.Head].length == 0)
         ) {
-            revert Game.allMatchingPlaysError(gameID);
+            revert allMatchingPlaysError(gameID);
         }
 
         _;

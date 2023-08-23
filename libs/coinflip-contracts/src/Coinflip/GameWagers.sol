@@ -6,8 +6,12 @@ import {Game} from './Game.sol';
 contract GameWagers {
     mapping(Game.ID gameID => Game.Wager wager) wagers;
 
+    error InvalidWager();
+
     modifier mustBeValidWager() {
-        require(msg.value > 0, 'Wager must be greater than 0');
+        if (msg.value <= 0) {
+            revert InvalidWager();
+        }
 
         _;
     }

@@ -6,13 +6,14 @@ import './Ownable.sol';
 contract ServiceProvider is Ownable {
     uint8 private serviceChargePercent = 2; // in percentage
 
+    error InvalidServiceChargePercent();
+
     function setServiceChargePercent(
         uint8 _serviceChargePercent
     ) external onlyOwner {
-        require(
-            _serviceChargePercent < 100,
-            'Service charge must be less than 100%'
-        );
+        if (_serviceChargePercent >= 100) {
+            revert InvalidServiceChargePercent();
+        }
 
         serviceChargePercent = _serviceChargePercent;
     }
@@ -33,22 +34,17 @@ contract ServiceProvider is Ownable {
 
     // TODO: Use Openzeppelin
     // Solidity rounds towards zero. So implicit 'floor' happens here
-    function getAmountForEachAndServiceCharge(
+    function splitAfterRemovingServiceCharge(
         uint amount,
         uint places
-    ) external view returns (uint amountForEach, uint serviceChargeAmount) {
+    ) external view returns (uint amountForEach) {
         uint _serviceChargeAmountSoFar = (amount * serviceChargePercent) / 100;
 
-        uint amountAfterDeductingServiceCharge = amount - serviceChargeAmount;
+        uint amountAfterDeductingServiceCharge = amount -
+            _serviceChargeAmountSoFar;
 
         uint _amountForEach = amountAfterDeductingServiceCharge / places;
 
-        uint maybeLeftOverAmount = amountAfterDeductingServiceCharge -
-            (amountForEach * places);
-
-        uint _serviceChargeAmount = _serviceChargeAmountSoFar +
-            maybeLeftOverAmount;
-
-        return (_amountForEach, _serviceChargeAmount);
+        return _amountForEach;
     }
 }
