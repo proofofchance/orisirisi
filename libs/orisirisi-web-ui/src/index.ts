@@ -1,1 +1,1 @@
-export * from './lib/orisirisi-web-ui';
+export { cn } from './lib/cn';
