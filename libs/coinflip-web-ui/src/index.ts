@@ -1,1 +1,1 @@
-export * from './lib/coinflip-web-ui';
+export * from './lib/background';

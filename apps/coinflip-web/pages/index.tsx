@@ -7,6 +7,7 @@ import {
   Player,
 } from '@orisirisi/coinflip';
 import { useEffect } from 'react';
+import { Background } from '@orisirisi/coinflip-web-ui';
 
 const StyledPage = styled.div`
   .page {
@@ -41,7 +42,11 @@ export function Index() {
     console.log('Losers: ', gameWithResult.getLosers());
   }, []);
 
-  return <StyledPage></StyledPage>;
+  return (
+    <StyledPage>
+      <Background />
+    </StyledPage>
+  );
 }
 
 export default Index;
