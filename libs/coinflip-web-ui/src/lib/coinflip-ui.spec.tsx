@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 
-import OrisirisiUi from './orisirisi-ui';
+import CoinflipUi from './coinflip-web-ui';
 
-describe('OrisirisiUi', () => {
+describe('CoinflipUi', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<OrisirisiUi />);
+    const { baseElement } = render(<CoinflipUi />);
     expect(baseElement).toBeTruthy();
   });
 });

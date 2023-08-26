@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'orisirisi-ui',
+  displayName: 'coinflip-web-ui',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/orisirisi-ui',
+  coverageDirectory: '../../coverage/libs/coinflip-web-ui',
 };

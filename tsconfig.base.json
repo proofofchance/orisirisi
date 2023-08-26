@@ -17,8 +17,8 @@
     "paths": {
       "@orisirisi/coinflip": ["libs/coinflip/src/index.ts"],
       "@orisirisi/coinflip-contracts": ["libs/coinflip-contracts/src/index.ts"],
-      "@orisirisi/coinflip-ui": ["libs/coinflip-ui/src/index.ts"],
-      "@orisirisi/orisirisi-ui": ["libs/orisirisi-ui/src/index.ts"]
+      "@orisirisi/coinflip-web-ui": ["libs/coinflip-web-ui/src/index.ts"],
+      "@orisirisi/orisirisi-web-ui": ["libs/orisirisi-web-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
