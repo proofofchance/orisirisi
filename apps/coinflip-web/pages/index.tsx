@@ -7,7 +7,7 @@ import {
   Player,
 } from '@orisirisi/coinflip';
 import { useEffect } from 'react';
-import { Background } from '@orisirisi/coinflip-web-ui';
+import { Background, NavigationBar } from '@orisirisi/coinflip-web-ui';
 
 const StyledPage = styled.div`
   .page {
@@ -44,6 +44,7 @@ export function Index() {
 
   return (
     <StyledPage>
+      <NavigationBar />
       <Background />
     </StyledPage>
   );
