@@ -18,6 +18,9 @@
       "@orisirisi/coinflip": ["libs/coinflip/src/index.ts"],
       "@orisirisi/coinflip-contracts": ["libs/coinflip-contracts/src/index.ts"],
       "@orisirisi/coinflip-web-ui": ["libs/coinflip-web-ui/src/index.ts"],
+      "@orisirisi/orisirisi-error-handling": [
+        "libs/orisirisi-error-handling/src/index.ts"
+      ],
       "@orisirisi/orisirisi-web-ui": ["libs/orisirisi-web-ui/src/index.ts"],
       "@orisirisi/orisirisi-web3": ["libs/orisirisi-web3/src/index.ts"],
       "@orisirisi/synarktech-web3": ["libs/synarktech-web3/src/index.ts"]

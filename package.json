@@ -9,8 +9,10 @@
   "private": true,
   "dependencies": {
     "@nx/next": "16.6.0",
+    "@walletconnect/ethereum-provider": "^2.10.0",
     "clsx": "^2.0.0",
     "crypto-js": "^4.1.1",
+    "ethers": "^6.4.0",
     "next": "13.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
