@@ -1,6 +1,6 @@
+import { WithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
-
 
 export const BackgroundWrapper = styled.div`
   background: rgb(152, 77, 56);
@@ -12,9 +12,14 @@ export const BackgroundWrapper = styled.div`
   );
 `;
 
-export function Background({ children }: PropsWithChildren) {
+export function Background({
+  children,
+  className,
+}: PropsWithChildren & WithClassName) {
   return (
-    <BackgroundWrapper className="bg-[#50d71e] bg-cover bg-center h-screen">
+    <BackgroundWrapper
+      className={cn('bg-[#50d71e] bg-cover bg-center h-screen', className)}
+    >
       {children}
     </BackgroundWrapper>
   );

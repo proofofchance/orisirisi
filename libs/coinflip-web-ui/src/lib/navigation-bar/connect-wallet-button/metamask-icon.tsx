@@ -1,10 +1,5 @@
 export const MetamaskIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={20}
-    height={18}
-    fill="none"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={20} height={18} fill="none">
     <path
       fill="#E17726"
       stroke="#E17726"
@@ -101,4 +96,5 @@ export const MetamaskIcon = () => (
       strokeWidth={0.25}
       d="m17.652 8.985-3.7-1.077 1.116 1.682-1.666 3.245 2.202-.028h3.289l-1.24-3.822ZM6.08 7.908l-3.7 1.077-1.234 3.822h3.282l2.202.028L4.965 9.59l1.114-1.682ZM11.097 9.77l.237-4.072 1.073-2.897h-4.78L8.7 5.698l.237 4.073.09 1.279.007 3.162H11l.007-3.162.09-1.28Z"
     />
-  </svg>);
+  </svg>
+);

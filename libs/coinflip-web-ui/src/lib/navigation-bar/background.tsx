@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const BackgroundWrapper = styled.nav`
   background: rgb(152, 77, 56);
