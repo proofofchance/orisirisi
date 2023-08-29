@@ -1,10 +1,9 @@
-import { BackgroundWrapperForNav } from './background';
-import { ConnectMetamaskWalletButton } from './buttons';
+import { BackgroundWrapper } from './background';
+import { ConnectMetamaskWalletButton } from './connect-wallet-button';
 
 export function NavigationBar() {
-
   return (
-    <BackgroundWrapperForNav className="p-4 ">
+    <BackgroundWrapper className="p-4 ">
       <div className="mx-20 my-4 flex justify-between items-center">
         <div className="flex items-center">
           <a href="/" className="text-white text-xl font-semibold">
@@ -24,6 +23,6 @@ export function NavigationBar() {
           <ConnectMetamaskWalletButton />
         </div>
       </div>
-    </BackgroundWrapperForNav>
+    </BackgroundWrapper>
   );
 }

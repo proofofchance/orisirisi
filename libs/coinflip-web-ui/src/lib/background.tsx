@@ -1,7 +1,8 @@
 import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
-const BackgroundColor = `
+
+export const BackgroundWrapper = styled.div`
   background: rgb(152, 77, 56);
   background: linear-gradient(
     90deg,
@@ -10,18 +11,11 @@ const BackgroundColor = `
     rgba(24, 30, 65, 1) 82%
   );
 `;
-export const BackgroundWrapperForNav = styled.nav`
-  ${BackgroundColor}
-`;
-
-export const BackgroundWrapperForDiv = styled.div`
-  ${BackgroundColor}
-`;
 
 export function Background({ children }: PropsWithChildren) {
   return (
-    <BackgroundWrapperForDiv className="bg-[#50d71e] bg-cover bg-center h-screen">
+    <BackgroundWrapper className="bg-[#50d71e] bg-cover bg-center h-screen">
       {children}
-    </BackgroundWrapperForDiv>
+    </BackgroundWrapper>
   );
 }
