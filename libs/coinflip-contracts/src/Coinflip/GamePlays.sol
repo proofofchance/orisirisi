@@ -29,15 +29,28 @@ contract GamePlays {
         _;
     }
 
+    modifier mustBeValidPlayProof(
+        Game.ID gameID,
+        Game.PlayID gamePlayID,
+        bytes32 playProof
+    ) {
+        if (
+            keccak256(abi.encodePacked(playProof)) !=
+            plays[gameID][gamePlayID].playHash
+        ) {
+            revert InvalidPlayProof();
+        }
+
+        _;
+    }
+
     modifier mustAvoidAllGamePlaysMatching(Game.ID gameID, Coin.Side coinSide) {
         uint16 playsLeft = Game.PlayID.unwrap(maxPlayCounts[gameID]) -
             Game.PlayID.unwrap(playCounts[gameID]);
+        uint16 headPlayCount = uint16(players[gameID][Coin.Side.Head].length);
+        uint16 tailPlayCount = uint16(players[gameID][Coin.Side.Tail].length);
 
-        if (
-            playsLeft == 1 &&
-            (players[gameID][Coin.Side.Head].length == 0 ||
-                players[gameID][Coin.Side.Head].length == 0)
-        ) {
+        if (playsLeft == 1 && (headPlayCount == 0 || tailPlayCount == 0)) {
             revert allMatchingPlaysError(gameID);
         }
 
@@ -51,41 +64,43 @@ contract GamePlays {
     ) internal {
         Game.PlayID gamePlayID = playCounts[gameID];
         Game.Player player = Game.Player.wrap(msg.sender);
-
-        plays[gameID][gamePlayID] = Game.Play({
+        Game.Play memory play = Game.Play({
             player: player,
             coinSide: coinSide,
             proofOfChance: '',
             playHash: playHash
         });
+
+        plays[gameID][gamePlayID] = play;
         players[gameID][coinSide].push(player);
-        playCounts[gameID] = Game.PlayID.wrap(
-            Game.PlayID.unwrap(playCounts[gameID]) + 1
-        );
+        incrementPlayCount(gameID);
     }
 
     function createGamePlayProof(
         Game.ID gameID,
         Game.PlayID gamePlayID,
         bytes32 playProof
-    ) internal {
-        if (
-            keccak256(abi.encodePacked(playProof)) !=
-            plays[gameID][gamePlayID].playHash
-        ) {
-            revert InvalidPlayProof();
-        }
-
+    ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
         playProofs[gameID][gamePlayID] = playProof;
-        playProofCounts[gameID] = Game.PlayID.wrap(
-            Game.PlayID.unwrap(playProofCounts[gameID]) + 1
-        );
+        incrementPlayProofCount(gameID);
     }
 
     function allProofsAreUploaded(Game.ID gameID) internal view returns (bool) {
         return
             Game.PlayID.unwrap(playProofCounts[gameID]) ==
             Game.PlayID.unwrap(playCounts[gameID]);
+    }
+
+    function incrementPlayCount(Game.ID gameID) private {
+        playCounts[gameID] = Game.PlayID.wrap(
+            Game.PlayID.unwrap(playCounts[gameID]) + 1
+        );
+    }
+
+    function incrementPlayProofCount(Game.ID gameID) private {
+        playProofCounts[gameID] = Game.PlayID.wrap(
+            Game.PlayID.unwrap(playProofCounts[gameID]) + 1
+        );
     }
 
     function setMaxGamePlayCount(

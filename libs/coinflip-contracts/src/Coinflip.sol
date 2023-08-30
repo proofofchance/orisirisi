@@ -37,7 +37,10 @@ contract Coinflip is
     }
 
     modifier mustHaveGameWager(Game.ID gameID) {
-        if (getGameWager(gameID) > wallets.getWalletBalance(msg.sender)) {
+        uint myBalance = wallets.getWalletBalance(msg.sender);
+        uint gameWager = getGameWager(gameID);
+
+        if (myBalance < gameWager) {
             revert InsufficientWalletBalance();
         }
 
