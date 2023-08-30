@@ -21,8 +21,8 @@ contract Coinflip is
     mapping(Game.ID => Coin.Side) outcomes;
     uint gamesCount;
 
-    Wallets private wallets;
-    ServiceProvider private serviceProvider;
+    Wallets public immutable wallets;
+    ServiceProvider public immutable serviceProvider;
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
