@@ -11,7 +11,6 @@ contract GamePlays {
     mapping(Game.ID gameID => Game.PlayID playCount) playCounts;
     mapping(Game.ID gameID => Game.PlayID maxPlayCount) maxPlayCounts;
 
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 proofOfChance)) playProofs;
     mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
     error InvalidPlayProof();
@@ -67,7 +66,7 @@ contract GamePlays {
         Game.Play memory play = Game.Play({
             player: player,
             coinSide: coinSide,
-            proofOfChance: '',
+            proof: '',
             playHash: playHash
         });
 
@@ -81,7 +80,7 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         bytes32 playProof
     ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
-        playProofs[gameID][gamePlayID] = playProof;
+        plays[gameID][gamePlayID].proof = playProof;
         incrementPlayProofCount(gameID);
     }
 

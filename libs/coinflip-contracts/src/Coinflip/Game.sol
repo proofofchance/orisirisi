@@ -13,7 +13,7 @@ library Game {
     struct Play {
         Player player;
         Coin.Side coinSide;
-        bytes32 proofOfChance;
+        bytes32 proof;
         bytes32 playHash;
     }
 
