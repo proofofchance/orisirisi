@@ -1,6 +1,8 @@
 import { WithClassName } from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
-import { ConnectMetamaskWalletButton } from './connect-wallet-button';
+import { ConnectWalletButton } from './connect-wallet-button';
+
+export { ConnectWalletOptionsModal } from './connect-wallet-button';
 
 export function NavigationBar({ className }: WithClassName) {
   return (
@@ -19,7 +21,7 @@ export function NavigationBar({ className }: WithClassName) {
             Create Game
           </a>
 
-          <ConnectMetamaskWalletButton />
+          <ConnectWalletButton />
         </div>
       </div>
     </BackgroundWrapper>

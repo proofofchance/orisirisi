@@ -22,7 +22,7 @@ function BottomNavigationButton({
   return (
     <button
       className={cn(
-        'rounded-[50px] px-12 py-4',
+        'rounded-full px-12 py-4',
         active
           ? activeBottomNavigationButtonClassName
           : inactiveBottomNavigationButtonClassName
