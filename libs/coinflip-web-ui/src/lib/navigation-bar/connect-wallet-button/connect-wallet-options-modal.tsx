@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { atom, useAtom } from 'jotai';
 import { Modal } from './modal';
 import { WithClassName, cn } from '@orisirisi/orisirisi-web-ui';
@@ -31,32 +31,24 @@ export function useConnectWalletOptionsModal() {
 export function ConnectWalletOptionsModal() {
   const { show, close } = useConnectWalletOptionsModal();
 
+  const buttonContent = (title: string, icon: ReactNode) => (
+    <div className="flex w-100 justify-between items-center">
+      <div>{title}</div>
+      <div className="h-4 w-4">{icon}</div>
+    </div>
+  );
+
   return (
     <Modal title="Pick Your Wallet" variant="sm" show={show} close={close}>
       <div className="flex flex-col mt-4">
         <ButtonLongCard>
-          <div className="flex w-100 justify-between items-center">
-            <div>Metamask</div>
-            <div className="h-4 w-4">
-              <MetamaskIcon />{' '}
-            </div>
-          </div>
+          {buttonContent('Metamask', <MetamaskIcon />)}
         </ButtonLongCard>
         <ButtonLongCard>
-          <div className="flex justify-between items-center">
-            <div>WalletConnect</div>
-            <div className="h-4 w-4">
-              <WalletConnectIcon />{' '}
-            </div>
-          </div>
+          {buttonContent('WalletConnect', <WalletConnectIcon />)}
         </ButtonLongCard>
         <ButtonLongCard>
-          <div className="flex justify-between items-center">
-            <div>Coinbase Wallet</div>
-            <div className="h-4 w-4">
-              <CoinbaseWalletIcon />{' '}
-            </div>
-          </div>
+          {buttonContent('Coinbase Wallet', <CoinbaseWalletIcon />)}
         </ButtonLongCard>
       </div>
     </Modal>
