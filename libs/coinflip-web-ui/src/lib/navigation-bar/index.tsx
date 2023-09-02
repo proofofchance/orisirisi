@@ -1,4 +1,4 @@
-import { WithClassName } from '@orisirisi/orisirisi-web-ui';
+import { WithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
 import { ConnectWalletButton } from './connect-wallet-button';
 import { CurrentAccountButton } from './current-account-button';
@@ -8,6 +8,7 @@ export { ConnectWalletOptionsModal } from './connect-wallet-button';
 
 export function NavigationBar({ className }: WithClassName) {
   const { currentWeb3Account } = useCurrentWeb3Account();
+  const isClient = useIsClient();
 
   return (
     <BackgroundWrapper className={className}>
@@ -25,7 +26,9 @@ export function NavigationBar({ className }: WithClassName) {
             Create Game
           </a>
 
-          {currentWeb3Account && currentWeb3Account.isWithoutError() ? (
+          {isClient &&
+          currentWeb3Account &&
+          currentWeb3Account.isWithoutError() ? (
             <CurrentAccountButton publicAddress={currentWeb3Account.address!} />
           ) : (
             <ConnectWalletButton />
