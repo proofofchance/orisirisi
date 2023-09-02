@@ -18,6 +18,7 @@
       "@orisirisi/coinflip": ["libs/coinflip/src/index.ts"],
       "@orisirisi/coinflip-contracts": ["libs/coinflip-contracts/src/index.ts"],
       "@orisirisi/coinflip-web-ui": ["libs/coinflip-web-ui/src/index.ts"],
+      "@orisirisi/orisirisi-browser": ["libs/orisirisi-browser/src/index.ts"],
       "@orisirisi/orisirisi-data-utils": [
         "libs/orisirisi-data-utils/src/index.ts"
       ],
