@@ -8,12 +8,7 @@ import {
   useCurrentWeb3Account,
   useCurrentWeb3Provider,
 } from '@orisirisi/orisirisi-web3-ui';
-
-export class Browser {
-  static openInNewTab(url: string) {
-    return window.open(url, '_blank')?.focus();
-  }
-}
+import { Browser } from '@orisirisi/orisirisi-browser';
 
 function ButtonLongCard({
   children,
