@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Browser } from '@orisirisi/orisirisi-browser';
 import { mustBeMutuallyExclusive } from '@orisirisi/orisirisi-data-utils';
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { Eip1193Provider } from 'ethers';
@@ -19,6 +21,10 @@ export class Web3Account {
   isWithoutError = () => !this.hasError();
   hasError = () => !!this.error;
   isEmpty = () => this.address === null;
+
+  static fromAddresses(addresses: string[]) {
+    return new Web3Account(addresses, null);
+  }
 
   private static pickCurrentAccountAddress = (addresses: string[]) =>
     addresses[0];
@@ -49,14 +55,53 @@ class Web3ProviderError {
   isChainDisconnectedError = () => this.code === 4901;
 }
 
+interface ConnectInfo {
+  chainId: string;
+}
+
+interface RawProvider extends Eip1193Provider {
+  isMetaMask: boolean;
+  isConnected: () => boolean;
+  on: (event: string, handler: (data: any) => void) => void;
+}
+
 declare global {
   interface Window {
-    ethereum?: Eip1193Provider & { isMetaMask: boolean };
+    ethereum?: RawProvider;
   }
 }
 
 export class Web3Provider {
-  constructor(private provider: Eip1193Provider) {}
+  constructor(private provider: RawProvider) {}
+
+  onAccountsChanged(onAccountsChanged: (accounts: string[]) => void) {
+    this.provider.on('accountsChanged', onAccountsChanged);
+  }
+
+  listenToDisconnectAndReloadWindow() {
+    this.onConnect(() => {
+      if (!this.provider.isConnected()) {
+        Browser.reloadWindow();
+      }
+    });
+    this.onDisconnect(() => Browser.reloadWindow());
+  }
+
+  onConnect(onConnect: (connectInfo: ConnectInfo) => void) {
+    this.provider.on('connect', onConnect);
+  }
+
+  onDisconnect(onDisconnect: (maybeProviderRpcError: any) => void) {
+    this.provider.on('disconnect', onDisconnect);
+  }
+
+  listenToChainChangedAndReloadWindow() {
+    this.onChainChanged(() => Browser.reloadWindow());
+  }
+
+  onChainChanged(onChainChanged: (chainId: string) => void) {
+    this.provider.on('chainChanged', onChainChanged);
+  }
 
   async getCurrentAccount() {
     const { ok: addresses, error } = await this.getAccountAddresses();
