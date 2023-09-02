@@ -14,13 +14,13 @@ export const defaultModalContext = {
 
 interface ModalProps extends ModalContext, PropsWithChildren {
   overlayClassName?: string;
-  variant?: 'sm' | 'lg';
+  variant: 'sm';
   className?: string;
   title?: string;
 }
 
 export function Modal(props: ModalProps) {
-  const { show = false, close, variant = 'lg' } = props;
+  const { variant, show = false, close } = props;
 
   if (!show) return null;
 
@@ -34,10 +34,10 @@ export function Modal(props: ModalProps) {
         )}
       ></div>
       <div
+        data-id="modal"
         className={cn(
-          'bg-[#F4F5F7] absolute z-20 top-[10vh]  rounded-2xl px-8 py-6 text-[#181C25]',
-          variant === 'lg' && 'lg:w-[44vw] w-[80vw] lg:left-[28vw] left-[10vw]',
-          variant === 'sm' && 'lg:w-[44vw] w-[40vw] lg:left-[28vw] left-[30vw]',
+          'bg-[#F4F5F7] absolute z-20 rounded-2xl px-8 py-6 text-[#181C25]',
+          variant === 'sm' && 'top-[40px] w-[400px] left-[calc(50vw-200px)]',
           props.className
         )}
       >

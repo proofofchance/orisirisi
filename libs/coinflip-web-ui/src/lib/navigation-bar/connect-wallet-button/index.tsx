@@ -1,10 +1,11 @@
 import { useConnectWalletOptionsModal } from './connect-wallet-options-modal';
+import { WalletIcon } from '@heroicons/react/24/outline';
 import Button from './button';
 
 export { ConnectWalletOptionsModal } from './connect-wallet-options-modal';
 
 export function ConnectWalletButton() {
-  const { open: openConnectWalletOptionsModal } =
+  const { openModal: openConnectWalletOptionsModal } =
     useConnectWalletOptionsModal();
 
   return (
@@ -12,16 +13,8 @@ export function ConnectWalletButton() {
       className="rounded-[40px] px-7 py-4"
       onClick={openConnectWalletOptionsModal}
     >
-      Connect Wallet
-    </Button>
-  );
-}
-
-export function ConnectMetamaskWalletButton() {
-  return (
-    <Button className="rounded-[40px] px-7 py-4">
       <div className="flex gap-x-2 items-center">
-        <div>{/* <MetamaskIcon /> */}</div>
+        <WalletIcon className="h-5 mt-[0.5px]" />
         <div>Connect Wallet</div>
       </div>
     </Button>
