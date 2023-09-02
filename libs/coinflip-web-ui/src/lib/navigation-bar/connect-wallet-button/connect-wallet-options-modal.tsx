@@ -42,11 +42,10 @@ export function useConnectWalletOptionsModal() {
 
 export function ConnectWalletOptionsModal() {
   const { showModal, closeModal } = useConnectWalletOptionsModal();
-  const { setCurrentWeb3Provider } = useCurrentWeb3Provider();
+  const { setWeb3ProviderForTheFirstTime } = useCurrentWeb3Provider();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
   useEffect(() => {
-    console.log({ showModal, currentWeb3Account });
     if (
       showModal &&
       currentWeb3Account &&
@@ -70,7 +69,7 @@ export function ConnectWalletOptionsModal() {
     if (metaMaskError && metaMaskError.notInstalled)
       return Browser.openInNewTab(MetaMask.downloadLink);
 
-    setCurrentWeb3Provider(provider!);
+    setWeb3ProviderForTheFirstTime(provider!);
   };
 
   return (

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Browser } from '@orisirisi/orisirisi-browser';
 import { mustBeMutuallyExclusive } from '@orisirisi/orisirisi-data-utils';
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { Eip1193Provider } from 'ethers';
@@ -21,6 +20,12 @@ export class Web3Account {
   isWithoutError = () => !this.hasError();
   hasError = () => !!this.error;
   isEmpty = () => this.address === null;
+
+  static fromAddress(address: string | null) {
+    if (!address) return null;
+
+    return Web3Account.fromAddresses([address]);
+  }
 
   static fromAddresses(addresses: string[]) {
     return new Web3Account(addresses, null);
@@ -71,20 +76,21 @@ declare global {
   }
 }
 
+export type Web3ProviderType = 'MetaMask' | 'WalletConnect';
 export class Web3Provider {
-  constructor(private provider: RawProvider) {}
+  constructor(private provider: RawProvider, public type: Web3ProviderType) {}
 
   onAccountsChanged(onAccountsChanged: (accounts: string[]) => void) {
     this.provider.on('accountsChanged', onAccountsChanged);
   }
 
-  listenToDisconnectAndReloadWindow() {
+  listenToDisconnectAndRun(run: () => void) {
     this.onConnect(() => {
       if (!this.provider.isConnected()) {
-        Browser.reloadWindow();
+        run();
       }
     });
-    this.onDisconnect(() => Browser.reloadWindow());
+    this.onDisconnect(run);
   }
 
   onConnect(onConnect: (connectInfo: ConnectInfo) => void) {
@@ -95,8 +101,8 @@ export class Web3Provider {
     this.provider.on('disconnect', onDisconnect);
   }
 
-  listenToChainChangedAndReloadWindow() {
-    this.onChainChanged(() => Browser.reloadWindow());
+  listenToChainChangedAndRun(run: () => void) {
+    this.onChainChanged(run);
   }
 
   onChainChanged(onChainChanged: (chainId: string) => void) {
@@ -114,7 +120,6 @@ export class Web3Provider {
       const accounts = await this.provider!.request({
         method: 'eth_requestAccounts',
       });
-
       return new Result(accounts, null);
     } catch (error: unknown) {
       return new Result(
@@ -127,16 +132,20 @@ export class Web3Provider {
 
 export class MetaMask {
   static downloadLink = 'https://metamask.io/download/';
+  static providerType: Web3ProviderType = 'MetaMask';
 
   static getWeb3Provider() {
     if (!this.isInstalled()) {
       return new Result(null, MetamaskError.notInstalled());
     }
 
-    const web3Provider = new Web3Provider(window.ethereum!);
+    const web3Provider = new Web3Provider(window.ethereum!, this.providerType);
 
     return new Result(web3Provider, null);
   }
+
+  static match = (providerType: Web3ProviderType) =>
+    providerType == this.providerType;
 
   static isInstalled() {
     return !!window.ethereum && this.isMetaMaskProvider();
