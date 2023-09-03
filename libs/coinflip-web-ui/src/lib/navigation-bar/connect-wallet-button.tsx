@@ -1,8 +1,8 @@
-import { useConnectWalletOptionsModal } from './connect-wallet-options-modal';
 import { WalletIcon } from '@heroicons/react/24/outline';
-import Button from './button';
+import { useConnectWalletOptionsModal } from './connect-wallet-button/connect-wallet-options-modal';
+import Button from './connect-wallet-button/button';
 
-export { ConnectWalletOptionsModal } from './connect-wallet-options-modal';
+export { ConnectWalletOptionsModal } from './connect-wallet-button/connect-wallet-options-modal';
 
 export function ConnectWalletButton() {
   const { openModal: openConnectWalletOptionsModal } =
