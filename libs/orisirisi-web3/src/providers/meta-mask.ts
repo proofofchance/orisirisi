@@ -17,8 +17,6 @@ export class MetaMask {
 
     const web3Provider = new Web3Provider(window.ethereum!, this.providerType);
 
-    console.log(web3Provider.getChain().isSupported());
-
     if (!web3Provider.getChain().isSupported())
       return new Result(null, MetaMaskError.UnsupportedChain);
 
