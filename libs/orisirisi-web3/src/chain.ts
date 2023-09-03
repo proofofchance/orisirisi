@@ -13,8 +13,25 @@ export class Chain {
 
   isSupported = () => this.id in ChainID;
 
+  getCurrency = () => {
+    switch (this.id) {
+      case ChainID.Arbitrum:
+        return 'ARB';
+      case ChainID.Avalanche:
+        return 'AVAX';
+      case ChainID.BNB:
+        return 'BNB';
+      case ChainID.Ethereum:
+        return 'ETH';
+      case ChainID.Optimism:
+        return 'OP';
+      case ChainID.Polygon:
+        return 'MATIC';
+      case ChainID.SepoliaTestNet:
+        return 'SepoliaETH';
+    }
+  };
+
   static fromNetworkVersion = (networkVersion: string) =>
     new Chain(+networkVersion);
-
-  static getAll = () => [];
 }

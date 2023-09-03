@@ -18,6 +18,7 @@ export function ChainCurrencyButton({ chain }: { chain: Chain }) {
       case ChainID.BNB:
         return <BNBLogo />;
       case ChainID.Ethereum:
+      case ChainID.SepoliaTestNet:
         return <EthereumLogo />;
       case ChainID.Optimism:
         return <OptimismLogo />;
@@ -27,8 +28,9 @@ export function ChainCurrencyButton({ chain }: { chain: Chain }) {
   };
 
   return (
-    <button className="bg-white rounded-full w-12 h-11 flex items-center justify-center">
-      <div className="w-6">{renderChainLogo()}</div>
+    <button className="bg-transparent rounded-full px-4 flex gap-2 items-center justify-center">
+      <div className="w-4">{renderChainLogo()}</div>
+      <div className="tracking-wide text-lg">{chain.getCurrency()}</div>
     </button>
   );
 }
