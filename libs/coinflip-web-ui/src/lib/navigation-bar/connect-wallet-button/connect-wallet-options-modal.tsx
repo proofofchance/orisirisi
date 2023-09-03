@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode, useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 import { Modal } from './modal';
 import { cn } from '@orisirisi/orisirisi-web-ui';
-import { MetaMask } from '@orisirisi/orisirisi-web3';
+import { MetaMask, MetaMaskError } from '@orisirisi/orisirisi-web3';
 import { CoinbaseWalletIcon, MetamaskIcon, WalletConnectIcon } from './icons';
 import {
   useCurrentWeb3Account,
@@ -66,8 +66,14 @@ export function ConnectWalletOptionsModal() {
     const { ok: provider, error: metaMaskError } =
       await MetaMask.getWeb3Provider();
 
-    if (metaMaskError && metaMaskError.notInstalled)
-      return Browser.openInNewTab(MetaMask.downloadLink);
+    switch (metaMaskError) {
+      case MetaMaskError.NotInstalled:
+        return Browser.openInNewTab(MetaMask.downloadLink);
+      case MetaMaskError.UnsupportedChain:
+        // TODO: Show Unsupported Chain Toast Here
+        console.log('Unsupported chain detected');
+        return;
+    }
 
     setWeb3ProviderForTheFirstTime(provider!);
   };
