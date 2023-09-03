@@ -5,6 +5,7 @@ import {
   Web3ProviderErrorJson,
 } from './web3-provider-error';
 import { Result } from '@orisirisi/orisirisi-error-handling';
+import { Chain } from '../chain';
 
 export type Web3ProviderType = 'MetaMask' | 'WalletConnect';
 
@@ -15,6 +16,7 @@ interface ConnectInfo {
 interface RawProvider extends Eip1193Provider {
   isMetaMask: boolean;
   isConnected: () => boolean;
+  networkVersion: string;
   on: (event: string, handler: (data: any) => void) => void;
 }
 
@@ -25,7 +27,12 @@ declare global {
 }
 
 export class Web3Provider {
-  constructor(private provider: RawProvider, public type: Web3ProviderType) {}
+  constructor(
+    private readonly provider: RawProvider,
+    public readonly type: Web3ProviderType
+  ) {}
+
+  getChain = () => Chain.fromNetworkVersion(this.provider.networkVersion);
 
   onAccountsChanged(onAccountsChanged: (accounts: string[]) => void) {
     this.provider.on('accountsChanged', onAccountsChanged);

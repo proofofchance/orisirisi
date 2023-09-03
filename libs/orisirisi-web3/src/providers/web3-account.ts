@@ -10,12 +10,8 @@ export class Web3Account {
   ) {
     mustBeMutuallyExclusive(addresses, error);
 
-    console.log({ addresses });
-
     if (addresses) {
       this.address = Web3Account.pickCurrentAccountAddress(addresses);
-
-      console.log({ a: this.address });
     }
   }
 
