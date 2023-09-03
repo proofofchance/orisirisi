@@ -4,6 +4,10 @@ import { Web3Account, Web3Provider } from '@orisirisi/orisirisi-web3';
 import { useCache } from './use-cache';
 
 const currentWeb3ProviderAtom = atom<Web3Provider | null>(null);
+const isWeb3ConnectedAtom = atom((get) => !!get(currentWeb3ProviderAtom));
+const currentChainAtom = atom((get) =>
+  get(currentWeb3ProviderAtom)?.getChain()
+);
 const currentWeb3AccountAtom = atom<Web3Account | null>(null);
 
 export function useCurrentWeb3Account() {
@@ -12,6 +16,18 @@ export function useCurrentWeb3Account() {
   );
 
   return { currentWeb3Account, setCurrentWeb3AccountValue };
+}
+
+export function useIsWeb3Connected() {
+  const [isWeb3Connected] = useAtom(isWeb3ConnectedAtom);
+
+  return isWeb3Connected;
+}
+
+export function useCurrentChain() {
+  const [currentChain] = useAtom(currentChainAtom);
+
+  return currentChain;
 }
 
 export function useCurrentWeb3Provider() {
