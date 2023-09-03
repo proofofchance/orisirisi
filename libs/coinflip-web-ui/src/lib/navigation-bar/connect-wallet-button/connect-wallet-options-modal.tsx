@@ -28,20 +28,32 @@ function ButtonLongCard({
   );
 }
 
-const showConnectWalletOptionsModal = atom(false);
+const showConnectWalletOptionsModal = atom<boolean | null>(null);
 
 export function useConnectWalletOptionsModal() {
   const [showModal, toggleShow] = useAtom(showConnectWalletOptionsModal);
 
+  const initModal = () => toggleShow(false);
+
+  const openModal = () => {
+    if (showModal === null) {
+      throw new Error('<ConnectWalletOptionsModal /> must be initialized');
+    }
+
+    toggleShow(true);
+  };
+  const closeModal = () => toggleShow(false);
+
   return {
     showModal,
-    openModal: () => toggleShow(true),
-    closeModal: () => toggleShow(false),
+    openModal,
+    closeModal,
+    initModal,
   };
 }
 
 export function ConnectWalletOptionsModal() {
-  const { showModal, closeModal } = useConnectWalletOptionsModal();
+  const { initModal, showModal, closeModal } = useConnectWalletOptionsModal();
   const { setWeb3ProviderForTheFirstTime } = useCurrentWeb3Provider();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
@@ -77,6 +89,11 @@ export function ConnectWalletOptionsModal() {
 
     setWeb3ProviderForTheFirstTime(provider!);
   };
+
+  if (showModal === null) {
+    initModal();
+    return null;
+  }
 
   return (
     <Modal
