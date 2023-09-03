@@ -30,7 +30,9 @@ export function ChainCurrencyButton({ chain }: { chain: Chain }) {
   return (
     <button className="bg-transparent rounded-full px-4 flex gap-2 items-center justify-center">
       <div className="w-4">{renderChainLogo()}</div>
-      <div className="tracking-wide text-lg">{chain.getCurrency()}</div>
+      <div className="tracking-wide font-semibold text-xl">
+        {chain.getCurrency()}
+      </div>
     </button>
   );
 }

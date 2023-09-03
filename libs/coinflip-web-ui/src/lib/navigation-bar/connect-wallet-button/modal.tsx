@@ -1,6 +1,6 @@
+import { PropsWithChildren } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { cn } from '@orisirisi/orisirisi-web-ui';
-import { PropsWithChildren } from 'react';
 
 export interface ModalContext {
   show?: boolean;

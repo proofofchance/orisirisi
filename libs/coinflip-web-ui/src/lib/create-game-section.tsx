@@ -7,9 +7,12 @@ export function CreateGameSection() {
     <div>
       <BackButton />
 
-      <ContinueButton />
-
       <GetWager />
+
+      <div className="mt-8 w-100 text-center">
+        <ContinueButton />
+      </div>
+      {/* TODO: Show USD estimation here */}
     </div>
   );
 }
