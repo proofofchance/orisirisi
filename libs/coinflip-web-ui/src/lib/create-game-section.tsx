@@ -17,7 +17,7 @@ export function CreateGameSection() {
   });
   const isFirstStep = stepCount === 0;
 
-  const validateAndMaybeGoToNextStep = async (field: CreateGameParamsField) => {
+  const validateAndGoToNextStep = async (field: CreateGameParamsField) => {
     const _triggerValidation = await trigger(field);
 
     if (formState.isValid) {
@@ -31,7 +31,7 @@ export function CreateGameSection() {
         return (
           <GetWager
             wagerField={wagerField}
-            validateAndMaybeGoToNextStep={validateAndMaybeGoToNextStep}
+            validateAndGoToNextStep={validateAndGoToNextStep}
           />
         );
       case 1:
@@ -55,7 +55,7 @@ export function CreateGameSection() {
       <div className="mt-12 w-100 text-center">
         {isFirstStep && (
           <BottomNavigationButton
-            onClick={() => validateAndMaybeGoToNextStep(firstField)}
+            onClick={() => validateAndGoToNextStep(firstField)}
             active
             disabled={!isFirstFormDirty}
           >
