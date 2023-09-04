@@ -5,6 +5,7 @@ interface BottomNavigationButtonProps extends PropsWithChildren {
   disabled?: boolean;
   active?: boolean;
   type?: 'submit' | 'button';
+  onClick: () => void;
 }
 
 const activeBottomNavigationButtonClassName =
@@ -17,10 +18,12 @@ export function BottomNavigationButton({
   active = false,
   disabled = false,
   type = 'button',
+  onClick,
   children,
 }: BottomNavigationButtonProps) {
   return (
     <button
+      onClick={onClick}
       type={type}
       className={cn(
         'rounded-full px-12 py-4',
