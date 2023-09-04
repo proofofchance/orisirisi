@@ -1,12 +1,10 @@
 import { PropsWithChildren } from 'react';
 import { cn } from '@orisirisi/orisirisi-web-ui';
 
-export function ContinueButton() {
-  return <BottomNavigationButton active>Continue</BottomNavigationButton>;
-}
-
 interface BottomNavigationButtonProps extends PropsWithChildren {
+  disabled?: boolean;
   active?: boolean;
+  type?: 'submit' | 'button';
 }
 
 const activeBottomNavigationButtonClassName =
@@ -15,17 +13,21 @@ const activeBottomNavigationButtonClassName =
 const inactiveBottomNavigationButtonClassName =
   'bg-transparent text-white hover:border-white hover:border-2 focus:outline-none focus:ring';
 
-function BottomNavigationButton({
+export function BottomNavigationButton({
   active = false,
+  disabled = false,
+  type = 'button',
   children,
 }: BottomNavigationButtonProps) {
   return (
     <button
+      type={type}
       className={cn(
         'rounded-full px-12 py-4',
         active
           ? activeBottomNavigationButtonClassName
-          : inactiveBottomNavigationButtonClassName
+          : inactiveBottomNavigationButtonClassName,
+        disabled && 'opacity-25'
       )}
     >
       {children}

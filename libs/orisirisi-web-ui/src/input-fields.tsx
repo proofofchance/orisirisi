@@ -3,15 +3,23 @@ import {
   isEmptyString,
   isValidDecimal,
 } from '@orisirisi/orisirisi-data-utils';
-import { ChangeEvent, InputHTMLAttributes, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  ForwardedRef,
+  InputHTMLAttributes,
+  forwardRef,
+  useState,
+} from 'react';
+import { WithClassName } from './interfaces';
 
 const ALLOWED_NUMBER_OF_DECIMALS = 50;
 
-export function DecimalInput({
-  onChange,
-  ...remainingProps
-}: InputHTMLAttributes<HTMLInputElement>) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+type Props = InputHTMLAttributes<HTMLInputElement>;
+
+function DecimalInputWithRefs(
+  { onChange, ...remainingProps }: Props,
+  inputRef: ForwardedRef<HTMLInputElement | null>
+) {
   const [cachedInput, cacheInput] = useState('');
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,3 +47,7 @@ export function DecimalInput({
     />
   );
 }
+
+export const DecimalInput = forwardRef<HTMLInputElement | null, WithClassName>(
+  DecimalInputWithRefs
+);
