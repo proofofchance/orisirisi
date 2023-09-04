@@ -11,37 +11,48 @@ import {
   useState,
 } from 'react';
 
-const ALLOWED_NUMBER_OF_DECIMALS = 50;
+const DECIMAL_SIZE = 50;
 
-type Props = InputHTMLAttributes<HTMLInputElement>;
+const isValidInputAttempt = (input: string) =>
+  isEmptyString(input) ||
+  isIncompleteInput(input) ||
+  isValidDecimal(input, DECIMAL_SIZE);
+
+const isIncompleteInput = (input: string) =>
+  input.endsWith('.') && countAllOccurrences(input, '.') === 1;
+
+export const isValidDecimalInput = (input: string) =>
+  isValidDecimal(input, DECIMAL_SIZE) &&
+  !(isEmptyString(input) && isIncompleteInput(input));
+
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
+  onEnter: () => void;
+}
 
 function DecimalInputWithRefs(
-  { onChange, ...remainingProps }: Props,
+  { onEnter, onChange, ...remainingProps }: Props,
   inputRef: ForwardedRef<HTMLInputElement | null>
 ) {
-  const [cachedInput, cacheInput] = useState('');
+  const [cachedAttemptedInput, cacheAttemptedInput] = useState('');
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const attemptedInput = event.target.value;
-    const input = isValidInput(attemptedInput) ? attemptedInput : cachedInput;
-    cacheInput(input);
+    const input = isValidInputAttempt(attemptedInput)
+      ? attemptedInput
+      : cachedAttemptedInput;
+    cacheAttemptedInput(input);
     event.target.value = input;
     onChange?.(event);
   };
 
-  const isValidInput = (input: string) =>
-    isEmptyString(input) ||
-    isIncompleteInput(input) ||
-    isValidDecimal(input, ALLOWED_NUMBER_OF_DECIMALS);
-
-  const isIncompleteInput = (input: string) =>
-    input.endsWith('.') && countAllOccurrences(input, '.') === 1;
-
   return (
     <input
       type="text"
+      onKeyUp={(e) => e.key === 'Enter' && onEnter()}
       onChange={handleOnChange}
       ref={inputRef}
+      autoComplete="off"
+      autoCorrect="off"
       {...remainingProps}
     />
   );

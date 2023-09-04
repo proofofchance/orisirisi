@@ -7,6 +7,7 @@ import {
 import { Move, Moves } from './moves';
 
 export { CoinSide } from './coin';
+export * from './create-game';
 
 export enum Chain {
   Ethereum = 1,
