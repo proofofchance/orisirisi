@@ -10,7 +10,6 @@ import {
   forwardRef,
   useState,
 } from 'react';
-import { WithClassName } from './interfaces';
 
 const ALLOWED_NUMBER_OF_DECIMALS = 50;
 
@@ -48,6 +47,6 @@ function DecimalInputWithRefs(
   );
 }
 
-export const DecimalInput = forwardRef<HTMLInputElement | null, WithClassName>(
+export const DecimalInput = forwardRef<HTMLInputElement | null, Props>(
   DecimalInputWithRefs
 );

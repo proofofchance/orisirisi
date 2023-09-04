@@ -16,6 +16,7 @@ export function GetWager() {
 
       <div className="mt-7 flex m-auto justify-center items-center w-[600px] border-2 border-white rounded-full px-2 ">
         <DecimalInput
+          placeholder={'0.02'}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager')}
         />
