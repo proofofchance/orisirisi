@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { cn } from '@orisirisi/orisirisi-web-ui';
 
-interface BottomNavigationButtonProps extends PropsWithChildren {
+export interface BottomNavigationButtonProps extends PropsWithChildren {
   disabled?: boolean;
   active?: boolean;
   type?: 'submit' | 'button';

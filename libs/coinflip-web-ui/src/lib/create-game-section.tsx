@@ -1,3 +1,4 @@
+import { useFormSteps } from './form-steps';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CreateGameParams, CreateGameParamsField } from '@orisirisi/coinflip';
 import { BackButton } from './create-game-section/back-button';
@@ -10,17 +11,37 @@ export function CreateGameSection() {
 
   const wagerField: CreateGameParamsField = 'wager';
   const firstField = wagerField;
-  const isFirstFormDirty = formState.dirtyFields[wagerField];
+  const isFirstFormDirty = formState.dirtyFields[firstField];
+  const { stepCount, goToNextStep, goToPreviousStep } = useFormSteps({
+    maxStepCount: 2,
+  });
+  const isFirstStep = stepCount === 0;
 
-  const maybeGoToNext = (field: CreateGameParamsField) => {
-    trigger(field);
+  const validateAndMaybeGoToNextStep = async (field: CreateGameParamsField) => {
+    const _triggerValidation = await trigger(field);
 
-    // TODO: Go to next
+    if (formState.isValid) {
+      goToNextStep();
+    }
+  };
+
+  const renderFormStep = () => {
+    switch (stepCount) {
+      case 0:
+        return (
+          <GetWager
+            wagerField={wagerField}
+            validateAndMaybeGoToNextStep={validateAndMaybeGoToNextStep}
+          />
+        );
+      case 1:
+        return <p>TODO: Next step</p>;
+    }
   };
 
   return (
     <div>
-      <BackButton />
+      <BackButton onClick={goToPreviousStep} />
 
       <form
         onSubmit={formMethods.handleSubmit(
@@ -28,19 +49,19 @@ export function CreateGameSection() {
             console.log({ createGameParams })
         )}
       >
-        <FormProvider {...formMethods}>
-          <GetWager wagerField={wagerField} maybeGoToNext={maybeGoToNext} />
-        </FormProvider>
+        <FormProvider {...formMethods}>{renderFormStep()}</FormProvider>
       </form>
 
       <div className="mt-12 w-100 text-center">
-        <BottomNavigationButton
-          onClick={() => trigger(firstField)}
-          active
-          disabled={!isFirstFormDirty}
-        >
-          Continue
-        </BottomNavigationButton>
+        {isFirstStep && (
+          <BottomNavigationButton
+            onClick={() => validateAndMaybeGoToNextStep(firstField)}
+            active
+            disabled={!isFirstFormDirty}
+          >
+            Continue
+          </BottomNavigationButton>
+        )}
       </div>
     </div>
   );

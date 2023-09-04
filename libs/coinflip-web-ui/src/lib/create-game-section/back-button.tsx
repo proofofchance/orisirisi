@@ -1,6 +1,13 @@
-export function BackButton() {
+import { ButtonHTMLAttributes } from 'react';
+
+export function BackButton({
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className="border-white border-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+    <button
+      {...props}
+      className="border-white border-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
+    >
       <BackIcon />
     </button>
   );

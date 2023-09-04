@@ -12,12 +12,10 @@ const isUpToMinimumWager = (wager: string) =>
 type validInput = true;
 interface Props {
   wagerField: CreateGameParamsField;
-  maybeGoToNext: (wagerField: CreateGameParamsField) => void;
+  validateAndMaybeGoToNextStep: (field: CreateGameParamsField) => void;
 }
 
-export function GetWager({ maybeGoToNext, wagerField }: Props) {
-  const currentChain = useCurrentChain();
-
+export function GetWager({ wagerField, validateAndMaybeGoToNextStep }: Props) {
   const { register, formState } = useFormContext();
 
   const errorMessage = formState.errors[wagerField]?.message as string;
@@ -33,6 +31,8 @@ export function GetWager({ maybeGoToNext, wagerField }: Props) {
     return true as validInput;
   };
 
+  const currentChain = useCurrentChain();
+
   return (
     <section className="text-center text-white">
       <h2 className="mt-16 font-bold text-[28px] tracking-wide">
@@ -45,7 +45,7 @@ export function GetWager({ maybeGoToNext, wagerField }: Props) {
             placeholder={`${MINIMUM_WAGER}`}
             className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
             {...register(wagerField, { validate })}
-            onEnter={() => maybeGoToNext(wagerField)}
+            onEnter={() => validateAndMaybeGoToNextStep(wagerField)}
           />
           <ChainCurrencyButton chain={currentChain!} />
         </div>
