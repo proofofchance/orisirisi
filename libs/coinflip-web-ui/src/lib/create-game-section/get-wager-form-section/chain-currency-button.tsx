@@ -7,8 +7,12 @@ import {
   OptimismLogo,
   PolygonLogo,
 } from './icons';
+import { WithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 
-export function ChainCurrencyButton({ chain }: { chain: Chain }) {
+export function ChainCurrencyButton({
+  chain,
+  className,
+}: { chain: Chain } & WithClassName) {
   const renderChainLogo = () => {
     switch (chain.id) {
       case ChainID.Arbitrum:
@@ -28,7 +32,12 @@ export function ChainCurrencyButton({ chain }: { chain: Chain }) {
   };
 
   return (
-    <button className="bg-transparent rounded-full px-4 flex gap-2 items-center justify-center">
+    <button
+      className={cn(
+        'bg-transparent rounded-full flex gap-2 items-center justify-center',
+        className
+      )}
+    >
       <div className="w-4">{renderChainLogo()}</div>
       <div className="tracking-wide font-semibold text-xl">
         {chain.getCurrency()}

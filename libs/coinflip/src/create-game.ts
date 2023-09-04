@@ -7,4 +7,8 @@ export interface CreateGameParams {
   coinSide: CoinSide;
 }
 
-export type CreateGameParamsField = keyof CreateGameParams;
+export type CreateGameParamsKey = keyof CreateGameParams;
+
+export const wagerParamKey: CreateGameParamsKey = 'wager';
+export const numberOfPlayersFieldParamKey: CreateGameParamsKey =
+  'numberOfPlayers';

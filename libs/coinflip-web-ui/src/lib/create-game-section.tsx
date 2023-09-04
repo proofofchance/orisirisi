@@ -1,26 +1,38 @@
 import { useFormSteps } from './form-steps';
 import { FormProvider, useForm } from 'react-hook-form';
-import { CreateGameParams, CreateGameParamsField } from '@orisirisi/coinflip';
+import {
+  CreateGameParams,
+  wagerParamKey,
+  numberOfPlayersFieldParamKey,
+} from '@orisirisi/coinflip';
 import { BackButton } from './create-game-section/back-button';
-import { BottomNavigationButton } from './create-game-section/bottom-navigation-buttons';
-import { GetWager } from './create-game-section/get-wager';
+import {
+  ContinueButton,
+  NextButton,
+  PreviousButton,
+} from './create-game-section/bottom-navigation-buttons';
+import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
+import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
+
+const fieldsInStepsOrder = [wagerParamKey, numberOfPlayersFieldParamKey];
+const getCurrentField = (stepCount: number) => fieldsInStepsOrder[stepCount];
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameParams>();
   const { formState, trigger } = formMethods;
 
-  const wagerField: CreateGameParamsField = 'wager';
-  const firstField = wagerField;
-  const isFirstFormDirty = formState.dirtyFields[firstField];
   const { stepCount, goToNextStep, goToPreviousStep } = useFormSteps({
     maxStepCount: 2,
   });
+  const currentField = getCurrentField(stepCount);
+
   const isFirstStep = stepCount === 0;
+  const isCurrentFormStepDirty = !!formState.dirtyFields[currentField];
+  const validateAndGoToNextStep = async () => {
+    const _triggerValidation = await trigger(currentField);
+    const isFieldValueValid = !formState.errors[currentField];
 
-  const validateAndGoToNextStep = async (field: CreateGameParamsField) => {
-    const _triggerValidation = await trigger(field);
-
-    if (formState.isValid) {
+    if (isFieldValueValid) {
       goToNextStep();
     }
   };
@@ -29,13 +41,17 @@ export function CreateGameSection() {
     switch (stepCount) {
       case 0:
         return (
-          <GetWager
-            wagerField={wagerField}
+          <GetWagerFormSection
+            wagerField={wagerParamKey}
             validateAndGoToNextStep={validateAndGoToNextStep}
           />
         );
       case 1:
-        return <p>TODO: Next step</p>;
+        return (
+          <GetNumberOfPlayersFormSection
+            numberOfPlayersField={'numberOfPlayers'}
+          />
+        );
     }
   };
 
@@ -53,15 +69,23 @@ export function CreateGameSection() {
       </form>
 
       <div className="mt-12 w-100 text-center">
-        {isFirstStep && (
-          <BottomNavigationButton
-            onClick={() => validateAndGoToNextStep(firstField)}
-            active
-            disabled={!isFirstFormDirty}
-          >
-            Continue
-          </BottomNavigationButton>
-        )}
+        <ContinueButton
+          onClick={validateAndGoToNextStep}
+          isFirstStep={isFirstStep}
+          isCurrentFormStepDirty={isCurrentFormStepDirty}
+        />
+
+        <PreviousButton
+          onClick={validateAndGoToNextStep}
+          isFirstStep={isFirstStep}
+          isCurrentFormStepDirty={isCurrentFormStepDirty}
+        />
+
+        <NextButton
+          onClick={validateAndGoToNextStep}
+          isFirstStep={isFirstStep}
+          isCurrentFormStepDirty={isCurrentFormStepDirty}
+        />
       </div>
     </div>
   );

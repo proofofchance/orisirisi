@@ -3,7 +3,7 @@ import { cn } from '@orisirisi/orisirisi-web-ui';
 import { HTMLAttributes } from 'react';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  message: string;
+  message: string | null;
 }
 
 export function ErrorMessageParagraph({
@@ -11,6 +11,8 @@ export function ErrorMessageParagraph({
   className,
   ...remainingProps
 }: Props) {
+  if (!message) return null;
+
   return (
     <div
       className={cn('flex gap-2 items-center', className)}
