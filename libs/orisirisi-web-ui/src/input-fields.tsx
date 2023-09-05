@@ -25,13 +25,18 @@ export const isValidDecimalInput = (input: string) =>
   isValidDecimal(input, DECIMAL_SIZE) &&
   !(isEmptyString(input) && isIncompleteInput(input));
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  onEnter: () => void;
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  ref?: ForwardedRef<HTMLInputElement | null>;
+  onEnter?: () => void;
 }
 
-function DecimalInputWithRefs(
-  { onEnter, onChange, ...remainingProps }: Props,
-  inputRef: ForwardedRef<HTMLInputElement | null>
+export const DecimalInput = forwardRef<HTMLInputElement | null, InputProps>(
+  DecimalInputWithRef
+);
+
+function DecimalInputWithRef(
+  { onChange, ...remainingProps }: InputProps,
+  ref: ForwardedRef<HTMLInputElement | null>
 ) {
   const [cachedAttemptedInput, cacheAttemptedInput] = useState('');
 
@@ -46,11 +51,9 @@ function DecimalInputWithRefs(
   };
 
   return (
-    <input
-      type="text"
-      onKeyUp={(e) => e.key === 'Enter' && onEnter()}
+    <TextInput
       onChange={handleOnChange}
-      ref={inputRef}
+      ref={ref}
       autoComplete="off"
       autoCorrect="off"
       {...remainingProps}
@@ -58,6 +61,20 @@ function DecimalInputWithRefs(
   );
 }
 
-export const DecimalInput = forwardRef<HTMLInputElement | null, Props>(
-  DecimalInputWithRefs
+export const TextInput = forwardRef<HTMLInputElement | null, InputProps>(
+  TextInputWithRef
 );
+
+function TextInputWithRef(
+  { onEnter, ...remainingProps }: InputProps,
+  ref: ForwardedRef<HTMLInputElement | null>
+) {
+  return (
+    <input
+      type="text"
+      onKeyUp={onEnter && ((e) => e.key === 'Enter' && onEnter())}
+      ref={ref}
+      {...remainingProps}
+    />
+  );
+}

@@ -1,8 +1,6 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonProps } from '@orisirisi/orisirisi-web-ui';
 
-export function BackButton({
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BackButton({ ...props }: ButtonProps) {
   return (
     <button
       {...props}
