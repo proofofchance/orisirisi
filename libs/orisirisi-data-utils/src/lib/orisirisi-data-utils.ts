@@ -10,6 +10,9 @@ export const decimalRegex = (decimalSize: number) =>
 export const isValidDecimal = (value: string, decimalSize: number) =>
   decimalRegex(decimalSize).test(value);
 
+export const isValidInteger = (value: string) =>
+  Number.isInteger(parseInt(value, 10));
+
 // Strings
 export const isEmptyString = (value: string) => value === '';
 
