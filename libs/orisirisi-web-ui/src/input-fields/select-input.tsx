@@ -1,14 +1,28 @@
-import { SelectHTMLAttributes } from 'react';
+import { ForwardedRef, SelectHTMLAttributes, forwardRef } from 'react';
 
-interface SelectInput extends SelectHTMLAttributes<HTMLSelectElement> {
-  options: string[];
+interface Option {
+  display: string;
+  value: string;
+}
+interface SelectInputProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  options: Option[];
 }
 
-export function SelectInput({ options, ...remainingProps }: SelectInput) {
+export const SelectInput = forwardRef<
+  HTMLSelectElement | null,
+  SelectInputProps
+>(SelectInputWithRef);
+
+export function SelectInputWithRef(
+  { options, ...remainingProps }: SelectInputProps,
+  ref: ForwardedRef<HTMLSelectElement | null>
+) {
   return (
-    <select {...remainingProps}>
-      {options.map((option, i) => (
-        <option key={i}>{option}</option>
+    <select {...remainingProps} ref={ref}>
+      {options.map(({ display, value }, i) => (
+        <option key={i} value={value}>
+          {display}
+        </option>
       ))}
     </select>
   );
