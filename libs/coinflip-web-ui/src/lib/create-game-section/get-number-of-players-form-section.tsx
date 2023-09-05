@@ -2,16 +2,11 @@ import { useFormContext } from 'react-hook-form';
 import { CreateGameParams } from '@orisirisi/coinflip';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
-import {
-  DownArrowButton,
-  UpArrowButton,
-} from './get-number-of-players-form-section/buttons';
+import { DownArrowButton, UpArrowButton } from './common-buttons';
 
 interface Props {
   field: 'numberOfPlayers';
 }
-
-const MAX_NUMBER_OF_PLAYERS = 20;
 
 class NumberOfPlayers {
   private static min = 2;
