@@ -9,6 +9,6 @@ export interface CreateGameParams {
 
 export type CreateGameParamsKey = keyof CreateGameParams;
 
-export const wagerParamKey: CreateGameParamsKey = 'wager';
-export const numberOfPlayersFieldParamKey: CreateGameParamsKey =
+export const wagerParamKey: 'wager' = 'wager';
+export const numberOfPlayersFieldParamKey: 'numberOfPlayers' =
   'numberOfPlayers';

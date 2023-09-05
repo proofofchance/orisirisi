@@ -18,7 +18,7 @@ export const DownArrowButton = ({ ...props }: ButtonProps) => {
 };
 
 export const ArrowButtonShell = ({ children, ...props }: ButtonProps) => (
-  <button {...props}>
+  <button type="button" {...props}>
     <div className="w-[12.5px] h-[9px]">{children}</div>
   </button>
 );

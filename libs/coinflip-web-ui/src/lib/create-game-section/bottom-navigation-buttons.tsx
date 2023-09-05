@@ -32,7 +32,6 @@ export function BottomNavigationButtons({
   const isLastHoveredPreviousButton = lastHovered === 'previous';
   const isLastHoveredNextButton = lastHovered === 'next';
 
-  console.log({ lastHovered });
   return (
     <>
       <ContinueButton
