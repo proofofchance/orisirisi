@@ -19,7 +19,8 @@ export function GetWagerFormSection({ field, goToNextStep }: Props) {
   const { register, formState, trigger: triggerValidation } = useFormContext();
   const currentChain = useCurrentChain();
   const errorMessage = formState.errors[field]?.message as string;
-  const isCurrentFormStepValid = async () =>
+
+  const isValidFieldValue = async () =>
     (await triggerValidation(field)) && !formState.errors[field];
 
   const validate = (wager: string) => {
@@ -41,9 +42,7 @@ export function GetWagerFormSection({ field, goToNextStep }: Props) {
           placeholder={`${MINIMUM_WAGER}`}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register(field, { validate })}
-          onEnter={async () =>
-            (await isCurrentFormStepValid()) && goToNextStep()
-          }
+          onEnter={async () => (await isValidFieldValue()) && goToNextStep()}
         />
         <ChainCurrencyButton className="px-4" chain={currentChain!} />
       </div>

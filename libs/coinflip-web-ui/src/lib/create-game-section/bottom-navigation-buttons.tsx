@@ -1,20 +1,69 @@
-import { PropsWithChildren } from 'react';
-import { cn } from '@orisirisi/orisirisi-web-ui';
+import { useState } from 'react';
+import { ButtonProps, cn } from '@orisirisi/orisirisi-web-ui';
 
-interface BottomNavigationBaseButtonProps extends PropsWithChildren {
+interface BottomNavigationBaseButtonProps extends ButtonProps {
   disabled?: boolean;
   active?: boolean;
   type?: 'submit' | 'button';
   onClick: () => void;
 }
 
-export interface BottomNavigationButtonProps
-  extends BottomNavigationBaseButtonProps {
+interface BottomNavigationButtonProps extends BottomNavigationBaseButtonProps {
   isFirstStep: boolean;
   isCurrentFormStepDirty: boolean;
 }
 
-export function ContinueButton({
+export interface BottomNavigationButtonsProps {
+  isFirstStep: boolean;
+  isCurrentFormStepDirty: boolean;
+  goToNextStep: () => void;
+  goToPreviousStep: () => void;
+  isCurrentFormStepValid: () => Promise<boolean>;
+}
+
+export function BottomNavigationButtons({
+  isCurrentFormStepValid,
+  goToNextStep,
+  goToPreviousStep,
+  ...remainingProps
+}: BottomNavigationButtonsProps) {
+  const [lastHovered, setLastHovered] = useState<'previous' | 'next'>('next');
+
+  const isLastHoveredPreviousButton = lastHovered === 'previous';
+  const isLastHoveredNextButton = lastHovered === 'next';
+
+  console.log({ lastHovered });
+  return (
+    <>
+      <ContinueButton
+        onClick={async () => (await isCurrentFormStepValid()) && goToNextStep()}
+        {...remainingProps}
+      />
+
+      <PreviousButton
+        active={isLastHoveredPreviousButton}
+        onMouseEnter={() =>
+          isLastHoveredNextButton && setLastHovered('previous')
+        }
+        onClick={async () =>
+          (await isCurrentFormStepValid()) && goToPreviousStep()
+        }
+        {...remainingProps}
+      />
+
+      <NextButton
+        active={isLastHoveredNextButton}
+        onMouseEnter={() =>
+          isLastHoveredPreviousButton && setLastHovered('next')
+        }
+        onClick={async () => (await isCurrentFormStepValid()) && goToNextStep()}
+        {...remainingProps}
+      />
+    </>
+  );
+}
+
+function ContinueButton({
   isFirstStep,
   isCurrentFormStepDirty,
   ...remainingProps
@@ -32,7 +81,7 @@ export function ContinueButton({
   );
 }
 
-export function PreviousButton({
+function PreviousButton({
   isFirstStep,
   isCurrentFormStepDirty,
   ...remainingProps
@@ -45,7 +94,7 @@ export function PreviousButton({
   );
 }
 
-export function NextButton({
+function NextButton({
   isFirstStep,
   isCurrentFormStepDirty,
   ...remainingProps
@@ -53,9 +102,7 @@ export function NextButton({
   if (isFirstStep) return null;
 
   return (
-    <BottomNavigationButton active {...remainingProps}>
-      Next
-    </BottomNavigationButton>
+    <BottomNavigationButton {...remainingProps}>Next</BottomNavigationButton>
   );
 }
 
@@ -63,7 +110,7 @@ const activeBottomNavigationButtonClassName =
   'bg-white text-black hover:bg-slate-50 focus:outline-none focus:ring focus:ring-blue-200';
 
 const inactiveBottomNavigationButtonClassName =
-  'bg-transparent text-white hover:border-white hover:border-2 focus:outline-none focus:ring';
+  'bg-transparent text-white focus:outline-none focus:ring';
 
 function BottomNavigationButton({
   active = false,
@@ -71,6 +118,7 @@ function BottomNavigationButton({
   type = 'button',
   onClick,
   children,
+  ...remainingProps
 }: BottomNavigationBaseButtonProps) {
   return (
     <button
@@ -78,11 +126,13 @@ function BottomNavigationButton({
       type={type}
       className={cn(
         'rounded-full px-12 py-4',
+        'transition duration-500 ease-in-out',
         active
           ? activeBottomNavigationButtonClassName
           : inactiveBottomNavigationButtonClassName,
         disabled && 'opacity-25'
       )}
+      {...remainingProps}
     >
       {children}
     </button>

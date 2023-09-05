@@ -6,11 +6,7 @@ import {
   numberOfPlayersFieldParamKey,
 } from '@orisirisi/coinflip';
 import { BackButton } from './create-game-section/back-button';
-import {
-  ContinueButton,
-  NextButton,
-  PreviousButton,
-} from './create-game-section/bottom-navigation-buttons';
+import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
 import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
 import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
 
@@ -51,26 +47,12 @@ export function CreateGameSection() {
       </form>
 
       <div className="mt-12 w-100 text-center">
-        <ContinueButton
-          onClick={async () =>
-            (await isCurrentFormStepValid()) && goToNextStep()
-          }
+        <BottomNavigationButtons
           isFirstStep={isFirstStep}
           isCurrentFormStepDirty={isCurrentFormStepDirty}
-        />
-
-        <PreviousButton
-          onClick={async () =>
-            (await isCurrentFormStepValid) && goToPreviousStep()
-          }
-          isFirstStep={isFirstStep}
-          isCurrentFormStepDirty={isCurrentFormStepDirty}
-        />
-
-        <NextButton
-          onClick={async () => (await isCurrentFormStepValid) && goToNextStep()}
-          isFirstStep={isFirstStep}
-          isCurrentFormStepDirty={isCurrentFormStepDirty}
+          isCurrentFormStepValid={isCurrentFormStepValid}
+          goToNextStep={goToNextStep}
+          goToPreviousStep={goToPreviousStep}
         />
       </div>
     </div>
