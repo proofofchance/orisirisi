@@ -34,12 +34,9 @@ function IntegerInputWithRef(
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const attemptedInput = event.target.value;
-    console.log({ attemptedInput });
-    console.log(Number.isInteger(attemptedInput));
     const input = isValidInputAttempt(attemptedInput, max)
       ? attemptedInput
       : cachedAttemptedInput;
-    console.log({ input });
     cacheAttemptedInput(input);
     event.target.value = input;
     onChange?.(event);

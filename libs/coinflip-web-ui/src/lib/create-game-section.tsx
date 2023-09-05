@@ -14,6 +14,7 @@ import {
   GetExpiryForm,
   GetExpiryFormSection,
 } from './create-game-section/get-expiry-form-section';
+import { GetCoinSideFormSection } from './create-game-section/get-coin-side-form-section';
 
 interface CreateGameForm
   extends GetWagerForm,
@@ -25,18 +26,26 @@ export function CreateGameSection() {
   const { formState, trigger: triggerValidation } = formMethods;
 
   const { stepCount, formSteps, goToNextStep, goToPreviousStep } =
-    useFormSteps();
+    useFormSteps<CreateGameForm>();
 
   formSteps
-    .addStep(<GetWagerFormSection goToNextStep={goToNextStep} />)
-    .addStep(<GetNumberOfPlayersFormSection />)
-    .addStep(<GetExpiryFormSection />);
+    .addStep(['wager'], <GetWagerFormSection goToNextStep={goToNextStep} />)
+    .addStep(['numberOfPlayers'], <GetNumberOfPlayersFormSection />)
+    .addStep(['expiry', 'expiryUnit'], <GetExpiryFormSection />)
+    .addStep([], <GetCoinSideFormSection />);
 
-  const currentField = formSteps.getField(stepCount);
+  const currentFields = formSteps.getFields(stepCount);
   const isFirstStep = stepCount === 0;
-  const isCurrentFormStepDirty = !!formState.dirtyFields[currentField];
-  const isCurrentFormStepValid = async () =>
-    (await triggerValidation(currentField)) && !formState.errors[currentField];
+  const isCurrentFormStepDirty = currentFields.every(
+    (field) => !!formState.dirtyFields[field]
+  );
+  const isCurrentFormStepValid = async () => {
+    await Promise.all(
+      currentFields.map(async (field) => await triggerValidation(field))
+    );
+
+    return currentFields.every((field) => !formState.errors[field]);
+  };
 
   return (
     <div>
