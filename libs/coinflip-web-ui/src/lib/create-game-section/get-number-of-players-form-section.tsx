@@ -7,12 +7,12 @@ import {
 } from './get-number-of-players-form-section/buttons';
 
 interface Props {
-  numberOfPlayersField: string;
+  field: string;
 }
 
 const MAX_NUMBER_OF_PLAYERS = 20;
 
-export function GetNumberOfPlayersFormSection({ numberOfPlayersField }: Props) {
+export function GetNumberOfPlayersFormSection({ field }: Props) {
   const { register, formState } = useFormContext();
 
   return (
@@ -20,7 +20,7 @@ export function GetNumberOfPlayersFormSection({ numberOfPlayersField }: Props) {
       <div className="mt-7 w-[600px] flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <TextInput
           defaultValue={'2 Players'}
-          {...register(numberOfPlayersField)}
+          {...register(field)}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
         />
         <div className="px-4 flex flex-col gap-3 justify-center">

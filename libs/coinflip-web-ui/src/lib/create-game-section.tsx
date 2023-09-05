@@ -1,5 +1,5 @@
-import { useFormSteps } from './form-steps';
 import { FormProvider, useForm } from 'react-hook-form';
+import { FormSteps, useFormSteps } from './form-steps';
 import {
   CreateGameParams,
   wagerParamKey,
@@ -14,46 +14,26 @@ import {
 import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
 import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
 
-const fieldsInStepsOrder = [wagerParamKey, numberOfPlayersFieldParamKey];
-const getCurrentField = (stepCount: number) => fieldsInStepsOrder[stepCount];
-
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameParams>();
-  const { formState, trigger } = formMethods;
+  const { formState, trigger: triggerValidation } = formMethods;
 
   const { stepCount, goToNextStep, goToPreviousStep } = useFormSteps({
     maxStepCount: 2,
   });
-  const currentField = getCurrentField(stepCount);
 
+  const formSteps = new FormSteps<CreateGameParams>()
+    .addStep(
+      <GetWagerFormSection field={wagerParamKey} goToNextStep={goToNextStep} />
+    )
+    .addStep(
+      <GetNumberOfPlayersFormSection field={numberOfPlayersFieldParamKey} />
+    );
+  const currentField = formSteps.getField(stepCount);
   const isFirstStep = stepCount === 0;
   const isCurrentFormStepDirty = !!formState.dirtyFields[currentField];
-  const validateAndGoToNextStep = async () => {
-    const _triggerValidation = await trigger(currentField);
-    const isFieldValueValid = !formState.errors[currentField];
-
-    if (isFieldValueValid) {
-      goToNextStep();
-    }
-  };
-
-  const renderFormStep = () => {
-    switch (stepCount) {
-      case 0:
-        return (
-          <GetWagerFormSection
-            wagerField={wagerParamKey}
-            validateAndGoToNextStep={validateAndGoToNextStep}
-          />
-        );
-      case 1:
-        return (
-          <GetNumberOfPlayersFormSection
-            numberOfPlayersField={'numberOfPlayers'}
-          />
-        );
-    }
-  };
+  const isCurrentFormStepValid = async () =>
+    (await triggerValidation(currentField)) && !formState.errors[currentField];
 
   return (
     <div>
@@ -65,24 +45,30 @@ export function CreateGameSection() {
             console.log({ createGameParams })
         )}
       >
-        <FormProvider {...formMethods}>{renderFormStep()}</FormProvider>
+        <FormProvider {...formMethods}>
+          {formSteps.renderStep(stepCount)}
+        </FormProvider>
       </form>
 
       <div className="mt-12 w-100 text-center">
         <ContinueButton
-          onClick={validateAndGoToNextStep}
+          onClick={async () =>
+            (await isCurrentFormStepValid()) && goToNextStep()
+          }
           isFirstStep={isFirstStep}
           isCurrentFormStepDirty={isCurrentFormStepDirty}
         />
 
         <PreviousButton
-          onClick={validateAndGoToNextStep}
+          onClick={async () =>
+            (await isCurrentFormStepValid) && goToPreviousStep()
+          }
           isFirstStep={isFirstStep}
           isCurrentFormStepDirty={isCurrentFormStepDirty}
         />
 
         <NextButton
-          onClick={validateAndGoToNextStep}
+          onClick={async () => (await isCurrentFormStepValid) && goToNextStep()}
           isFirstStep={isFirstStep}
           isCurrentFormStepDirty={isCurrentFormStepDirty}
         />

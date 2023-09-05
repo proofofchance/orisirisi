@@ -11,17 +11,16 @@ const isUpToMinimumWager = (wager: string) =>
   parseFloat(wager) >= MINIMUM_WAGER;
 
 interface Props {
-  wagerField: CreateGameParamsKey;
-  validateAndGoToNextStep: (field: CreateGameParamsKey) => void;
+  field: CreateGameParamsKey;
+  goToNextStep: () => void;
 }
 
-export function GetWagerFormSection({
-  wagerField,
-  validateAndGoToNextStep,
-}: Props) {
-  const { register, formState } = useFormContext();
+export function GetWagerFormSection({ field, goToNextStep }: Props) {
+  const { register, formState, trigger: triggerValidation } = useFormContext();
   const currentChain = useCurrentChain();
-  const errorMessage = formState.errors[wagerField]?.message as string;
+  const errorMessage = formState.errors[field]?.message as string;
+  const isCurrentFormStepValid = async () =>
+    (await triggerValidation(field)) && !formState.errors[field];
 
   const validate = (wager: string) => {
     if (!isValidDecimalInput(wager)) {
@@ -41,8 +40,10 @@ export function GetWagerFormSection({
         <DecimalInput
           placeholder={`${MINIMUM_WAGER}`}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
-          {...register(wagerField, { validate })}
-          onEnter={() => validateAndGoToNextStep(wagerField)}
+          {...register(field, { validate })}
+          onEnter={async () =>
+            (await isCurrentFormStepValid()) && goToNextStep()
+          }
         />
         <ChainCurrencyButton className="px-4" chain={currentChain!} />
       </div>
