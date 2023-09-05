@@ -43,6 +43,7 @@ export function GetWagerFormSection({ field, goToNextStep }: Props) {
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register(field, { validate })}
           onEnter={async () => (await isValidFieldValue()) && goToNextStep()}
+          preventSubmit
         />
         <ChainCurrencyButton className="px-4" chain={currentChain!} />
       </div>

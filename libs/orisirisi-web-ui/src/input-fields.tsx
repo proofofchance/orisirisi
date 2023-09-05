@@ -7,6 +7,7 @@ import {
   ChangeEvent,
   ForwardedRef,
   InputHTMLAttributes,
+  KeyboardEvent,
   forwardRef,
   useState,
 } from 'react';
@@ -27,7 +28,8 @@ export const isValidDecimalInput = (input: string) =>
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   ref?: ForwardedRef<HTMLInputElement | null>;
-  onEnter?: () => void;
+  preventSubmit?: boolean;
+  onEnter?: (e?: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const DecimalInput = forwardRef<HTMLInputElement | null, InputProps>(
@@ -66,13 +68,22 @@ export const TextInput = forwardRef<HTMLInputElement | null, InputProps>(
 );
 
 function TextInputWithRef(
-  { onEnter, ...remainingProps }: InputProps,
+  { onEnter, preventSubmit, ...remainingProps }: InputProps,
   ref: ForwardedRef<HTMLInputElement | null>
 ) {
   return (
     <input
       type="text"
-      onKeyUp={onEnter && ((e) => e.key === 'Enter' && onEnter())}
+      onKeyDown={
+        onEnter &&
+        ((e) => {
+          if (e.key === 'Enter') {
+            onEnter(e);
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        })
+      }
       ref={ref}
       {...remainingProps}
     />
