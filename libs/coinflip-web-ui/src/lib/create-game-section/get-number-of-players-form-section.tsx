@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { CreateGameParams, CreateGameParamsKey } from '@orisirisi/coinflip';
+import { CreateGameParams } from '@orisirisi/coinflip';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 import {
@@ -28,7 +28,8 @@ class NumberOfPlayers {
     const newValue = Math.max(this.value - 1, NumberOfPlayers.min);
     return new NumberOfPlayers(newValue);
   }
-  static fromString(str: string) {
+  static fromString(str?: string) {
+    if (!str) return NumberOfPlayers.getMinAllowed();
     const [value] = str.split(this.delimiter);
     return new NumberOfPlayers(+value);
   }
