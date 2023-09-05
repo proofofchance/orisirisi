@@ -1,44 +1,59 @@
 import { FormProvider, useForm } from 'react-hook-form';
-import { FormSteps, useFormSteps } from './form-steps';
-import {
-  CreateGameParams,
-  wagerParamKey,
-  numberOfPlayersFieldParamKey,
-} from '@orisirisi/coinflip';
+import { useFormSteps } from './form-steps';
 import { BackButton } from './create-game-section/back-button';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
-import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
-import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
+import {
+  GetWagerForm,
+  GetWagerFormSection,
+} from './create-game-section/get-wager-form-section';
+import {
+  GetNumberOfPlayersForm,
+  GetNumberOfPlayersFormSection,
+} from './create-game-section/get-number-of-players-form-section';
+import {
+  GetExpiryForm,
+  GetExpiryFormSection,
+} from './create-game-section/get-expiry-form-section';
+import { GetCoinSideFormSection } from './create-game-section/get-coin-side-form-section';
+
+interface CreateGameForm
+  extends GetWagerForm,
+    GetNumberOfPlayersForm,
+    GetExpiryForm {}
 
 export function CreateGameSection() {
-  const formMethods = useForm<CreateGameParams>();
+  const formMethods = useForm<CreateGameForm>();
   const { formState, trigger: triggerValidation } = formMethods;
 
-  const { stepCount, goToNextStep, goToPreviousStep } = useFormSteps({
-    maxStepCount: 2,
-  });
+  const { stepCount, formSteps, goToNextStep, goToPreviousStep } =
+    useFormSteps<CreateGameForm>();
 
-  const formSteps = new FormSteps<CreateGameParams>()
-    .addStep(
-      <GetWagerFormSection field={wagerParamKey} goToNextStep={goToNextStep} />
-    )
-    .addStep(
-      <GetNumberOfPlayersFormSection field={numberOfPlayersFieldParamKey} />
-    );
-  const currentField = formSteps.getField(stepCount);
+  formSteps
+    .addStep(['wager'], <GetWagerFormSection goToNextStep={goToNextStep} />)
+    .addStep(['numberOfPlayers'], <GetNumberOfPlayersFormSection />)
+    .addStep(['expiry', 'expiryUnit'], <GetExpiryFormSection />)
+    .addStep([], <GetCoinSideFormSection />);
+
+  const currentFields = formSteps.getFields(stepCount);
   const isFirstStep = stepCount === 0;
-  const isCurrentFormStepDirty = !!formState.dirtyFields[currentField];
-  const isCurrentFormStepValid = async () =>
-    (await triggerValidation(currentField)) && !formState.errors[currentField];
+  const isCurrentFormStepDirty = currentFields.every(
+    (field) => !!formState.dirtyFields[field]
+  );
+  const isCurrentFormStepValid = async () => {
+    await Promise.all(
+      currentFields.map(async (field) => await triggerValidation(field))
+    );
+
+    return currentFields.every((field) => !formState.errors[field]);
+  };
 
   return (
     <div>
       <BackButton onClick={goToPreviousStep} />
 
       <form
-        onSubmit={formMethods.handleSubmit(
-          (createGameParams: CreateGameParams) =>
-            console.log({ createGameParams })
+        onSubmit={formMethods.handleSubmit((createGameParams) =>
+          console.log({ createGameParams })
         )}
       >
         <FormProvider {...formMethods}>

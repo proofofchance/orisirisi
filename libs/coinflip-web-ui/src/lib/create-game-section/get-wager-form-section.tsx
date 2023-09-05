@@ -10,18 +10,25 @@ const MINIMUM_WAGER = 0.02;
 const isUpToMinimumWager = (wager: string) =>
   parseFloat(wager) >= MINIMUM_WAGER;
 
+export interface GetWagerForm {
+  wager: string;
+}
+
 interface Props {
-  field: CreateGameParamsKey;
   goToNextStep: () => void;
 }
 
-export function GetWagerFormSection({ field, goToNextStep }: Props) {
-  const { register, formState, trigger: triggerValidation } = useFormContext();
+export function GetWagerFormSection({ goToNextStep }: Props) {
+  const {
+    register,
+    formState,
+    trigger: triggerValidation,
+  } = useFormContext<GetWagerForm>();
   const currentChain = useCurrentChain();
-  const errorMessage = formState.errors[field]?.message as string;
+  const errorMessage = formState.errors['wager']?.message as string;
 
   const isValidFieldValue = async () =>
-    (await triggerValidation(field)) && !formState.errors[field];
+    (await triggerValidation('wager')) && !formState.errors['wager'];
 
   const validate = (wager: string) => {
     if (!isValidDecimalInput(wager)) {
@@ -41,7 +48,7 @@ export function GetWagerFormSection({ field, goToNextStep }: Props) {
         <DecimalInput
           placeholder={`${MINIMUM_WAGER}`}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
-          {...register(field, { validate })}
+          {...register('wager', { validate })}
           onEnter={async () => (await isValidFieldValue()) && goToNextStep()}
           preventSubmit
         />

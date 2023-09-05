@@ -1,17 +1,7 @@
 import { useFormContext } from 'react-hook-form';
-import { CreateGameParams } from '@orisirisi/coinflip';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
-import {
-  DownArrowButton,
-  UpArrowButton,
-} from './get-number-of-players-form-section/buttons';
-
-interface Props {
-  field: 'numberOfPlayers';
-}
-
-const MAX_NUMBER_OF_PLAYERS = 20;
+import { DownArrowButton, UpArrowButton } from './common-buttons';
 
 class NumberOfPlayers {
   private static min = 2;
@@ -37,24 +27,29 @@ class NumberOfPlayers {
     `${this.value}${NumberOfPlayers.delimiter}${NumberOfPlayers.suffix}`;
 }
 
-export function GetNumberOfPlayersFormSection({ field }: Props) {
-  const { register, setValue, watch } = useFormContext<CreateGameParams>();
+export interface GetNumberOfPlayersForm {
+  numberOfPlayers: string;
+}
 
-  const numberOfPlayers = NumberOfPlayers.fromString(watch(field));
+export function GetNumberOfPlayersFormSection() {
+  const { register, setValue, watch } =
+    useFormContext<GetNumberOfPlayersForm>();
+
+  const numberOfPlayers = NumberOfPlayers.fromString(watch('numberOfPlayers'));
 
   const increaseNumberOfPlayers = () =>
-    setValue(field, numberOfPlayers.increase().toString());
+    setValue('numberOfPlayers', numberOfPlayers.increase().toString());
 
   const decreaseNumberOfPlayers = () =>
-    setValue(field, numberOfPlayers.decrease().toString());
+    setValue('numberOfPlayers', numberOfPlayers.decrease().toString());
 
   return (
     <FormSectionShell title="Set Number of Players">
       <div className="mt-7 w-[600px] flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <TextInput
-          defaultValue={NumberOfPlayers.getMinAllowed().toString()}
-          {...register(field)}
           className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          {...register('numberOfPlayers')}
+          defaultValue={NumberOfPlayers.getMinAllowed().toString()}
         />
         <div className="px-4 flex flex-col gap-3 justify-center">
           <UpArrowButton onClick={increaseNumberOfPlayers} />

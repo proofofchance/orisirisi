@@ -1,45 +1,52 @@
 import { ReactElement, useState } from 'react';
 
-class FormStep {
-  constructor(public stepCount: number, public reactElement: ReactElement) {}
+class FormStep<Field> {
+  constructor(
+    public stepCount: number,
+    public fields: Field[],
+    public reactElement: ReactElement
+  ) {}
 }
 
-export class FormSteps<T> {
+class FormSteps<Form> {
   private lastStepCount = 0;
-  private value: Map<number, FormStep> = new Map();
+  private value: Map<number, FormStep<keyof Form>> = new Map();
 
-  addStep(reactElement: ReactElement) {
+  addStep(fields: (keyof Form)[], reactElement: ReactElement) {
     this.value.set(
       this.lastStepCount,
-      new FormStep(this.lastStepCount, reactElement)
+      new FormStep(this.lastStepCount, fields, reactElement)
     );
     this.lastStepCount++;
     return this;
   }
 
+  size = () => this.value.size;
   getStep = (stepCount: number) => this.value.get(stepCount);
-  getField = (stepCount: number) =>
-    this.getStep(stepCount)!.reactElement.props['field'] as keyof T;
+  getFields = (stepCount: number) => this.getStep(stepCount)!.fields;
   renderStep = (stepCount: number) => this.getStep(stepCount)!.reactElement;
 }
 
 interface Props {
   initialStepCount?: number;
-  maxStepCount: number;
 }
-export function useFormSteps({ initialStepCount = 0, maxStepCount }: Props) {
+
+export function useFormSteps<T>(props?: Props) {
+  const formSteps = new FormSteps<T>();
+  const initialStepCount = props?.initialStepCount ?? 0;
   const [stepCount, setStepCount] = useState(initialStepCount);
 
   const goToPreviousStep = () =>
     setStepCount((stepCount) => Math.max(stepCount - 1, initialStepCount));
 
   const goToNextStep = () =>
-    setStepCount((stepCount) => Math.min(stepCount + 1, maxStepCount));
+    setStepCount((stepCount) => Math.min(stepCount + 1, formSteps.size()));
 
   const isFirstStep = () => stepCount === initialStepCount;
 
   return {
     stepCount,
+    formSteps,
     isFirstStep,
     goToNextStep,
     goToPreviousStep,
