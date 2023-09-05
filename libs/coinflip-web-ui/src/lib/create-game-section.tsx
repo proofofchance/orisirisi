@@ -1,30 +1,35 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormSteps } from './form-steps';
-import {
-  CreateGameParams,
-  wagerParamKey,
-  numberOfPlayersFieldParamKey,
-} from '@orisirisi/coinflip';
 import { BackButton } from './create-game-section/back-button';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
-import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
-import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
-import { GetExpiryFormSection } from './create-game-section/get-expiry-form-section';
+import {
+  GetWagerForm,
+  GetWagerFormSection,
+} from './create-game-section/get-wager-form-section';
+import {
+  GetNumberOfPlayersForm,
+  GetNumberOfPlayersFormSection,
+} from './create-game-section/get-number-of-players-form-section';
+import {
+  GetExpiryForm,
+  GetExpiryFormSection,
+} from './create-game-section/get-expiry-form-section';
+
+interface CreateGameForm
+  extends GetWagerForm,
+    GetNumberOfPlayersForm,
+    GetExpiryForm {}
 
 export function CreateGameSection() {
-  const formMethods = useForm<CreateGameParams>();
+  const formMethods = useForm<CreateGameForm>();
   const { formState, trigger: triggerValidation } = formMethods;
 
   const { stepCount, formSteps, goToNextStep, goToPreviousStep } =
     useFormSteps();
 
   formSteps
-    .addStep(
-      <GetWagerFormSection field={wagerParamKey} goToNextStep={goToNextStep} />
-    )
-    .addStep(
-      <GetNumberOfPlayersFormSection field={numberOfPlayersFieldParamKey} />
-    )
+    .addStep(<GetWagerFormSection goToNextStep={goToNextStep} />)
+    .addStep(<GetNumberOfPlayersFormSection />)
     .addStep(<GetExpiryFormSection />);
 
   const currentField = formSteps.getField(stepCount);
@@ -38,9 +43,8 @@ export function CreateGameSection() {
       <BackButton onClick={goToPreviousStep} />
 
       <form
-        onSubmit={formMethods.handleSubmit(
-          (createGameParams: CreateGameParams) =>
-            console.log({ createGameParams })
+        onSubmit={formMethods.handleSubmit((createGameParams) =>
+          console.log({ createGameParams })
         )}
       >
         <FormProvider {...formMethods}>
