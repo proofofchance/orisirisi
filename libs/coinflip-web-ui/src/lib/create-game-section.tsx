@@ -1,5 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form';
-import { FormSteps, useFormSteps } from './form-steps';
+import { useFormSteps } from './form-steps';
 import {
   CreateGameParams,
   wagerParamKey,
@@ -9,22 +9,24 @@ import { BackButton } from './create-game-section/back-button';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
 import { GetWagerFormSection } from './create-game-section/get-wager-form-section';
 import { GetNumberOfPlayersFormSection } from './create-game-section/get-number-of-players-form-section';
+import { GetExpiryFormSection } from './create-game-section/get-expiry-form-section';
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameParams>();
   const { formState, trigger: triggerValidation } = formMethods;
 
-  const { stepCount, goToNextStep, goToPreviousStep } = useFormSteps({
-    maxStepCount: 2,
-  });
+  const { stepCount, formSteps, goToNextStep, goToPreviousStep } =
+    useFormSteps();
 
-  const formSteps = new FormSteps<CreateGameParams>()
+  formSteps
     .addStep(
       <GetWagerFormSection field={wagerParamKey} goToNextStep={goToNextStep} />
     )
     .addStep(
       <GetNumberOfPlayersFormSection field={numberOfPlayersFieldParamKey} />
-    );
+    )
+    .addStep(<GetExpiryFormSection />);
+
   const currentField = formSteps.getField(stepCount);
   const isFirstStep = stepCount === 0;
   const isCurrentFormStepDirty = !!formState.dirtyFields[currentField];
