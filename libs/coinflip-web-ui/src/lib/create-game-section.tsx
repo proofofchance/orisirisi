@@ -3,26 +3,26 @@ import { useFormSteps } from './form-steps';
 import { BackButton } from './create-game-section/back-button';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
 import {
-  GetWagerForm,
-  GetWagerFormSection,
-} from './create-game-section/get-wager-form-section';
+  WagerForm,
+  WagerFormSection,
+} from './create-game-section/wager-form-section';
 import {
-  GetNumberOfPlayersForm,
-  GetNumberOfPlayersFormSection,
-} from './create-game-section/get-number-of-players-form-section';
+  NumberOfPlayersForm,
+  NumberOfPlayersFormSection,
+} from './create-game-section/number-of-players-form-section';
 import {
-  GetExpiryForm,
-  GetExpiryFormSection,
-} from './create-game-section/get-expiry-form-section';
+  ExpiryForm,
+  ExpiryFormSection,
+} from './create-game-section/expiry-form-section';
 import {
-  GetCoinSideForm,
-  GetCoinSideFormSection,
-} from './create-game-section/get-coin-side-form-section';
+  CoinSideForm,
+  CoinSideFormSection,
+} from './create-game-section/coin-side-form-section';
 
-type CreateGameForm = GetWagerForm &
-  GetNumberOfPlayersForm &
-  GetExpiryForm &
-  GetCoinSideForm;
+type CreateGameForm = WagerForm &
+  NumberOfPlayersForm &
+  ExpiryForm &
+  CoinSideForm;
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameForm>();
@@ -32,10 +32,10 @@ export function CreateGameSection() {
     useFormSteps<CreateGameForm>();
 
   formSteps
-    .addStep(['wager'], <GetWagerFormSection goToNextStep={goToNextStep} />)
-    .addStep(['numberOfPlayers'], <GetNumberOfPlayersFormSection />)
-    .addStep(['expiry', 'expiryUnit'], <GetExpiryFormSection />)
-    .addStep(['coinSide'], <GetCoinSideFormSection />);
+    .addStep(['wager'], <WagerFormSection goToNextStep={goToNextStep} />)
+    .addStep(['numberOfPlayers'], <NumberOfPlayersFormSection />)
+    .addStep(['expiry', 'expiryUnit'], <ExpiryFormSection />)
+    .addStep(['coinSide'], <CoinSideFormSection />);
 
   const currentFields = formSteps.getFields(stepCount);
   const isFirstStep = stepCount === 0;

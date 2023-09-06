@@ -27,13 +27,12 @@ class NumberOfPlayers {
     `${this.value}${NumberOfPlayers.delimiter}${NumberOfPlayers.suffix}`;
 }
 
-export interface GetNumberOfPlayersForm {
+export interface NumberOfPlayersForm {
   numberOfPlayers: string;
 }
 
-export function GetNumberOfPlayersFormSection() {
-  const { register, setValue, watch } =
-    useFormContext<GetNumberOfPlayersForm>();
+export function NumberOfPlayersFormSection() {
+  const { register, setValue, watch } = useFormContext<NumberOfPlayersForm>();
 
   const numberOfPlayers = NumberOfPlayers.fromString(watch('numberOfPlayers'));
 

@@ -9,12 +9,12 @@ import { CoinSide, getRandomCoinSide } from '@orisirisi/coinflip';
 import { ButtonProps, cn } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 
-export interface GetCoinSideForm {
+export interface CoinSideForm {
   coinSide: CoinSide;
 }
 
-export function GetCoinSideFormSection() {
-  const { setValue, watch } = useFormContext<GetCoinSideForm>();
+export function CoinSideFormSection() {
+  const { setValue, watch } = useFormContext<CoinSideForm>();
   const coinSide = watch('coinSide');
 
   return (

@@ -2,12 +2,12 @@ import { useFormContext } from 'react-hook-form';
 import { IntegerInput, SelectInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 
-export interface GetExpiryForm {
+export interface ExpiryForm {
   expiry: string;
   expiryUnit: ExpiryUnit;
 }
-export function GetExpiryFormSection() {
-  const { register, watch, setValue } = useFormContext<GetExpiryForm>();
+export function ExpiryFormSection() {
+  const { register, watch, setValue } = useFormContext<ExpiryForm>();
 
   const expiryUnit = watch('expiryUnit') ?? DEFAULT_EXPIRY_UNIT;
   setValue('expiry', getDefaultExpiry(expiryUnit).toString());

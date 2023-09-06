@@ -9,7 +9,7 @@ const MINIMUM_WAGER = 0.02;
 const isUpToMinimumWager = (wager: string) =>
   parseFloat(wager) >= MINIMUM_WAGER;
 
-export interface GetWagerForm {
+export interface WagerForm {
   wager: string;
 }
 
@@ -17,12 +17,12 @@ interface Props {
   goToNextStep: () => void;
 }
 
-export function GetWagerFormSection({ goToNextStep }: Props) {
+export function WagerFormSection({ goToNextStep }: Props) {
   const {
     register,
     formState,
     trigger: triggerValidation,
-  } = useFormContext<GetWagerForm>();
+  } = useFormContext<WagerForm>();
   const currentChain = useCurrentChain();
   const errorMessage = formState.errors['wager']?.message as string;
 
