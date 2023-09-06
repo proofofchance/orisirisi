@@ -45,9 +45,9 @@ export function GetNumberOfPlayersFormSection() {
 
   return (
     <FormSectionShell title="Set Number of Players">
-      <div className="mt-7 w-[600px] flex justify-center items-center border-2 border-white rounded-full px-2 ">
+      <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <TextInput
-          className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('numberOfPlayers')}
           defaultValue={NumberOfPlayers.getMinAllowed().toString()}
         />

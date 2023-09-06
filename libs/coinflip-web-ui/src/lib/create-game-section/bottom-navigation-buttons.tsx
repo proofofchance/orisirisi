@@ -106,10 +106,10 @@ function NextButton({
 }
 
 const activeBottomNavigationButtonClassName =
-  'bg-white text-black hover:bg-slate-50 focus:outline-none focus:ring focus:ring-blue-200';
+  'bg-white text-black focus:outline-none focus:ring focus:ring-blue-200';
 
 const inactiveBottomNavigationButtonClassName =
-  'bg-transparent text-white focus:outline-none focus:ring';
+  'bg-transparent text-white focus:outline-none';
 
 function BottomNavigationButton({
   active = false,
@@ -125,7 +125,7 @@ function BottomNavigationButton({
       type={type}
       className={cn(
         'rounded-full px-12 py-4',
-        'transition duration-500 ease-in-out',
+        'transition duration-75 ease-in-out',
         active
           ? activeBottomNavigationButtonClassName
           : inactiveBottomNavigationButtonClassName,
