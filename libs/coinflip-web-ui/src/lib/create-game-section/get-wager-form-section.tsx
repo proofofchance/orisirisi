@@ -1,5 +1,4 @@
 import { useFormContext } from 'react-hook-form';
-import { CreateGameParamsKey } from '@orisirisi/coinflip';
 import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
 import { DecimalInput, isValidDecimalInput } from '@orisirisi/orisirisi-web-ui';
 import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-button';
@@ -47,7 +46,7 @@ export function GetWagerFormSection({ goToNextStep }: Props) {
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <DecimalInput
           placeholder={`${MINIMUM_WAGER}`}
-          className="w-[600px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', { validate })}
           onEnter={async () => (await isValidFieldValue()) && goToNextStep()}
           preventSubmit

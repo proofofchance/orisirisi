@@ -1,3 +1,5 @@
+import { getRandomInteger } from '@orisirisi/orisirisi-data-utils';
+
 export enum CoinSide {
   Head = 0,
   Tail = 1,
@@ -23,6 +25,10 @@ export function coinSideToString(coinSide: CoinSide): string {
   }
 }
 
-export function totalCoinSides(): number {
+export function totalCoinSides() {
   return Object.keys(CoinSide).length / 2;
+}
+
+export function chooseRandomCoinSide(): CoinSide {
+  return getRandomInteger(totalCoinSides());
 }

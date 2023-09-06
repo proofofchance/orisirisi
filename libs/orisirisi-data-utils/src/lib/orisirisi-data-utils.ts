@@ -13,6 +13,10 @@ export const isValidDecimal = (value: string, decimalSize: number) =>
 export const isValidInteger = (value: string) =>
   Number.isInteger(parseInt(value, 10));
 
+export function getRandomInteger(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
 // Strings
 export const isEmptyString = (value: string) => value === '';
 

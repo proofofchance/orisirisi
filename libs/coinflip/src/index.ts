@@ -6,7 +6,7 @@ import {
 } from './coin';
 import { Move, Moves } from './moves';
 
-export { CoinSide } from './coin';
+export * from './coin';
 
 export enum Chain {
   Ethereum = 1,

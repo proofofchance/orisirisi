@@ -61,7 +61,7 @@ export function CreateGameSection() {
         </FormProvider>
       </form>
 
-      <div className="mt-12 w-100 text-center">
+      <div className="mt-16 w-100 text-center">
         <BottomNavigationButtons
           isFirstStep={isFirstStep}
           isCurrentFormStepDirty={isCurrentFormStepDirty}
