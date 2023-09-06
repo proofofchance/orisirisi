@@ -29,6 +29,6 @@ export function totalCoinSides() {
   return Object.keys(CoinSide).length / 2;
 }
 
-export function chooseRandomCoinSide(): CoinSide {
+export function getRandomCoinSide(): CoinSide {
   return getRandomInteger(totalCoinSides());
 }

@@ -5,7 +5,7 @@ import {
   ArrowSmallUpIcon,
   ArrowSmallDownIcon,
 } from '@heroicons/react/24/outline';
-import { CoinSide, chooseRandomCoinSide } from '@orisirisi/coinflip';
+import { CoinSide, getRandomCoinSide } from '@orisirisi/coinflip';
 import { ButtonProps, cn } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 
@@ -37,7 +37,7 @@ export function GetCoinSideFormSection() {
         <ChooseButton
           icon={<ArrowPathIcon className="h-6" />}
           label="Pick Random"
-          onClick={() => setValue('coinSide', chooseRandomCoinSide())}
+          onClick={() => setValue('coinSide', getRandomCoinSide())}
         />
       </div>
       {/* TODO: <div className="mt-6">Coin Animation here</div> */}
