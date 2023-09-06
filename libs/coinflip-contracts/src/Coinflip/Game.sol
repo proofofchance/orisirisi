@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 import {Coin} from './Coin.sol';
 
 library Game {
-    type Wager is uint;
     type ID is uint;
 
     type PlayID is uint16;

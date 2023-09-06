@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import {Game} from './Game.sol';
 
 contract GameWagers {
-    mapping(Game.ID gameID => Game.Wager wager) wagers;
+    mapping(Game.ID gameID => uint wager) wagers;
 
     error InvalidWager();
 
@@ -17,11 +17,11 @@ contract GameWagers {
     }
 
     function createGameWager(Game.ID gameID, uint wager) internal {
-        wagers[gameID] = Game.Wager.wrap(wager);
+        wagers[gameID] = wager;
     }
 
     function getGameWager(Game.ID gameID) internal view returns (uint) {
-        return Game.Wager.unwrap(wagers[gameID]);
+        return wagers[gameID];
     }
 }
 
