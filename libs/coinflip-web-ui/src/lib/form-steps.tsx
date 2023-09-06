@@ -42,7 +42,7 @@ export function useFormSteps<T>(props?: Props) {
   const goToNextStep = () =>
     setStepCount((stepCount) => Math.min(stepCount + 1, formSteps.size()));
 
-  const isFirstStep = () => stepCount === initialStepCount;
+  const isFirstStep = stepCount === initialStepCount;
 
   return {
     stepCount,
