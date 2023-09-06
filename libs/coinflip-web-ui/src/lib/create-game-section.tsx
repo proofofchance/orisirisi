@@ -14,12 +14,15 @@ import {
   GetExpiryForm,
   GetExpiryFormSection,
 } from './create-game-section/get-expiry-form-section';
-import { GetCoinSideFormSection } from './create-game-section/get-coin-side-form-section';
+import {
+  GetCoinSideForm,
+  GetCoinSideFormSection,
+} from './create-game-section/get-coin-side-form-section';
 
-interface CreateGameForm
-  extends GetWagerForm,
-    GetNumberOfPlayersForm,
-    GetExpiryForm {}
+type CreateGameForm = GetWagerForm &
+  GetNumberOfPlayersForm &
+  GetExpiryForm &
+  GetCoinSideForm;
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameForm>();
@@ -32,7 +35,7 @@ export function CreateGameSection() {
     .addStep(['wager'], <GetWagerFormSection goToNextStep={goToNextStep} />)
     .addStep(['numberOfPlayers'], <GetNumberOfPlayersFormSection />)
     .addStep(['expiry', 'expiryUnit'], <GetExpiryFormSection />)
-    .addStep([], <GetCoinSideFormSection />);
+    .addStep(['coinSide'], <GetCoinSideFormSection />);
 
   const currentFields = formSteps.getFields(stepCount);
   const isFirstStep = stepCount === 0;
