@@ -26,12 +26,14 @@ export const ArrowButtonShell = ({ children, ...props }: ButtonProps) => (
 
 interface InsideFormShellButtonProps extends ButtonProps {
   selected?: boolean;
+  disabled?: boolean;
   icon?: ReactElement;
   label: string;
 }
 
 export function InsideFormShellButton({
   selected,
+  disabled,
   icon,
   label,
   className,
@@ -43,6 +45,7 @@ export function InsideFormShellButton({
       className={cn(
         'rounded-full px-12 py-4 text-lg border-white border-2',
         selected && 'bg-white text-black',
+        disabled && 'opacity-25',
         'hover:bg-white hover:text-black focus:outline-none focus:ring focus:ring-blue-200',
         className
       )}
