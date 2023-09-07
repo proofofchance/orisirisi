@@ -1,2 +1,2 @@
-export * from './providers';
-export * from './chain';
+export * from './lib/providers';
+export * from './lib/chain';

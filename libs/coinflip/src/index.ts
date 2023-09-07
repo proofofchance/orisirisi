@@ -3,10 +3,10 @@ import {
   coinSideToString,
   oppositeCoinSide,
   totalCoinSides,
-} from './coin';
-import { Move, Moves } from './moves';
+} from './lib/coin';
+import { Move, Moves } from './lib/moves';
 
-export * from './coin';
+export * from './lib/coin';
 
 export enum Chain {
   Ethereum = 1,

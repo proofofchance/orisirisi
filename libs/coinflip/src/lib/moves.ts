@@ -1,6 +1,6 @@
 import { SHA256 } from 'crypto-js';
 import { CoinSide } from './coin';
-import { Player } from './';
+import { Player } from '..';
 
 /** Coinflip Move Crypto */
 class Crypto {
