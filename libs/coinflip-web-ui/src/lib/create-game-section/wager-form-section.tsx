@@ -26,7 +26,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
   const currentChain = useCurrentChain();
   const errorMessage = formState.errors['wager']?.message as string;
 
-  const isValidFieldValue = async () =>
+  const isValidWagerValue = async () =>
     (await triggerValidation('wager')) && !formState.errors['wager'];
 
   const validate = (wager: string) => {
@@ -48,7 +48,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
           placeholder={`${MINIMUM_WAGER}`}
           className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', { validate })}
-          onEnter={async () => (await isValidFieldValue()) && goToNextStep()}
+          onEnter={async () => (await isValidWagerValue()) && goToNextStep()}
           preventSubmit
         />
         <ChainCurrencyButton className="px-4" chain={currentChain!} />

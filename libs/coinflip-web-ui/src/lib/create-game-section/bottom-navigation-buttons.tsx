@@ -44,9 +44,7 @@ export function BottomNavigationButtons({
         onMouseEnter={() =>
           isLastHoveredNextButton && setLastHovered('previous')
         }
-        onClick={async () =>
-          (await isCurrentFormStepValid()) && goToPreviousStep()
-        }
+        onClick={goToPreviousStep}
         {...remainingProps}
       />
 
@@ -106,7 +104,7 @@ function NextButton({
 }
 
 const activeBottomNavigationButtonClassName =
-  'bg-white text-black focus:outline-none focus:ring focus:ring-blue-200';
+  'bg-white hover:bg-slate-100 text-black focus:outline-none focus:ring focus:ring-blue-200';
 
 const inactiveBottomNavigationButtonClassName =
   'bg-transparent text-white focus:outline-none';

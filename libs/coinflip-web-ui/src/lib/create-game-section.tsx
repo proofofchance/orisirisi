@@ -18,27 +18,38 @@ import {
   CoinSideForm,
   CoinSideFormSection,
 } from './create-game-section/coin-side-form-section';
+import {
+  ProofOfChanceForm,
+  ProofOfChanceFormSection,
+} from './create-game-section/proof-of-chance-form-section';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
   ExpiryForm &
-  CoinSideForm;
+  CoinSideForm &
+  ProofOfChanceForm;
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameForm>();
   const { formState, trigger: triggerValidation } = formMethods;
 
-  const { stepCount, formSteps, goToNextStep, goToPreviousStep } =
+  const { stepCount, formSteps, isFirstStep, goToNextStep, goToPreviousStep } =
     useFormSteps<CreateGameForm>();
 
   formSteps
     .addStep(['wager'], <WagerFormSection goToNextStep={goToNextStep} />)
     .addStep(['numberOfPlayers'], <NumberOfPlayersFormSection />)
     .addStep(['expiry', 'expiryUnit'], <ExpiryFormSection />)
-    .addStep(['coinSide'], <CoinSideFormSection />);
+    .addStep(['coinSide'], <CoinSideFormSection />)
+    .addStep(
+      ['proofOfChance'],
+      <ProofOfChanceFormSection
+        stepCount={stepCount}
+        goToNextStep={goToNextStep}
+      />
+    );
 
   const currentFields = formSteps.getFields(stepCount);
-  const isFirstStep = stepCount === 0;
   const isCurrentFormStepDirty = currentFields.every(
     (field) => !!formState.dirtyFields[field]
   );
