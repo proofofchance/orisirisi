@@ -43,7 +43,10 @@ export function CreateGameSection() {
     .addStep(['coinSide'], <CoinSideFormSection />)
     .addStep(
       ['proofOfChance'],
-      <ProofOfChanceFormSection goToNextStep={goToNextStep} />
+      <ProofOfChanceFormSection
+        stepCount={stepCount}
+        goToNextStep={goToNextStep}
+      />
     );
 
   const currentFields = formSteps.getFields(stepCount);
