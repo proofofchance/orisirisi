@@ -27,7 +27,7 @@ export function CoinSideFormSection() {
 
   const pickCoinSide = async (coinSide: CoinSide) => {
     setValue('coinSide', coinSide);
-    await triggerValidation();
+    await triggerValidation('coinSide');
   };
   return (
     <FormSectionShell title="Pick a Coin Side">
