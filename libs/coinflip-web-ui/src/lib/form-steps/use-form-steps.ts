@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FormSteps } from './form-steps';
-import { useNextFormStepHandler } from './next-form-step-handlers';
+import { useGoToNextFormStepHandler } from './go-to-next-form-step-handlers';
 
 interface Props {
   initialStepCount?: number;
@@ -11,14 +11,14 @@ export function useFormSteps<T>(props?: Props) {
   const initialStepCount = props?.initialStepCount ?? 0;
   const [stepCount, setStepCount] = useState(initialStepCount);
 
-  const { nextFormStepHandler } = useNextFormStepHandler(stepCount);
+  const { goToNextFormStepHandler } = useGoToNextFormStepHandler(stepCount);
 
   const goToPreviousStep = () =>
     setStepCount((stepCount) => Math.max(stepCount - 1, initialStepCount));
 
   const goToNextStep = () => {
-    if (nextFormStepHandler) {
-      (async () => await nextFormStepHandler())();
+    if (goToNextFormStepHandler) {
+      (async () => await goToNextFormStepHandler())();
     } else {
       setStepCount((stepCount) => Math.min(stepCount + 1, formSteps.size()));
     }

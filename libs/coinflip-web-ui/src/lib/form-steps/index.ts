@@ -1,2 +1,2 @@
 export { useFormSteps } from './use-form-steps';
-export { useSetNextFormStepHandler } from './next-form-step-handlers';
+export { useSetGoToNextFormStepHandler } from './go-to-next-form-step-handlers';
