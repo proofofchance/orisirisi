@@ -3,30 +3,6 @@ import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 import { DownArrowButton, UpArrowButton } from './common-buttons';
 
-class NumberOfPlayers {
-  private static min = 2;
-  private static max = 20;
-  private static delimiter = ' ';
-  private static suffix = 'Players';
-  private constructor(private value: number) {}
-  static getMinAllowed = () => new NumberOfPlayers(this.min);
-  increase() {
-    const newValue = Math.min(this.value + 1, NumberOfPlayers.max);
-    return new NumberOfPlayers(newValue);
-  }
-  decrease() {
-    const newValue = Math.max(this.value - 1, NumberOfPlayers.min);
-    return new NumberOfPlayers(newValue);
-  }
-  static fromString(str?: string) {
-    if (!str) return NumberOfPlayers.getMinAllowed();
-    const [value] = str.split(this.delimiter);
-    return new NumberOfPlayers(+value);
-  }
-  toString = () =>
-    `${this.value}${NumberOfPlayers.delimiter}${NumberOfPlayers.suffix}`;
-}
-
 export interface NumberOfPlayersForm {
   numberOfPlayers: string;
 }
@@ -57,4 +33,28 @@ export function NumberOfPlayersFormSection() {
       </div>
     </FormSectionShell>
   );
+}
+
+class NumberOfPlayers {
+  private static min = 2;
+  private static max = 20;
+  private static delimiter = ' ';
+  private static suffix = 'Players';
+  private constructor(private value: number) {}
+  static getMinAllowed = () => new NumberOfPlayers(this.min);
+  increase() {
+    const newValue = Math.min(this.value + 1, NumberOfPlayers.max);
+    return new NumberOfPlayers(newValue);
+  }
+  decrease() {
+    const newValue = Math.max(this.value - 1, NumberOfPlayers.min);
+    return new NumberOfPlayers(newValue);
+  }
+  static fromString(str?: string) {
+    if (!str) return NumberOfPlayers.getMinAllowed();
+    const [value] = str.split(this.delimiter);
+    return new NumberOfPlayers(+value);
+  }
+  toString = () =>
+    `${this.value}${NumberOfPlayers.delimiter}${NumberOfPlayers.suffix}`;
 }
