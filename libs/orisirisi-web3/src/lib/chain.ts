@@ -3,6 +3,7 @@ export enum ChainID {
   Avalanche = 43114,
   BNB = 56,
   Ethereum = 1,
+  Localhost = 5777,
   Optimism = 10,
   Polygon = 137,
   SepoliaTestNet = 11155111,
@@ -22,6 +23,7 @@ export class Chain {
       case ChainID.BNB:
         return 'BNB';
       case ChainID.Ethereum:
+      case ChainID.Localhost:
         return 'ETH';
       case ChainID.Optimism:
         return 'OP';
