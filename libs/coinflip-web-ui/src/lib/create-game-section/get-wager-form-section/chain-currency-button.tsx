@@ -1,4 +1,4 @@
-import { Chain, ChainID } from '@orisirisi/orisirisi-web3';
+import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
 import {
   ArbitrumLogo,
   AvalancheLogo,
@@ -22,7 +22,7 @@ export function ChainCurrencyButton({
       case ChainID.BNB:
         return <BNBLogo />;
       case ChainID.Ethereum:
-      case ChainID.Localhost:
+      case ChainID.HardhatLocalhost:
       case ChainID.SepoliaTestNet:
         return <EthereumLogo />;
       case ChainID.Optimism:

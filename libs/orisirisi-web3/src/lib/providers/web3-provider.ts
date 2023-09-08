@@ -1,11 +1,11 @@
 import { Eip1193Provider } from 'ethers';
-import { Web3Account } from './web3-account';
 import {
   Web3ProviderError,
   Web3ProviderErrorJson,
 } from './web3-provider-error';
 import { Result } from '@orisirisi/orisirisi-error-handling';
-import { Chain } from '../chain';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { Web3Account } from './web3-account';
 
 export type Web3ProviderType = 'MetaMask' | 'WalletConnect';
 

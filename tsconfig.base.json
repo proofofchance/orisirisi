@@ -27,6 +27,9 @@
       ],
       "@orisirisi/orisirisi-web-ui": ["libs/orisirisi-web-ui/src/index.ts"],
       "@orisirisi/orisirisi-web3": ["libs/orisirisi-web3/src/index.ts"],
+      "@orisirisi/orisirisi-web3-chains": [
+        "libs/orisirisi-web3-chains/src/index.ts"
+      ],
       "@orisirisi/orisirisi-web3-ui": ["libs/orisirisi-web3-ui/src/index.ts"],
       "@orisirisi/synarktech-web3": ["libs/synarktech-web3/src/index.ts"]
     }
