@@ -7,7 +7,6 @@
  *  */
 
 export { MetaMask, MetaMaskError } from './providers/meta-mask';
-export { Web3Account } from './providers/web3-account';
 export { Web3ProviderType } from './providers/web3-provider-type';
 export {
   CoinbaseWalletProvider,
