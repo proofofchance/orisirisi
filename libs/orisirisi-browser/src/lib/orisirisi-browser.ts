@@ -46,7 +46,7 @@ export class BrowserStorage {
     });
   };
 
-  static get = (key: string) => {
+  static get = <T = any>(key: string) => {
     return runOnlyInWindow(() => {
       const jsonKey = JSON.stringify({ key });
 
@@ -60,7 +60,7 @@ export class BrowserStorage {
           )
         );
 
-      return new Result(JSON.parse(stringifiedValue).value, null);
+      return new Result(JSON.parse(stringifiedValue).value as T, null);
     });
   };
 

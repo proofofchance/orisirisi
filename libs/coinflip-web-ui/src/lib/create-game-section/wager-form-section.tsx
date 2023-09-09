@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
+import { useCurrentWeb3Provider } from '@orisirisi/orisirisi-web3-ui';
 import { DecimalInput, isValidDecimalInput } from '@orisirisi/orisirisi-web-ui';
 import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-button';
 import { ErrorMessageParagraph } from './error-message-paragraph';
@@ -23,7 +23,9 @@ export function WagerFormSection({ goToNextStep }: Props) {
     formState,
     trigger: triggerValidation,
   } = useFormContext<WagerForm>();
-  const currentChain = useCurrentChain();
+  const web3Provider = useCurrentWeb3Provider();
+  const chain = web3Provider!.getChain();
+
   const errorMessage = formState.errors['wager']?.message as string;
 
   const isValidWagerValue = async () =>
@@ -35,7 +37,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
     }
 
     if (!isUpToMinimumWager(wager)) {
-      return `Minimum wager allowed is ${0.02} ${currentChain!.getCurrency()}`;
+      return `Minimum wager allowed is ${0.02} ${chain!.getCurrency()}`;
     }
 
     return true;
@@ -51,7 +53,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
           onEnter={async () => (await isValidWagerValue()) && goToNextStep()}
           preventSubmit
         />
-        <ChainCurrencyButton className="px-4" chain={currentChain!} />
+        <ChainCurrencyButton className="px-4" chain={chain!} />
       </div>
       <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />
       {/* TODO: Show USD estimation here using Uniswap from Rust API */}

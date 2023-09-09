@@ -4,10 +4,10 @@ import {
   CreateGameSection,
   NavigationBar,
 } from '@orisirisi/coinflip-web-ui';
-import { useIsWeb3Connected } from '@orisirisi/orisirisi-web3-ui';
+import { useIsWeb3AccountConnected } from '@orisirisi/orisirisi-web3-ui';
 
 export function Index() {
-  const isWeb3Connected = useIsWeb3Connected();
+  const isWeb3Connected = useIsWeb3AccountConnected();
 
   return (
     <>

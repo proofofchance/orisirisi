@@ -1,49 +1,31 @@
 import { BrowserStorage } from '@orisirisi/orisirisi-browser';
-import {
-  MetaMask,
-  Web3Account,
-  Web3ProviderType,
-} from '@orisirisi/orisirisi-web3';
+import { Web3ProviderType } from '@orisirisi/orisirisi-web3';
 
-class CachedWeb3Provider {
+export class CachedWeb3ProviderType {
   private static key = 'CACHED_WEB3_PROVIDER_TYPE_KEY';
 
-  static setType(providerType: Web3ProviderType) {
-    BrowserStorage.set(CachedWeb3Provider.key, providerType);
-  }
-
-  private static getType() {
-    return BrowserStorage.get(this.key);
+  static set(providerType: Web3ProviderType) {
+    BrowserStorage.set(this.key, providerType);
   }
 
   static get() {
-    const { ok: previouslyUsedWeb3ProviderType } = this.getType();
-
-    return MetaMask.match(previouslyUsedWeb3ProviderType)
-      ? MetaMask.getWeb3Provider().ok
-      : null;
+    return BrowserStorage.get<Web3ProviderType>(this.key).ok;
   }
 
   static clear() {
-    BrowserStorage.clear(CachedWeb3Provider.key);
+    BrowserStorage.clear(this.key);
   }
 }
 
-class CachedWeb3Account {
+class CachedWeb3AccountAddress {
   private static key = 'CACHED_WEB3_ACCOUNT_ADDRESS';
 
-  static setAddress(address: string) {
+  static set(address: string) {
     BrowserStorage.set(this.key, address);
   }
 
-  private static getAddress() {
-    return BrowserStorage.get(this.key);
-  }
-
   static get() {
-    const { ok: previouslyUsedWeb3AccountAddress } = this.getAddress();
-
-    return Web3Account.fromAddress(previouslyUsedWeb3AccountAddress);
+    return BrowserStorage.get(this.key).ok;
   }
 
   static clear() {
@@ -52,26 +34,26 @@ class CachedWeb3Account {
 }
 
 export function useCache() {
-  const cacheWeb3Provider = (providerType: Web3ProviderType) =>
-    CachedWeb3Provider.setType(providerType);
+  const cacheWeb3ProviderType = (providerType: Web3ProviderType) =>
+    CachedWeb3ProviderType.set(providerType);
 
-  const cacheWeb3Account = (address: string | null) =>
-    address && CachedWeb3Account.setAddress(address);
+  const cacheWeb3AccountAddress = (address: string | null) =>
+    address && CachedWeb3AccountAddress.set(address);
 
   const clearCache = () => {
-    CachedWeb3Provider.clear();
-    CachedWeb3Account.clear();
+    CachedWeb3ProviderType.clear();
+    CachedWeb3AccountAddress.clear();
   };
 
-  const cachedWeb3Provider = CachedWeb3Provider.get();
-  const cachedWeb3Account = CachedWeb3Account.get();
+  const cachedWeb3ProviderType = CachedWeb3ProviderType.get();
+  const cachedWeb3AccountAddress = CachedWeb3AccountAddress.get();
 
   return {
-    cacheExists: cachedWeb3Provider && cachedWeb3Account,
-    cachedWeb3Provider,
-    cachedWeb3Account,
-    cacheWeb3Provider,
-    cacheWeb3Account,
+    cacheExists: cachedWeb3ProviderType && cachedWeb3AccountAddress,
+    cachedWeb3ProviderType,
+    cachedWeb3AccountAddress,
+    cacheWeb3ProviderType,
+    cacheWeb3AccountAddress,
     clearCache,
   };
 }

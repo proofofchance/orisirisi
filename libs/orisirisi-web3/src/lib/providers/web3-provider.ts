@@ -1,86 +1,31 @@
-import { Eip1193Provider } from 'ethers';
+import { MetaMask } from './meta-mask';
+import { Web3ProviderType } from './web3-provider-type';
 import {
-  Web3ProviderError,
-  Web3ProviderErrorJson,
-} from './web3-provider-error';
-import { Result } from '@orisirisi/orisirisi-error-handling';
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
-import { Web3Account } from './web3-account';
-
-export type Web3ProviderType = 'MetaMask' | 'WalletConnect';
-
-interface ConnectInfo {
-  chainId: string;
-}
-
-interface RawProvider extends Eip1193Provider {
-  isMetaMask: boolean;
-  isConnected: () => boolean;
-  networkVersion: string;
-  on: (event: string, handler: (data: any) => void) => void;
-}
-
-declare global {
-  interface Window {
-    ethereum?: RawProvider;
-  }
-}
+  CoinbaseWalletProvider,
+  MetaMaskProvider,
+} from './window-ethereum-providers';
 
 export class Web3Provider {
-  constructor(
-    private readonly provider: RawProvider,
-    public readonly type: Web3ProviderType
+  private constructor(
+    private readonly provider: MetaMaskProvider | CoinbaseWalletProvider,
+    private readonly type: Web3ProviderType
   ) {}
 
-  getChain = () => Chain.fromNetworkVersion(this.provider.networkVersion);
-
-  onAccountsChanged(onAccountsChanged: (accounts: string[]) => void) {
-    this.provider.on('accountsChanged', onAccountsChanged);
+  getChain() {
+    switch (this.type) {
+      case Web3ProviderType.MetaMask:
+        return MetaMask.getChain(this.provider as MetaMaskProvider);
+      default:
+        throw new Error('Unsupported Web3ProviderType');
+    }
   }
 
-  listenToDisconnectAndRun(run: () => void) {
-    this.onConnect(() => {
-      if (!this.provider.isConnected()) {
-        run();
-      }
-    });
-    this.onDisconnect(run);
-  }
-
-  onConnect(onConnect: (connectInfo: ConnectInfo) => void) {
-    this.provider.on('connect', onConnect);
-  }
-
-  onDisconnect(onDisconnect: (maybeProviderRpcError: any) => void) {
-    this.provider.on('disconnect', onDisconnect);
-  }
-
-  listenToChainChangedAndRun(run: () => void) {
-    this.onChainChanged(run);
-  }
-
-  onChainChanged(onChainChanged: (chainId: string) => void) {
-    this.provider.on('chainChanged', onChainChanged);
-  }
-
-  async getCurrentAccount() {
-    const { ok: addresses, error } = await this.getAccountAddresses();
-
-    return new Web3Account(addresses, error);
-  }
-
-  async getAccountAddresses() {
-    try {
-      const addresses = await this.provider!.request({
-        method: 'eth_requestAccounts',
-      });
-
-      return new Result(addresses, null);
-    } catch (error: unknown) {
-      return new Result(
-        null,
-        new Web3ProviderError(error as Web3ProviderErrorJson)
-      );
+  static new(web3ProviderType: Web3ProviderType) {
+    switch (web3ProviderType) {
+      case Web3ProviderType.MetaMask:
+        return new Web3Provider(MetaMask.getProvider()!, web3ProviderType);
+      default:
+        throw new Error('Unsupported Web3ProviderType');
     }
   }
 }

@@ -41,3 +41,5 @@ export const countAllOccurrences = (
 
   return count;
 };
+
+export type Maybe<T> = T | null | undefined;

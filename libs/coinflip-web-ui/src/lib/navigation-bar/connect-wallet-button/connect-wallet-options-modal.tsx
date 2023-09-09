@@ -2,13 +2,11 @@ import { ButtonHTMLAttributes, ReactNode, useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 import { Modal } from './modal';
 import { cn } from '@orisirisi/orisirisi-web-ui';
-import { MetaMask, MetaMaskError } from '@orisirisi/orisirisi-web3';
 import { CoinbaseWalletIcon, MetamaskIcon, WalletConnectIcon } from './icons';
 import {
+  useConnectWithMetaMask,
   useCurrentWeb3Account,
-  useCurrentWeb3Provider,
 } from '@orisirisi/orisirisi-web3-ui';
-import { Browser } from '@orisirisi/orisirisi-browser';
 
 function ButtonLongCard({
   children,
@@ -54,7 +52,7 @@ export function useConnectWalletOptionsModal() {
 
 export function ConnectWalletOptionsModal() {
   const { initModal, showModal, closeModal } = useConnectWalletOptionsModal();
-  const { setWeb3ProviderForTheFirstTime } = useCurrentWeb3Provider();
+  const connectWithMetaMask = useConnectWithMetaMask();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
   useEffect(() => {
@@ -74,22 +72,6 @@ export function ConnectWalletOptionsModal() {
     </div>
   );
 
-  const connectToMetamask = async () => {
-    const { ok: provider, error: metaMaskError } =
-      await MetaMask.getWeb3Provider();
-
-    switch (metaMaskError) {
-      case MetaMaskError.NotInstalled:
-        return Browser.openInNewTab(MetaMask.downloadLink);
-      case MetaMaskError.UnsupportedChain:
-        // TODO: Show Unsupported Chain Toast Here
-        console.log('Unsupported chain detected');
-        return;
-    }
-
-    setWeb3ProviderForTheFirstTime(provider!);
-  };
-
   if (showModal === null) {
     initModal();
     return null;
@@ -103,7 +85,7 @@ export function ConnectWalletOptionsModal() {
       close={closeModal}
     >
       <div className="flex flex-col mt-4">
-        <ButtonLongCard onClick={connectToMetamask}>
+        <ButtonLongCard onClick={connectWithMetaMask}>
           {renderButtonContent('Metamask', <MetamaskIcon />)}
         </ButtonLongCard>
         <ButtonLongCard>
