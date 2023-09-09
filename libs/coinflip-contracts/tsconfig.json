@@ -8,8 +8,10 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "composite": true,
     "declaration": true,
-    "composite": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "files": ["./hardhat.config.ts"],
   "include": [
@@ -17,7 +19,8 @@
     "tasks/**/*",
     "tests/**/*",
     "deploy/**/*",
-    "typechain-types/"
+    "scripts/**/*",
+    "./typechain-types"
   ],
   "references": [
     {
