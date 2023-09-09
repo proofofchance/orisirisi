@@ -4,6 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev:coinflip-web": "nx serve coinflip-web --port 2000",
+    "dev:coinflip-contracts": "cd libs/coinflip-contracts && pnpm dev",
+    "dev:deploy-coinflip-contracts": "cd libs/coinflip-contracts && pnpm dev:deploy",
     "test:coinflip-contracts": "cd libs/coinflip-contracts && pnpm test"
   },
   "private": true,
