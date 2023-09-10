@@ -5,6 +5,10 @@
     "declaration": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "deployments/**/*.json"],
+  "include": [
+    "src/**/*.ts",
+    "deployments/**/*.json",
+    "typechain-types/**/*.ts"
+  ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }
