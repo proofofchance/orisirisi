@@ -7,6 +7,9 @@ import { Maybe } from '@orisirisi/orisirisi-data-utils';
 export enum MetaMaskError {
   NotInstalled = 0,
   UnsupportedChain = 1,
+  // THis error happens when MetaMask is loading while doing some work
+  // and therefore unavailable for web client Proxy gets
+  UnAvailable = 2,
   Generic,
   UserReject = 4001,
   Unauthorized = 4100,
@@ -28,7 +31,11 @@ export class MetaMask {
 
     if (!provider) return new Result(null, MetaMaskError.NotInstalled);
 
-    if (!this.getChain(provider)!.isSupported())
+    const { ok: chain, error } = this.getChain(provider);
+
+    if (error) return new Result(null, error);
+
+    if (!chain!.isSupported())
       return new Result(null, MetaMaskError.UnsupportedChain);
 
     return new Result(provider, null);
@@ -41,8 +48,34 @@ export class MetaMask {
   }
 
   static getChain(provider: MetaMaskProvider) {
-    return Chain.fromNetworkVersion(provider.networkVersion);
+    if (!provider.networkVersion)
+      return new Result(null, MetaMaskError.UnAvailable);
+
+    return new Result(Chain.fromNetworkVersion(provider.networkVersion), null);
   }
+
+  static handleConnectionEvents = (
+    onDisconnected: () => void,
+    onAccountsChanged?: (addresses: string[]) => void
+  ) => {
+    const provider = MetaMask.getProvider()!;
+
+    provider.on('accountsChanged', async (addresses: string[]) => {
+      if (addresses.length === 0) {
+        return onDisconnected();
+      }
+
+      onAccountsChanged?.(addresses);
+    });
+
+    provider.on('connect', () => {
+      if (!provider.isConnected()) {
+        onDisconnected();
+      }
+    });
+    provider.on('disconnect', onDisconnected);
+    provider.on('chainChanged', onDisconnected);
+  };
 
   private static getWhenInstalledAlone() {
     const maybeMetamask = window.ethereum;

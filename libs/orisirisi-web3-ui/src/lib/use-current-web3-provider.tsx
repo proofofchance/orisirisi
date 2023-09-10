@@ -1,6 +1,7 @@
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { Web3Provider, Web3ProviderType } from '@orisirisi/orisirisi-web3';
-import { CachedWeb3ProviderType, useCache } from './use-cache';
+import { Cache, CachedWeb3ProviderType, useCache } from './use-cache';
+import { Browser } from '@orisirisi/orisirisi-browser';
 
 const currentWeb3ProviderTypeAtom = atom<Web3ProviderType | null>(
   CachedWeb3ProviderType.get() || null
@@ -35,3 +36,8 @@ const currentChainAtom = atom((get) =>
   get(currentWeb3ProviderAtom)?.getChain()
 );
 export const useCurrentChain = () => useAtomValue(currentChainAtom);
+
+export const handleWeb3ProviderDisconnected = () => {
+  Cache.clear();
+  Browser.reloadWindow();
+};

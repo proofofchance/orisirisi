@@ -10,7 +10,7 @@ export interface CoinbaseWalletProvider extends Eip1193Provider {
 export interface MetaMaskProvider extends Eip1193Provider {
   isMetaMask: true;
   isConnected: () => boolean;
-  networkVersion: string;
+  networkVersion: string | null;
   on: (
     event: 'connect' | 'disconnect' | 'accountsChanged' | 'chainChanged',
     handler: (data: any) => void

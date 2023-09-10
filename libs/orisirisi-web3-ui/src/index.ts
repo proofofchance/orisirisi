@@ -3,6 +3,7 @@ export {
   useIsWeb3AccountConnected,
 } from './lib/use-current-web3-account';
 export {
+  useCurrentChain,
   useCurrentWeb3Provider,
   useCurrentWeb3ProviderType,
 } from './lib/use-current-web3-provider';

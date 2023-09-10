@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useCurrentWeb3Provider } from '@orisirisi/orisirisi-web3-ui';
+import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
 import { DecimalInput, isValidDecimalInput } from '@orisirisi/orisirisi-web-ui';
 import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-button';
 import { ErrorMessageParagraph } from './error-message-paragraph';
@@ -23,8 +23,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
     formState,
     trigger: triggerValidation,
   } = useFormContext<WagerForm>();
-  const web3Provider = useCurrentWeb3Provider();
-  const chain = web3Provider?.getChain();
+  const chain = useCurrentChain();
 
   const errorMessage = formState.errors['wager']?.message as string;
 

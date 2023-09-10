@@ -1,7 +1,11 @@
-import { Web3Account, Web3ProviderType } from '@orisirisi/orisirisi-web3';
+import {
+  MetaMask,
+  Web3Account,
+  Web3ProviderType,
+} from '@orisirisi/orisirisi-web3';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { CachedWeb3ProviderType, useCache } from './use-cache';
-import { handleMetaMaskConnectionEvents } from './use-connect-with-metamask';
+import { handleWeb3ProviderDisconnected } from './use-current-web3-provider';
 
 const currentWeb3AccountAtom = atom<Web3Account | null>(null);
 
@@ -22,11 +26,13 @@ export function useCurrentWeb3Account() {
       case null:
         break;
       case Web3ProviderType.MetaMask:
-        return handleMetaMaskConnectionEvents((addresses) =>
-          setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+        return MetaMask.handleConnectionEvents(
+          handleWeb3ProviderDisconnected,
+          (addresses) =>
+            setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
         );
       default:
-        throw 'Unsupported Web3Provider';
+        throw new Error('Unsupported Web3Provider');
     }
   };
 

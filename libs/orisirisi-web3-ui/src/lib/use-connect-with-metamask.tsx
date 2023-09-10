@@ -4,57 +4,39 @@ import {
   MetaMaskError,
   Web3Account,
 } from '@orisirisi/orisirisi-web3';
-import { Cache, useCache } from './use-cache';
+import { useCache } from './use-cache';
 import { useCurrentWeb3Account } from './use-current-web3-account';
-
-export const handleMetaMaskConnectionEvents = (
-  onAccountsChanged?: (addresses: string[]) => void
-) => {
-  const provider = MetaMask.getProvider()!;
-
-  provider.on('accountsChanged', async (addresses: string[]) => {
-    if (addresses.length === 0) {
-      return handleWeb3ProviderDisconnected();
-    }
-
-    onAccountsChanged?.(addresses);
-  });
-
-  provider.on('connect', () => {
-    if (!provider.isConnected()) {
-      handleWeb3ProviderDisconnected();
-    }
-  });
-  provider.on('disconnect', handleWeb3ProviderDisconnected);
-  provider.on('chainChanged', handleWeb3ProviderDisconnected);
-};
-
-const handleWeb3ProviderDisconnected = () => {
-  Cache.clear();
-  Browser.reloadWindow();
-};
+import {
+  handleWeb3ProviderDisconnected,
+  useCurrentWeb3ProviderType,
+} from './use-current-web3-provider';
 
 export function useConnectWithMetaMask() {
   const { setCurrentWeb3Account } = useCurrentWeb3Account();
+  const { setCurrentWeb3ProviderType } = useCurrentWeb3ProviderType();
   const { cacheWeb3ProviderType } = useCache();
 
   const connectWithMetaMask = async () => {
-    const { ok: provider, error: metaMaskError } =
-      await MetaMask.getWeb3Provider();
+    const { error: metaMaskError } = MetaMask.getWeb3Provider();
 
     switch (metaMaskError) {
       case MetaMaskError.NotInstalled:
         return Browser.openInNewTab(MetaMask.downloadLink);
+      case MetaMaskError.UnAvailable:
+        console.log('MetaMask is loading. Show a toast feedback to try again');
+        return;
       case MetaMaskError.UnsupportedChain:
         // TODO: Show Unsupported Chain Toast Here
         console.log('Unsupported chain detected');
         return;
     }
 
-    handleMetaMaskConnectionEvents((addresses) =>
-      setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+    MetaMask.handleConnectionEvents(
+      handleWeb3ProviderDisconnected,
+      (addresses) => setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
     );
 
+    setCurrentWeb3ProviderType(MetaMask.type);
     cacheWeb3ProviderType(MetaMask.type);
     const currentWeb3Account = await Web3Account.getCurrentAccount(
       MetaMask.type
