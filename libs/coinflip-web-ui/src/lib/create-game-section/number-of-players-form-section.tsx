@@ -35,12 +35,12 @@ export function NumberOfPlayersFormSection() {
   );
 }
 
-class NumberOfPlayers {
+export class NumberOfPlayers {
   private static min = 2;
   private static max = 20;
   private static delimiter = ' ';
   private static suffix = 'Players';
-  private constructor(private value: number) {}
+  private constructor(public value: number) {}
   static getMinAllowed = () => new NumberOfPlayers(this.min);
   increase() {
     const newValue = Math.min(this.value + 1, NumberOfPlayers.max);
