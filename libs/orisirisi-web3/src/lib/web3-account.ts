@@ -1,57 +1,45 @@
-import { mustBeMutuallyExclusive } from '@orisirisi/orisirisi-data-utils';
 import { Result } from '@orisirisi/orisirisi-error-handling';
-import { Eip1193Provider } from 'ethers';
+import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers';
+import { Web3Provider, Web3ProviderType } from './providers';
 
 export enum Web3AccountError {
   Generic,
 }
 export class Web3Account {
-  public address: string | null = null;
+  private constructor(public address: string, public signer: Signer | null) {}
 
-  constructor(
-    addresses: string[] | null,
-    public error: Web3AccountError | null
-  ) {
-    mustBeMutuallyExclusive(addresses, error);
+  static async getCurrentAccount(web3ProviderType: Web3ProviderType) {
+    const provider = Web3Provider.new(web3ProviderType).toBrowserProvider();
 
-    if (addresses) {
-      this.address = Web3Account.pickCurrentAccountAddress(addresses);
-    }
+    const { ok: signer, error } = await this.getSigner(provider);
+
+    if (!signer) return new Result(null, error!);
+
+    const address = await signer.getAddress();
+
+    return new Result(new Web3Account(address, signer), null);
   }
 
-  isWithoutError = () => !this.hasError();
-  hasError = () => !!this.error;
-  isEmpty = () => this.address === null;
-
-  static async getCurrentAccount(provider: Eip1193Provider) {
-    const { ok: addresses, error } = await this.getAccountAddresses(provider);
-
-    return new Web3Account(addresses, error);
-  }
-
-  static async getAccountAddresses(provider: Eip1193Provider) {
+  private static async getSigner(
+    provider: BrowserProvider
+  ): Promise<Result<JsonRpcSigner, null> | Result<null, Web3AccountError>> {
     try {
-      const addresses = await provider.request({
-        method: 'eth_requestAccounts',
-      });
+      const signer = await provider.getSigner();
 
-      return new Result(addresses, null);
+      return new Result(signer, null);
     } catch (error: unknown) {
       console.log({ error });
       return new Result(null, Web3AccountError.Generic);
     }
   }
 
-  static fromAddress(address: string | null) {
-    if (!address) return null;
-
+  static fromAddress(address: string) {
     return this.fromAddresses([address]);
   }
 
   static fromAddresses(addresses: string[]) {
-    return new Web3Account(addresses, null);
+    return new Web3Account(this.pickCurrentAccountAddress(addresses), null);
   }
 
-  private static pickCurrentAccountAddress = (addresses: string[]) =>
-    addresses[0];
+  static pickCurrentAccountAddress = (addresses: string[]) => addresses[0];
 }

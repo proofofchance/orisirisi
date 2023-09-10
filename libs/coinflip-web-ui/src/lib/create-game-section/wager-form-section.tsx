@@ -24,7 +24,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
     trigger: triggerValidation,
   } = useFormContext<WagerForm>();
   const web3Provider = useCurrentWeb3Provider();
-  const chain = web3Provider!.getChain();
+  const chain = web3Provider?.getChain();
 
   const errorMessage = formState.errors['wager']?.message as string;
 
@@ -53,7 +53,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
           onEnter={async () => (await isValidWagerValue()) && goToNextStep()}
           preventSubmit
         />
-        <ChainCurrencyButton className="px-4" chain={chain!} />
+        {chain && <ChainCurrencyButton className="px-4" chain={chain} />}
       </div>
       <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />
       {/* TODO: Show USD estimation here using Uniswap from Rust API */}

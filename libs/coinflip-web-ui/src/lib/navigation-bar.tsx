@@ -26,9 +26,7 @@ export function NavigationBar({ className }: WithClassName) {
             Create Game
           </a>
 
-          {isClient &&
-          currentWeb3Account &&
-          currentWeb3Account.isWithoutError() ? (
+          {isClient && currentWeb3Account ? (
             <CurrentAccountButton publicAddress={currentWeb3Account.address!} />
           ) : (
             <ConnectWalletButton />

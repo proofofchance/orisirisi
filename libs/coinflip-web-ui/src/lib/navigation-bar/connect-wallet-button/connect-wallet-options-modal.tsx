@@ -56,11 +56,7 @@ export function ConnectWalletOptionsModal() {
   const { currentWeb3Account } = useCurrentWeb3Account();
 
   useEffect(() => {
-    if (
-      showModal &&
-      currentWeb3Account &&
-      currentWeb3Account.isWithoutError()
-    ) {
+    if (showModal && currentWeb3Account) {
       closeModal();
     }
   }, [showModal, currentWeb3Account, closeModal]);

@@ -33,17 +33,19 @@ class CachedWeb3AccountAddress {
   }
 }
 
+export class Cache {
+  static clear() {
+    CachedWeb3ProviderType.clear();
+    CachedWeb3AccountAddress.clear();
+  }
+}
+
 export function useCache() {
   const cacheWeb3ProviderType = (providerType: Web3ProviderType) =>
     CachedWeb3ProviderType.set(providerType);
 
   const cacheWeb3AccountAddress = (address: string | null) =>
     address && CachedWeb3AccountAddress.set(address);
-
-  const clearCache = () => {
-    CachedWeb3ProviderType.clear();
-    CachedWeb3AccountAddress.clear();
-  };
 
   const cachedWeb3ProviderType = CachedWeb3ProviderType.get();
   const cachedWeb3AccountAddress = CachedWeb3AccountAddress.get();
@@ -54,6 +56,6 @@ export function useCache() {
     cachedWeb3AccountAddress,
     cacheWeb3ProviderType,
     cacheWeb3AccountAddress,
-    clearCache,
+    clearCache: Cache.clear,
   };
 }

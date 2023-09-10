@@ -1,26 +1,46 @@
-import { Web3Account } from '@orisirisi/orisirisi-web3';
-import { atom, useAtom } from 'jotai';
-import { useCache } from './use-cache';
+import { Web3Account, Web3ProviderType } from '@orisirisi/orisirisi-web3';
+import { atom, useAtom, useAtomValue } from 'jotai';
+import { CachedWeb3ProviderType, useCache } from './use-cache';
+import { handleMetaMaskConnectionEvents } from './use-connect-with-metamask';
 
 const currentWeb3AccountAtom = atom<Web3Account | null>(null);
-const isWeb3AccountConnectedAtom = atom((get) => !!get(currentWeb3AccountAtom));
 
 export function useCurrentWeb3Account() {
-  const { cacheExists, cachedWeb3AccountAddress } = useCache();
-  const [currentWeb3Account, setCurrentWeb3Account] = useAtom(
+  const { cacheExists, cachedWeb3AccountAddress, cacheWeb3AccountAddress } =
+    useCache();
+  const [currentWeb3Account, setCurrentWeb3AccountValue] = useAtom(
     currentWeb3AccountAtom
   );
+
+  const setCurrentWeb3Account = async (account: Web3Account) => {
+    setCurrentWeb3AccountValue(account);
+    cacheWeb3AccountAddress(account.address);
+  };
+
+  const handleWeb3ProviderEvents = () => {
+    switch (CachedWeb3ProviderType.get()) {
+      case null:
+        break;
+      case Web3ProviderType.MetaMask:
+        return handleMetaMaskConnectionEvents((addresses) =>
+          setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+        );
+      default:
+        throw 'Unsupported Web3Provider';
+    }
+  };
 
   if (!currentWeb3Account && cacheExists) {
     const cachedWeb3Account = Web3Account.fromAddress(cachedWeb3AccountAddress);
 
     setCurrentWeb3Account(cachedWeb3Account);
+
+    handleWeb3ProviderEvents();
   }
 
   return { currentWeb3Account, setCurrentWeb3Account };
 }
 
-export function useIsWeb3AccountConnected() {
-  const [isWeb3AccountConnected] = useAtom(isWeb3AccountConnectedAtom);
-  return isWeb3AccountConnected;
-}
+const isWeb3AccountConnectedAtom = atom((get) => !!get(currentWeb3AccountAtom));
+export const useIsWeb3AccountConnected = () =>
+  useAtomValue(isWeb3AccountConnectedAtom);

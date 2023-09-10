@@ -1,18 +1,42 @@
 import { Browser } from '@orisirisi/orisirisi-browser';
 import {
-  Web3Account,
   MetaMask,
-  MetaMaskProvider,
   MetaMaskError,
+  Web3Account,
 } from '@orisirisi/orisirisi-web3';
-import { useCache } from './use-cache';
+import { Cache, useCache } from './use-cache';
 import { useCurrentWeb3Account } from './use-current-web3-account';
+
+export const handleMetaMaskConnectionEvents = (
+  onAccountsChanged?: (addresses: string[]) => void
+) => {
+  const provider = MetaMask.getProvider()!;
+
+  provider.on('accountsChanged', async (addresses: string[]) => {
+    if (addresses.length === 0) {
+      return handleWeb3ProviderDisconnected();
+    }
+
+    onAccountsChanged?.(addresses);
+  });
+
+  provider.on('connect', () => {
+    if (!provider.isConnected()) {
+      handleWeb3ProviderDisconnected();
+    }
+  });
+  provider.on('disconnect', handleWeb3ProviderDisconnected);
+  provider.on('chainChanged', handleWeb3ProviderDisconnected);
+};
+
+const handleWeb3ProviderDisconnected = () => {
+  Cache.clear();
+  Browser.reloadWindow();
+};
 
 export function useConnectWithMetaMask() {
   const { setCurrentWeb3Account } = useCurrentWeb3Account();
-
-  const { cacheWeb3ProviderType, cacheWeb3AccountAddress, clearCache } =
-    useCache();
+  const { cacheWeb3ProviderType } = useCache();
 
   const connectWithMetaMask = async () => {
     const { ok: provider, error: metaMaskError } =
@@ -27,38 +51,16 @@ export function useConnectWithMetaMask() {
         return;
     }
 
+    handleMetaMaskConnectionEvents((addresses) =>
+      setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+    );
+
     cacheWeb3ProviderType(MetaMask.type);
-    handleEvents(provider!);
+    const currentWeb3Account = await Web3Account.getCurrentAccount(
+      MetaMask.type
+    );
 
-    const currentWeb3Account = await Web3Account.getCurrentAccount(provider!);
-    cacheWeb3AccountAddress(currentWeb3Account.address);
-    setCurrentWeb3Account(currentWeb3Account);
-  };
-
-  const handleEvents = (provider: MetaMaskProvider) => {
-    const handleWeb3ProviderDisconnected = () => {
-      clearCache();
-      Browser.reloadWindow();
-    };
-
-    provider.on('accountsChanged', (addresses: string[]) => {
-      if (addresses.length === 0) {
-        return handleWeb3ProviderDisconnected();
-      }
-
-      const currentWeb3Account = Web3Account.fromAddresses(addresses);
-
-      cacheWeb3AccountAddress(currentWeb3Account.address);
-      setCurrentWeb3Account(currentWeb3Account);
-    });
-
-    provider.on('connect', () => {
-      if (!provider.isConnected()) {
-        handleWeb3ProviderDisconnected();
-      }
-    });
-    provider.on('disconnect', handleWeb3ProviderDisconnected);
-    provider.on('chainChanged', handleWeb3ProviderDisconnected);
+    await setCurrentWeb3Account(currentWeb3Account.ok!);
   };
 
   return connectWithMetaMask;
