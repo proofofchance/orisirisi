@@ -5,16 +5,12 @@ interface BottomNavigationBaseButtonProps extends ButtonProps {
   disabled?: boolean;
   active?: boolean;
   type?: 'submit' | 'button';
-  onClick: () => void;
-}
-
-interface BottomNavigationButtonProps extends BottomNavigationBaseButtonProps {
-  isFirstStep: boolean;
-  isCurrentFormStepDirty: boolean;
+  onClick?: () => void;
 }
 
 export interface BottomNavigationButtonsProps {
   isFirstStep: boolean;
+  isLastStep: boolean;
   isCurrentFormStepDirty: boolean;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
@@ -25,6 +21,9 @@ export function BottomNavigationButtons({
   isCurrentFormStepValid,
   goToNextStep,
   goToPreviousStep,
+  isFirstStep,
+  isLastStep,
+  isCurrentFormStepDirty,
   ...remainingProps
 }: BottomNavigationButtonsProps) {
   const [lastHovered, setLastHovered] = useState<'previous' | 'next'>('next');
@@ -32,74 +31,57 @@ export function BottomNavigationButtons({
   const isLastHoveredPreviousButton = lastHovered === 'previous';
   const isLastHoveredNextButton = lastHovered === 'next';
 
+  const showPrevAndNext = !isFirstStep && !isLastStep;
+
   return (
     <>
-      <ContinueButton
-        onClick={async () => (await isCurrentFormStepValid()) && goToNextStep()}
-        {...remainingProps}
-      />
+      {isFirstStep && (
+        <BottomNavigationButton
+          disabled={!isCurrentFormStepDirty}
+          onClick={async () =>
+            (await isCurrentFormStepValid()) && goToNextStep()
+          }
+          active
+          {...remainingProps}
+        >
+          Continue
+        </BottomNavigationButton>
+      )}
 
-      <PreviousButton
-        active={isLastHoveredPreviousButton}
-        onMouseEnter={() =>
-          isLastHoveredNextButton && setLastHovered('previous')
-        }
-        onClick={goToPreviousStep}
-        {...remainingProps}
-      />
+      {showPrevAndNext && (
+        <BottomNavigationButton
+          active={isLastHoveredPreviousButton}
+          onMouseEnter={() =>
+            isLastHoveredNextButton && setLastHovered('previous')
+          }
+          onClick={goToPreviousStep}
+          {...remainingProps}
+        >
+          Previous
+        </BottomNavigationButton>
+      )}
 
-      <NextButton
-        active={isLastHoveredNextButton}
-        onMouseEnter={() =>
-          isLastHoveredPreviousButton && setLastHovered('next')
-        }
-        onClick={async () => (await isCurrentFormStepValid()) && goToNextStep()}
-        {...remainingProps}
-      />
+      {showPrevAndNext && (
+        <BottomNavigationButton
+          active={isLastHoveredNextButton}
+          onMouseEnter={() =>
+            isLastHoveredPreviousButton && setLastHovered('next')
+          }
+          onClick={async () =>
+            (await isCurrentFormStepValid()) && goToNextStep()
+          }
+          {...remainingProps}
+        >
+          Next
+        </BottomNavigationButton>
+      )}
+
+      {isLastStep && (
+        <BottomNavigationButton type="submit" {...remainingProps} active>
+          Submit
+        </BottomNavigationButton>
+      )}
     </>
-  );
-}
-
-function ContinueButton({
-  isFirstStep,
-  isCurrentFormStepDirty,
-  ...remainingProps
-}: BottomNavigationButtonProps) {
-  if (!isFirstStep) return null;
-
-  return (
-    <BottomNavigationButton
-      disabled={!isCurrentFormStepDirty}
-      active
-      {...remainingProps}
-    >
-      Continue
-    </BottomNavigationButton>
-  );
-}
-
-function PreviousButton({
-  isFirstStep,
-  isCurrentFormStepDirty,
-  ...remainingProps
-}: BottomNavigationButtonProps) {
-  if (isFirstStep) return null;
-  return (
-    <BottomNavigationButton {...remainingProps}>
-      Previous
-    </BottomNavigationButton>
-  );
-}
-
-function NextButton({
-  isFirstStep,
-  isCurrentFormStepDirty,
-  ...remainingProps
-}: BottomNavigationButtonProps) {
-  if (isFirstStep) return null;
-
-  return (
-    <BottomNavigationButton {...remainingProps}>Next</BottomNavigationButton>
   );
 }
 
@@ -113,13 +95,11 @@ function BottomNavigationButton({
   active = false,
   disabled = false,
   type = 'button',
-  onClick,
   children,
   ...remainingProps
 }: BottomNavigationBaseButtonProps) {
   return (
     <button
-      onClick={onClick}
       type={type}
       className={cn(
         'rounded-full px-12 py-4',

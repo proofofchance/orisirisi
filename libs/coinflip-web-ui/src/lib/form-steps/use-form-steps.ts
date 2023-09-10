@@ -30,6 +30,7 @@ export function useFormSteps<T>(props?: Props) {
     stepCount,
     formSteps,
     isFirstStep,
+    goToStep: setStepCount,
     goToNextStep,
     goToPreviousStep,
   };

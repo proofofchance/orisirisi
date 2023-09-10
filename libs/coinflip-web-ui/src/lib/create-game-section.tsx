@@ -22,6 +22,7 @@ import {
   ProofOfChanceForm,
   ProofOfChanceFormSection,
 } from './create-game-section/proof-of-chance-form-section';
+import { ConfirmGameDetailsFormSection } from './create-game-section/confirm-game-details-form-section';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -31,12 +32,18 @@ type CreateGameForm = WagerForm &
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameForm>();
-  const { formState, trigger: triggerValidation } = formMethods;
+  const { formState, trigger: triggerValidation, getValues } = formMethods;
 
-  const { stepCount, formSteps, isFirstStep, goToNextStep, goToPreviousStep } =
-    useFormSteps<CreateGameForm>();
+  const {
+    stepCount,
+    formSteps,
+    isFirstStep,
+    goToStep,
+    goToNextStep,
+    goToPreviousStep,
+  } = useFormSteps<CreateGameForm>();
 
-  formSteps
+  const createGameFormSteps = formSteps
     .addStep(['wager'], <WagerFormSection goToNextStep={goToNextStep} />)
     .addStep(['numberOfPlayers'], <NumberOfPlayersFormSection />)
     .addStep(['expiry', 'expiryUnit'], <ExpiryFormSection />)
@@ -47,9 +54,17 @@ export function CreateGameSection() {
         stepCount={stepCount}
         goToNextStep={goToNextStep}
       />
+    )
+    .addStep(
+      [],
+      <ConfirmGameDetailsFormSection
+        goToStep={goToStep}
+        getGameDetails={getValues}
+      />
     );
 
   const currentFields = formSteps.getFields(stepCount);
+  const isLastStep = stepCount === createGameFormSteps.lastStep();
   const isCurrentFormStepDirty = currentFields.every(
     (field) => !!formState.dirtyFields[field]
   );
@@ -73,17 +88,18 @@ export function CreateGameSection() {
         <FormProvider {...formMethods}>
           {formSteps.renderStep(stepCount)}
         </FormProvider>
-      </form>
 
-      <div className="mt-16 w-100 text-center">
-        <BottomNavigationButtons
-          isFirstStep={isFirstStep}
-          isCurrentFormStepDirty={isCurrentFormStepDirty}
-          isCurrentFormStepValid={isCurrentFormStepValid}
-          goToNextStep={goToNextStep}
-          goToPreviousStep={goToPreviousStep}
-        />
-      </div>
+        <div className="mt-16 w-100 text-center">
+          <BottomNavigationButtons
+            isFirstStep={isFirstStep}
+            isLastStep={isLastStep}
+            isCurrentFormStepDirty={isCurrentFormStepDirty}
+            isCurrentFormStepValid={isCurrentFormStepValid}
+            goToNextStep={goToNextStep}
+            goToPreviousStep={goToPreviousStep}
+          />
+        </div>
+      </form>
     </div>
   );
 }

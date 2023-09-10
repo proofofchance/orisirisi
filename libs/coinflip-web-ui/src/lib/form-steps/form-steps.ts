@@ -24,6 +24,7 @@ export class FormSteps<Form> {
   }
 
   size = () => this.value.size;
+  lastStep = () => this.size() - 1;
   getStep = (stepCount: number) => this.value.get(stepCount);
   getFields = (stepCount: number) => this.getStep(stepCount)!.fields;
   renderStep = (stepCount: number) => this.getStep(stepCount)!.reactElement;
