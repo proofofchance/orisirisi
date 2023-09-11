@@ -27,6 +27,14 @@ contract Coinflip is
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
 
+    event GameCreated(
+        Game.ID gameID,
+        uint16 maxPlayCount,
+        uint expiryTimestamp,
+        Coin.Side coinSide,
+        bytes32 playHash
+    );
+
     constructor(address payable _wallets, address _serviceProvider) {
         wallets = Wallets(_wallets);
         serviceProvider = ServiceProvider(_serviceProvider);
@@ -68,6 +76,14 @@ contract Coinflip is
         setMaxGamePlayCount(newGameID, maxGamePlayCount);
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
+
+        emit GameCreated(
+            newGameID,
+            maxGamePlayCount,
+            expiryTimestamp,
+            coinSide,
+            playHash
+        );
     }
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
