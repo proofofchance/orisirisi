@@ -6,18 +6,41 @@ import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 import {Payments} from './Payments.sol';
 
 contract Wallets is UsingReentrancyGuard, Ownable {
+    mapping(address => bool) apps;
     mapping(address owner => uint balance) wallets;
 
     error InsufficientFunds();
+    error UnAuthorizedApp();
 
     receive() external payable {
         _creditWallet(msg.sender, msg.value);
     }
 
+    function addApp(address app) external onlyOwner {
+        if (app == address(0)) {
+            revert InvalidAddress();
+        }
+        apps[app] = true;
+    }
+
+    function removeApp(address app) external onlyOwner {
+        if (app == address(0)) {
+            revert InvalidAddress();
+        }
+        apps[app] = false;
+    }
+
+    modifier onlyApp() {
+        if (!apps[msg.sender]) {
+            revert UnAuthorizedApp();
+        }
+        _;
+    }
+
     function transfer(
         address to,
         uint amount
-    ) external nonReentrant onlyOwner returns (bool) {
+    ) external nonReentrant onlyApp returns (bool) {
         if (to == address(0)) {
             revert InvalidAddress();
         }
@@ -35,7 +58,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     function debitWallet(
         address owner,
         uint amount
-    ) external nonReentrant onlyOwner returns (bool) {
+    ) external nonReentrant onlyApp returns (bool) {
         if (owner == address(0)) {
             revert InvalidAddress();
         }
