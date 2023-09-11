@@ -33,7 +33,10 @@ export function useConnectWithMetaMask() {
 
     MetaMask.handleConnectionEvents(
       handleWeb3ProviderDisconnected,
-      (addresses) => setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+      (addresses) =>
+        setCurrentWeb3Account(
+          Web3Account.fromAddresses(addresses, MetaMask.type)
+        )
     );
 
     setCurrentWeb3ProviderType(MetaMask.type);

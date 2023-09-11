@@ -43,3 +43,8 @@ export const countAllOccurrences = (
 };
 
 export type Maybe<T> = T | null | undefined;
+
+export const currentTimeInSeconds = () =>
+  Math.round(new Date().getTime() / 1000);
+export const hoursToSeconds = (hours: number) => hours * 60 * 60;
+export const daysToSeconds = (days: number) => days * 24 * 60 * 60;
