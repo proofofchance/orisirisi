@@ -1,17 +1,18 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "es2020",
     "module": "commonjs",
+    "esModuleInterop": true,
+    "composite": true,
+    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "composite": true,
-    "declaration": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true
+    "declaration": true
   },
   "files": ["./hardhat.config.ts"],
   "include": [

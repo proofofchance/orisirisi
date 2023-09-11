@@ -3,7 +3,12 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@orisirisi/orisirisi-web3-chains": [
+        "libs/orisirisi-web3-chains/src/index.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts",
