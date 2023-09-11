@@ -7,6 +7,7 @@ import {
   WagerFormSection,
 } from './create-game-section/wager-form-section';
 import {
+  NumberOfPlayers,
   NumberOfPlayersForm,
   NumberOfPlayersFormSection,
 } from './create-game-section/number-of-players-form-section';
@@ -23,6 +24,21 @@ import {
   ProofOfChanceFormSection,
 } from './create-game-section/proof-of-chance-form-section';
 import { ConfirmGameDetailsFormSection } from './create-game-section/confirm-game-details-form-section';
+import { CoinflipContract } from '@orisirisi/coinflip-contracts';
+import {
+  useCurrentChain,
+  useCurrentWeb3Account,
+} from '@orisirisi/orisirisi-web3-ui';
+import { encodeBytes32String, parseEther } from 'ethers';
+import {
+  currentTimeInSeconds,
+  daysToSeconds,
+  hoursToSeconds,
+} from '@orisirisi/orisirisi-data-utils';
+import {
+  Web3ProviderError,
+  Web3ProviderErrorCode,
+} from '@orisirisi/orisirisi-web3';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -76,13 +92,61 @@ export function CreateGameSection() {
     return currentFields.every((field) => !formState.errors[field]);
   };
 
+  const { currentWeb3Account } = useCurrentWeb3Account();
+  const currentChain = useCurrentChain();
+
   return (
     <div>
       <BackButton onClick={goToPreviousStep} />
 
       <form
-        onSubmit={formMethods.handleSubmit((createGameParams) =>
-          console.log({ createGameParams })
+        onSubmit={formMethods.handleSubmit(
+          async ({
+            wager,
+            numberOfPlayers,
+            expiry,
+            expiryUnit,
+            coinSide,
+            proofOfChance,
+          }) => {
+            const { ok: signer, error } = await currentWeb3Account!.getSigner();
+
+            // TODO: Do something with error here
+
+            const coinflipContract = CoinflipContract.fromSigner(
+              signer!,
+              currentChain!.id
+            );
+
+            const getExpiryTimestamp = () => {
+              switch (expiryUnit) {
+                case 'days':
+                  return currentTimeInSeconds() + daysToSeconds(+expiry);
+
+                case 'hours':
+                  return currentTimeInSeconds() + hoursToSeconds(+expiry);
+              }
+            };
+
+            try {
+              await coinflipContract.createGame(
+                +wager,
+                NumberOfPlayers.fromString(numberOfPlayers).value,
+                getExpiryTimestamp(),
+                coinSide,
+                encodeBytes32String(proofOfChance),
+                { value: parseEther(wager) }
+              );
+
+              // TODO: Show toast for successfully creating game and route to 'My Games'
+            } catch (e) {
+              switch (Web3ProviderError.from(e).code) {
+                case Web3ProviderErrorCode.UserRejected:
+                  console.log('User Rejected. TODO: Add a toast here');
+                  break;
+              }
+            }
+          }
         )}
       >
         <FormProvider {...formMethods}>

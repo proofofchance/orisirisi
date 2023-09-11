@@ -22,7 +22,7 @@ export function ChainCurrencyButton({
       case ChainID.BNB:
         return <BNBLogo />;
       case ChainID.Ethereum:
-      case ChainID.Localhost:
+      case ChainID.Local:
       case ChainID.SepoliaTestNet:
         return <EthereumLogo />;
       case ChainID.Optimism:

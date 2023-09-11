@@ -29,7 +29,9 @@ export function useCurrentWeb3Account() {
         return MetaMask.handleConnectionEvents(
           handleWeb3ProviderDisconnected,
           (addresses) =>
-            setCurrentWeb3Account(Web3Account.fromAddresses(addresses))
+            setCurrentWeb3Account(
+              Web3Account.fromAddresses(addresses, MetaMask.type)
+            )
         );
       default:
         throw new Error('Unsupported Web3Provider');
@@ -37,7 +39,10 @@ export function useCurrentWeb3Account() {
   };
 
   if (!currentWeb3Account && cacheExists) {
-    const cachedWeb3Account = Web3Account.fromAddress(cachedWeb3AccountAddress);
+    const cachedWeb3Account = Web3Account.fromAddress(
+      cachedWeb3AccountAddress,
+      CachedWeb3ProviderType.get()!
+    );
 
     setCurrentWeb3Account(cachedWeb3Account);
 

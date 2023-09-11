@@ -6,6 +6,29 @@ import {
   MetaMaskProvider,
 } from './window-ethereum-providers';
 
+/** Raw Error from MetaMask, CoinbaseWallet and WalletConnect */
+interface Web3ProviderRawError {
+  info: { error: Web3ProviderError };
+}
+
+export enum Web3ProviderErrorCode {
+  UserRejected = 4001,
+  Unauthorized = 4100,
+  UnsupportedMethod = 4200,
+  Disconnected = 4900,
+  ChainDisconnected = 4901,
+}
+
+export class Web3ProviderError {
+  constructor(public code: Web3ProviderErrorCode, public message: string) {}
+
+  static from = (e: unknown) => {
+    const error = e as Web3ProviderRawError;
+
+    return error.info.error;
+  };
+}
+
 export class Web3Provider {
   private constructor(
     private readonly provider: MetaMaskProvider | CoinbaseWalletProvider,

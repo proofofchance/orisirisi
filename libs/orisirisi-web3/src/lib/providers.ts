@@ -12,4 +12,8 @@ export {
   CoinbaseWalletProvider,
   MetaMaskProvider,
 } from './providers/window-ethereum-providers';
-export { Web3Provider } from './providers/web3-provider';
+export {
+  Web3Provider,
+  Web3ProviderError,
+  Web3ProviderErrorCode,
+} from './providers/web3-provider';
