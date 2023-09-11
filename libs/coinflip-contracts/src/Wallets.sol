@@ -45,7 +45,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             revert InvalidAddress();
         }
 
-        if (getWalletBalance(msg.sender) > amount) {
+        if (getWalletBalance(msg.sender) < amount) {
             revert InsufficientFunds();
         }
 
@@ -63,7 +63,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             revert InvalidAddress();
         }
 
-        if (getWalletBalance(owner) > amount) {
+        if (getWalletBalance(owner) < amount) {
             revert InsufficientFunds();
         }
 
