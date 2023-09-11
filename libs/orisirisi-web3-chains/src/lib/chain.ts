@@ -3,7 +3,7 @@ export enum ChainID {
   Avalanche = 43114,
   BNB = 56,
   Ethereum = 1,
-  Localhost = 31337,
+  Local = 31337,
   Optimism = 10,
   Polygon = 137,
   SepoliaTestNet = 11155111,
@@ -24,7 +24,7 @@ export class Chain {
         return 'BNB';
       case ChainID.Ethereum:
         return 'ETH';
-      case ChainID.Localhost:
+      case ChainID.Local:
         return 'LocalETH';
       case ChainID.Optimism:
         return 'OP';
@@ -35,6 +35,14 @@ export class Chain {
     }
   };
 
+  static fromChainID(chainId?: number) {
+    if (!chainId) return this.defaultChain();
+
+    return new Chain(chainId);
+  }
+
   static fromNetworkVersion = (networkVersion: string) =>
     new Chain(+networkVersion);
+
+  static defaultChain = () => new Chain(ChainID.Local);
 }

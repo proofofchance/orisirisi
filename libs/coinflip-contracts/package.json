@@ -4,7 +4,7 @@
   "scripts": {
     "test": "hardhat test --parallel",
     "dev": "hardhat node",
-    "dev:deploy": "hardhat run --network localhost scripts/deploy-locally.ts"
+    "dev:deploy": "hardhat run --network localhost scripts/deploy.ts && hardhat run --network localhost scripts/deployPostOperations.ts"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

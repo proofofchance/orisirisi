@@ -5,13 +5,11 @@ async function main() {
   const deployOptions = {
     from: deployer.address,
     log: true,
-    deterministicDeployment: ethers.ZeroHash,
   };
 
-  const { address: walletsAddress } = await deployments.deploy(
-    'Wallets',
-    deployOptions
-  );
+  const { address: walletsAddress } = await deployments.deploy('Wallets', {
+    ...deployOptions,
+  });
   console.log('Wallets address : ', walletsAddress);
 
   const { address: serviceProviderAddress } = await deployments.deploy(
@@ -27,8 +25,6 @@ async function main() {
   console.log('Coinflip Address : ', coinflipAddress);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
