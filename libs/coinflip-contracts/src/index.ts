@@ -34,13 +34,4 @@ export class WalletsContract {
         throw new Error('Undeployed Contract');
     }
   }
-
-  static getABI(chainId: ChainID) {
-    switch (chainId) {
-      case ChainID.Local:
-        return walletsLocalDeployment.abi;
-      default:
-        throw new Error('Undeployed Contract');
-    }
-  }
 }
