@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';

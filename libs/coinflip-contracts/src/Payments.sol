@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 library Payments {
     function pay(address to, uint256 amount) internal {
