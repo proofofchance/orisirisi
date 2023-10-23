@@ -2,7 +2,7 @@ import { BrowserStorage } from '@orisirisi/orisirisi-browser';
 import { Web3ProviderType } from '@orisirisi/orisirisi-web3';
 
 export class CachedWeb3ProviderType {
-  private static key = 'CACHED_WEB3_PROVIDER_TYPE_KEY';
+  private static key = 'ORISIRISI_CACHED_WEB3_PROVIDER_TYPE_KEY';
 
   static set(providerType: Web3ProviderType) {
     BrowserStorage.set(this.key, providerType);
@@ -18,7 +18,7 @@ export class CachedWeb3ProviderType {
 }
 
 class CachedWeb3AccountAddress {
-  private static key = 'CACHED_WEB3_ACCOUNT_ADDRESS';
+  private static key = 'ORISIRISI_CACHED_WEB3_ACCOUNT_ADDRESS';
 
   static set(address: string) {
     BrowserStorage.set(this.key, address);
