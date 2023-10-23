@@ -12,6 +12,7 @@ Debugging Tips:
 
 - Clear/Reset nonce data in MetaMask settings
 - Switch between networks
+- Disconnect and Reconnect
 - Fetch all events in the node:
 
   ```sh
