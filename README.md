@@ -11,3 +11,14 @@ Houses provable web3 games of chance
 Debugging Tips:
 
 - Clear/Reset nonce data in MetaMask settings
+
+- Fetch all events in the node:
+
+  ```sh
+  curl \
+      "http://localhost:8545"  \
+      --location \
+      --header 'Content-Type: application/json' \
+      --request POST \
+      --data-raw '{"jsonrpc":"2.0","method":"eth_getLogs","params":[{}],"id":1}'
+  ```
