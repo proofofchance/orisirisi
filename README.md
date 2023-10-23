@@ -23,3 +23,9 @@ Debugging Tips:
       --request POST \
       --data-raw '{"jsonrpc":"2.0","method":"eth_getLogs","params":[{}],"id":1}'
   ```
+
+- Get current block number
+
+```sh
+  curl "http://localhost:8545" -X POST --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+```
