@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
@@ -30,9 +30,7 @@ contract Coinflip is
     event GameCreated(
         Game.ID gameID,
         uint16 maxPlayCount,
-        uint expiryTimestamp,
-        Coin.Side coinSide,
-        bytes32 playHash
+        uint expiryTimestamp
     );
 
     constructor(address payable _wallets, address _serviceProvider) {
@@ -77,13 +75,7 @@ contract Coinflip is
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
 
-        emit GameCreated(
-            newGameID,
-            maxGamePlayCount,
-            expiryTimestamp,
-            coinSide,
-            playHash
-        );
+        emit GameCreated(newGameID, maxGamePlayCount, expiryTimestamp);
     }
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
