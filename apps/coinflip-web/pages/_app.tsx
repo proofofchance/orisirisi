@@ -6,6 +6,7 @@ import {
   ConnectWalletOptionsModal,
   NavigationBar,
 } from '@orisirisi/coinflip-web-ui';
+import { Toaster } from 'react-hot-toast';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,6 +17,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
       <main className="app">
         <ConnectWalletOptionsModal />
+        <Toaster />
         <Background className="px-20">
           <NavigationBar className="py-4" />
           <Component {...pageProps} />
