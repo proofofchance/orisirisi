@@ -30,7 +30,9 @@ contract Coinflip is
     event GameCreated(
         Game.ID gameID,
         uint16 maxPlayCount,
-        uint expiryTimestamp
+        uint expiryTimestamp,
+        address creator,
+        uint wager
     );
 
     constructor(address payable _wallets, address _serviceProvider) {
@@ -75,7 +77,13 @@ contract Coinflip is
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
 
-        emit GameCreated(newGameID, maxGamePlayCount, expiryTimestamp);
+        emit GameCreated(
+            newGameID,
+            maxGamePlayCount,
+            expiryTimestamp,
+            msg.sender,
+            wager
+        );
     }
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
