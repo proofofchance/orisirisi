@@ -1,6 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 import { IntegerInput, SelectInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
+import {
+  currentTimeInSeconds,
+  daysToSeconds,
+  hoursToSeconds,
+} from '@orisirisi/orisirisi-data-utils';
 
 export interface ExpiryForm {
   expiry: string;
@@ -36,6 +41,16 @@ export function ExpiryFormSection() {
     </FormSectionShell>
   );
 }
+
+export const getExpiryTimestamp = (expiry: string, expiryUnit: ExpiryUnit) => {
+  switch (expiryUnit) {
+    case 'days':
+      return currentTimeInSeconds() + daysToSeconds(+expiry);
+
+    case 'hours':
+      return currentTimeInSeconds() + hoursToSeconds(+expiry);
+  }
+};
 
 type ExpiryUnit = 'hours' | 'days';
 
