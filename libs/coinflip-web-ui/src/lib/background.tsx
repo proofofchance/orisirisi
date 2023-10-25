@@ -18,7 +18,10 @@ export function Background({
 }: PropsWithChildren & WithClassName) {
   return (
     <BackgroundWrapper
-      className={cn('bg-[#50d71e] bg-cover bg-center h-screen', className)}
+      className={cn(
+        'bg-[#50d71e] bg-cover bg-center min-h-screen overflow-auto',
+        className
+      )}
     >
       {children}
     </BackgroundWrapper>
