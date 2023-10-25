@@ -17,6 +17,12 @@ contract GamePlays {
     error MaxedOutPlaysError(Game.ID gameID);
     error allMatchingPlaysError(Game.ID gameID);
 
+    event GamePlayCreated(
+        Game.PlayID playID,
+        Coin.Side coinSide,
+        bytes32 playHash
+    );
+
     modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
         if (
             Game.PlayID.unwrap(playCounts[gameID]) ==
@@ -73,6 +79,8 @@ contract GamePlays {
         plays[gameID][gamePlayID] = play;
         players[gameID][coinSide].push(player);
         incrementPlayCount(gameID);
+
+        emit GamePlayCreated(gamePlayID, coinSide, playHash);
     }
 
     function createGamePlayProof(
