@@ -28,6 +28,7 @@ export function GamesPage() {
   const games = useCoinflipGames({ filter: currentFilter });
 
   const isClient = useIsClient();
+  const { currentWeb3Account } = useCurrentWeb3Account();
 
   return (
     <div>
@@ -49,10 +50,12 @@ export function GamesPage() {
             <CheckIcon className="h-5" />
             <span>Completed</span>
           </FilterGamesButton>
-          <FilterGamesButton currentFilter={currentFilter} filter="my_games">
-            <UserIcon className="h-5" />
-            <span>My Games</span>
-          </FilterGamesButton>
+          {currentWeb3Account && (
+            <FilterGamesButton currentFilter={currentFilter} filter="my_games">
+              <UserIcon className="h-5" />
+              <span>My Games</span>
+            </FilterGamesButton>
+          )}
         </div>
       )}
       <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
