@@ -8,4 +8,9 @@ export enum Chain {
   SepoliaTestNet = 11155111,
 }
 
-export { Game as CoinflipGame, Games as CoinflipGames } from './lib/games';
+export {
+  Game as CoinflipGame,
+  Games as CoinflipGames,
+  GameStatus as CoinflipGameStatus,
+  FetchGamesParams as FetchCoinflipGamesParams,
+} from './lib/games';

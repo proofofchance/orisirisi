@@ -72,3 +72,19 @@ function runOnlyInWindow<R>(run: () => R) {
 
   return run();
 }
+
+export const buildQueryString = (
+  queryObject: Partial<Record<string, string>>
+) => {
+  const queryString = Object.keys(queryObject).reduce(
+    (queryStringSoFar, key) => {
+      if (queryObject[key]) {
+        return `${queryStringSoFar}&${key}=${queryObject[key]}`;
+      }
+      return queryStringSoFar;
+    },
+    ''
+  );
+
+  return queryString ? `?${queryString}` : '';
+};

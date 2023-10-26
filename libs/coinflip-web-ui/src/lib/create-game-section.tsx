@@ -14,6 +14,7 @@ import {
 import {
   ExpiryForm,
   ExpiryFormSection,
+  getExpiryTimestamp,
 } from './create-game-section/expiry-form-section';
 import {
   CoinSideForm,
@@ -31,14 +32,11 @@ import {
 } from '@orisirisi/orisirisi-web3-ui';
 import { encodeBytes32String, parseEther } from 'ethers';
 import {
-  currentTimeInSeconds,
-  daysToSeconds,
-  hoursToSeconds,
-} from '@orisirisi/orisirisi-data-utils';
-import {
   Web3ProviderError,
   Web3ProviderErrorCode,
 } from '@orisirisi/orisirisi-web3';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -95,60 +93,49 @@ export function CreateGameSection() {
   const { currentWeb3Account } = useCurrentWeb3Account();
   const currentChain = useCurrentChain();
 
+  const { push } = useRouter();
+  const createGame = async ({
+    wager,
+    numberOfPlayers,
+    expiry,
+    expiryUnit,
+    coinSide,
+    proofOfChance,
+  }: CreateGameForm) => {
+    const { ok: signer, error } = await currentWeb3Account!.getSigner();
+
+    // TODO: Do something with error here
+    const coinflipContract = CoinflipContract.fromSigner(
+      signer!,
+      currentChain!.id
+    );
+
+    try {
+      await coinflipContract.createGame(
+        parseEther(wager).toString(),
+        NumberOfPlayers.fromString(numberOfPlayers).value,
+        getExpiryTimestamp(expiry, expiryUnit),
+        coinSide,
+        encodeBytes32String(proofOfChance),
+        { value: parseEther(wager) }
+      );
+
+      toast.success('Successfully created!', { position: 'bottom-right' });
+
+      push('/games?filter=my_games');
+    } catch (e) {
+      switch (Web3ProviderError.from(e).code) {
+        case Web3ProviderErrorCode.UserRejected:
+          console.log('User Rejected. TODO: Add a toast here');
+          break;
+      }
+    }
+  };
   return (
     <div>
       <BackButton onClick={goToPreviousStep} />
 
-      <form
-        onSubmit={formMethods.handleSubmit(
-          async ({
-            wager,
-            numberOfPlayers,
-            expiry,
-            expiryUnit,
-            coinSide,
-            proofOfChance,
-          }) => {
-            const { ok: signer, error } = await currentWeb3Account!.getSigner();
-
-            // TODO: Do something with error here
-
-            const coinflipContract = CoinflipContract.fromSigner(
-              signer!,
-              currentChain!.id
-            );
-
-            const getExpiryTimestamp = () => {
-              switch (expiryUnit) {
-                case 'days':
-                  return currentTimeInSeconds() + daysToSeconds(+expiry);
-
-                case 'hours':
-                  return currentTimeInSeconds() + hoursToSeconds(+expiry);
-              }
-            };
-
-            try {
-              await coinflipContract.createGame(
-                parseEther(wager).toString(),
-                NumberOfPlayers.fromString(numberOfPlayers).value,
-                getExpiryTimestamp(),
-                coinSide,
-                encodeBytes32String(proofOfChance),
-                { value: parseEther(wager) }
-              );
-
-              // TODO: Show toast for successfully creating game and route to 'My Games'
-            } catch (e) {
-              switch (Web3ProviderError.from(e).code) {
-                case Web3ProviderErrorCode.UserRejected:
-                  console.log('User Rejected. TODO: Add a toast here');
-                  break;
-              }
-            }
-          }
-        )}
-      >
+      <form onSubmit={formMethods.handleSubmit(createGame)}>
         <FormProvider {...formMethods}>
           {formSteps.renderStep(stepCount)}
         </FormProvider>

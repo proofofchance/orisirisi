@@ -18,7 +18,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <main className="app">
         <ConnectWalletOptionsModal />
         <Toaster />
-        <Background className="px-20">
+        <Background className="px-4 sm:px-20">
           <NavigationBar className="py-4" />
           <Component {...pageProps} />
         </Background>
