@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import {
   CoinflipGame,
   CoinflipGames,
@@ -12,6 +12,7 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+import { cn, useIsClient } from '@orisirisi/orisirisi-web-ui';
 
 export type GamesPageFilter =
   | 'all'
@@ -23,39 +24,69 @@ export type GamesPageFilter =
 export function GamesPage() {
   const { query } = useRouter();
 
-  const { filter } = query;
-  const games = useCoinflipGames({ filter } as { filter: GamesPageFilter });
+  const currentFilter = (query.filter ?? 'all') as GamesPageFilter;
+  const games = useCoinflipGames({ filter: currentFilter });
+
+  const isClient = useIsClient();
 
   return (
     <div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 text-white my-4">
-        <button className="flex items-center gap-2 rounded-lg p-1 pl-4 border-solid border-[0.5px] border-gray-400">
-          <RubikCubeIcon />
-          <span>All</span>
-        </button>
-        <button className="flex items-center gap-2 rounded-lg p-1 pl-4 border-solid border-[0.5px] border-gray-400">
-          <CurrencyDollarIcon className="h-5" />
-          <span>Available</span>
-        </button>
-        <button className="flex items-center gap-2 rounded-lg p-1 pl-4 border-solid border-[0.5px] border-gray-400">
-          <ArrowPathIcon className="h-5" />
-          <span>Ongoing</span>
-        </button>
-        <button className="flex items-center gap-2 rounded-lg p-1 pl-4 border-solid border-[0.5px] border-gray-400">
-          <CheckIcon className="h-5" />
-          <span>Completed</span>
-        </button>
-        <button className="flex items-center gap-2 bg-[#2969FF] rounded-xl p-2 pl-4">
-          <UserIcon className="h-5" />
-          <span>My Games</span>
-        </button>
-      </div>
+      {isClient && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 text-white mt-4 mb-8">
+          <FilterGamesButton currentFilter={currentFilter} filter="all">
+            <RubikCubeIcon />
+            <span>All</span>
+          </FilterGamesButton>
+          <FilterGamesButton currentFilter={currentFilter} filter="available">
+            <CurrencyDollarIcon className="h-5" />
+            <span>Available</span>
+          </FilterGamesButton>
+          <FilterGamesButton currentFilter={currentFilter} filter="ongoing">
+            <ArrowPathIcon className="h-5" />
+            <span>Ongoing</span>
+          </FilterGamesButton>
+          <FilterGamesButton currentFilter={currentFilter} filter="completed">
+            <CheckIcon className="h-5" />
+            <span>Completed</span>
+          </FilterGamesButton>
+          <FilterGamesButton currentFilter={currentFilter} filter="my_games">
+            <UserIcon className="h-5" />
+            <span>My Games</span>
+          </FilterGamesButton>
+        </div>
+      )}
       <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
         {games.map((game, i) => (
           <GameCard game={game} key={i} />
         ))}
       </div>
     </div>
+  );
+}
+
+function FilterGamesButton({
+  filter,
+  currentFilter,
+  children,
+}: {
+  filter: GamesPageFilter;
+  currentFilter: GamesPageFilter;
+} & PropsWithChildren) {
+  const activeClass = 'bg-[#2969FF]';
+  const inactiveClass = 'border-solid border-[0.5px] border-gray-400';
+
+  const { push } = useRouter();
+
+  return (
+    <button
+      onClick={() => push({ pathname: 'games', query: { filter } })}
+      className={cn(
+        'flex items-center gap-2 rounded-lg p-1 pl-4',
+        filter === currentFilter ? activeClass : inactiveClass
+      )}
+    >
+      {children}
+    </button>
   );
 }
 
