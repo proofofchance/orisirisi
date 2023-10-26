@@ -79,8 +79,11 @@ export const buildQueryString = (
   const queryString = Object.keys(queryObject).reduce(
     (queryStringSoFar, key) => {
       if (queryObject[key]) {
+        if (!queryStringSoFar) return `${key}=${queryObject[key]}`;
+
         return `${queryStringSoFar}&${key}=${queryObject[key]}`;
       }
+
       return queryStringSoFar;
     },
     ''
