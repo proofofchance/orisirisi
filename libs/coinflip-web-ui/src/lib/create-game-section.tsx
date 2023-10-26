@@ -120,9 +120,17 @@ export function CreateGameSection() {
         { value: parseEther(wager) }
       );
 
-      toast.success('Successfully created!', { position: 'bottom-right' });
+      const INDEX_GRACE_PERIOD_MS = 8000;
+      toast.loading('Creating Game', {
+        position: 'bottom-right',
+        duration: INDEX_GRACE_PERIOD_MS,
+      });
 
-      push('/games?filter=my_games');
+      setTimeout(() => {
+        toast.success('Successfully created!', { position: 'bottom-right' });
+
+        push('/games?filter=my_games');
+      }, INDEX_GRACE_PERIOD_MS);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:
@@ -133,7 +141,7 @@ export function CreateGameSection() {
   };
   return (
     <div>
-      <BackButton onClick={goToPreviousStep} />
+      {!isFirstStep && <BackButton onClick={goToPreviousStep} />}
 
       <form onSubmit={formMethods.handleSubmit(createGame)}>
         <FormProvider {...formMethods}>
