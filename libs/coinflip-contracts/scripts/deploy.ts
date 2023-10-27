@@ -67,7 +67,7 @@ function maybeUpdateContractAddressesInArk({
   coinflipAddress: string;
 }) {
   if (doesFileExist(ARK_ENV_FILE_PATH)) {
-    console.log('Updating Coinflip Address in Ark...');
+    console.log('Updating Coinflip contract addresses in Ark...');
     updateEnvVariable(ARK_ENV_FILE_PATH, 'WALLETS_ADDRESS', walletsAddress);
     updateEnvVariable(
       ARK_ENV_FILE_PATH,
