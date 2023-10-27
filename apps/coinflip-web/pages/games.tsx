@@ -25,12 +25,12 @@ export function GamesPage() {
   const { query } = useRouter();
 
   const currentFilter = (query.filter ?? 'all') as GamesPageFilter;
-  const games = useCoinflipGames({ filter: currentFilter });
+  const { games, isLoading } = useCoinflipGames({ filter: currentFilter });
 
   return (
     <div>
       <GamesFilterButtons currentFilter={currentFilter} />
-      <GamesView games={games} />
+      <GamesView games={games} isLoading={isLoading} />
     </div>
   );
 }
@@ -100,8 +100,14 @@ function GamesFilterButton({
   );
 }
 
-function GamesView({ games }: { games: CoinflipGame[] }) {
-  if (games.length == 0) return <GamesEmptyView />;
+function GamesView({
+  games,
+  isLoading,
+}: {
+  games: CoinflipGame[];
+  isLoading: boolean;
+}) {
+  if (!isLoading && games.length == 0) return <GamesEmptyView />;
 
   return (
     <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
@@ -143,6 +149,7 @@ export default GamesPage;
 
 function useCoinflipGames({ filter }: { filter?: GamesPageFilter }) {
   const { currentWeb3Account } = useCurrentWeb3Account();
+  const [isLoading, setIsLoading] = useState(false);
   const [games, setGames] = useState<CoinflipGame[]>([]);
 
   useEffect(() => {
@@ -162,10 +169,13 @@ function useCoinflipGames({ filter }: { filter?: GamesPageFilter }) {
       return params;
     };
 
-    CoinflipGames.fetch(buildParams()).then((games) => setGames(games));
+    setIsLoading(true);
+    CoinflipGames.fetch(buildParams())
+      .then((games) => setGames(games))
+      .then(() => setIsLoading(false));
   }, [filter, currentWeb3Account]);
 
-  return games;
+  return { games, isLoading };
 }
 
 const RubikCubeIcon = () => (
