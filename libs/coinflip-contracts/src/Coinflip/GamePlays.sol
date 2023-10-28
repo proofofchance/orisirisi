@@ -18,7 +18,7 @@ contract GamePlays {
     error allMatchingPlaysError(Game.ID gameID);
 
     event GamePlayCreated(
-        Game.PlayID playID,
+        Game.PlayID id,
         Game.ID gameID,
         Coin.Side coinSide,
         bytes32 playHash
