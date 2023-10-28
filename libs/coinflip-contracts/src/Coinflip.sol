@@ -70,8 +70,6 @@ contract Coinflip is
         }
         maybePayGameWager();
         debitGameWager(wager);
-        Game.ID newGameID = Game.ID.wrap(gamesCount);
-        createGamePlay(newGameID, coinSide, playHash);
         createGameWager(newGameID, wager);
         setMaxGamePlayCount(newGameID, maxGamePlayCount);
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
@@ -84,6 +82,9 @@ contract Coinflip is
             msg.sender,
             wager
         );
+
+        Game.ID newGameID = Game.ID.wrap(gamesCount);
+        createGamePlay(newGameID, coinSide, playHash);
     }
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
