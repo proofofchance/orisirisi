@@ -129,7 +129,7 @@ export function CreateGameSection() {
       setTimeout(() => {
         toast.success('Successfully created!', { position: 'bottom-right' });
 
-        push('/games?filter=my_games');
+        push('/games?for=my_games');
       }, INDEX_GRACE_PERIOD_MS);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {

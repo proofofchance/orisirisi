@@ -6,7 +6,7 @@ export interface Game {
   expiry_timestamp: number;
 }
 
-export type GameStatus = 'available' | 'ongoing' | 'completed';
+export type GameStatus = 'ongoing' | 'completed';
 
 export interface FetchGamesParams {
   creator_address?: string;
