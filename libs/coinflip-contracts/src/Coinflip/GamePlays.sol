@@ -19,6 +19,7 @@ contract GamePlays {
 
     event GamePlayCreated(
         Game.PlayID playID,
+        Game.ID gameID,
         Coin.Side coinSide,
         bytes32 playHash
     );
@@ -80,7 +81,7 @@ contract GamePlays {
         players[gameID][coinSide].push(player);
         incrementPlayCount(gameID);
 
-        emit GamePlayCreated(gamePlayID, coinSide, playHash);
+        emit GamePlayCreated(gamePlayID, gameID, coinSide, playHash);
     }
 
     function createGamePlayProof(
