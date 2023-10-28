@@ -2,6 +2,12 @@ import { buildQueryString } from '@orisirisi/orisirisi-browser';
 
 export interface Game {
   id: number;
+  chain_id: number;
+  wager_usd: number;
+  total_possible_win_usd: number;
+  view_count: number;
+  players_left: number;
+  total_players_required: number;
   max_play_count: number;
   expiry_timestamp: number;
 }

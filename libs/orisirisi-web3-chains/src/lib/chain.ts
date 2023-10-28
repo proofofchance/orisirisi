@@ -4,6 +4,7 @@ export enum ChainID {
   BNB = 56,
   Ethereum = 1,
   Local = 31337,
+  LocalAlt = 1337,
   Optimism = 10,
   Polygon = 137,
   SepoliaTestNet = 11155111,
@@ -25,6 +26,7 @@ export class Chain {
       case ChainID.Ethereum:
         return 'ETH';
       case ChainID.Local:
+      case ChainID.LocalAlt:
         return 'LocalETH';
       case ChainID.Optimism:
         return 'OP';

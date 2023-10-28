@@ -9,12 +9,14 @@ import {
 import { useRouter } from 'next/router';
 import { WithClassName, cn, useIsClient } from '@orisirisi/orisirisi-web-ui';
 import {
+  ChainLogo,
   GamesEmptyIcon,
   GamesPageFilter,
   GamesPageForFilter,
   RubikCubeIcon,
   useCoinflipGames,
 } from '@orisirisi/coinflip-web-ui';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export function GamesPage() {
   const { query } = useRouter();
@@ -175,12 +177,19 @@ function GameCard({ game }: { game: CoinflipGame }) {
     <div className="rounded-lg h-64 bg-[rgba(0,0,0,0.25)] p-4">
       <div>#{game.id}</div>
       <div>
-        <h4>Win SomeAmountHere</h4>
+        <h4>$ {game.wager_usd}</h4>
+      </div>
+      <div className="w-4">
+        <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
       </div>
       <div>
         <div></div>
         <div>Expires in </div>
       </div>
+      <button>Play</button>
+      <button>View More</button>
+
+      <div>{game.view_count}</div>
     </div>
   );
 }
