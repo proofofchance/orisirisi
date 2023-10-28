@@ -6,7 +6,6 @@ import {
 } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import {
-  ArrowPathIcon,
   CheckIcon,
   CurrencyDollarIcon,
   UserIcon,
@@ -14,12 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import { cn, useIsClient } from '@orisirisi/orisirisi-web-ui';
 
-export type GamesPageFilter =
-  | 'all'
-  | 'available'
-  | 'ongoing'
-  | 'completed'
-  | 'my_games';
+export type GamesPageFilter = 'all' | 'available' | 'completed' | 'my_games';
 
 export function GamesPage() {
   const { query } = useRouter();
@@ -54,10 +48,6 @@ function GamesFilterButtons({
           <GamesFilterButton currentFilter={currentFilter} filter="available">
             <CurrencyDollarIcon className="h-5" />
             <span>Available</span>
-          </GamesFilterButton>
-          <GamesFilterButton currentFilter={currentFilter} filter="ongoing">
-            <ArrowPathIcon className="h-5" />
-            <span>Ongoing</span>
           </GamesFilterButton>
           <GamesFilterButton currentFilter={currentFilter} filter="completed">
             <CheckIcon className="h-5" />
