@@ -1,5 +1,10 @@
-import { PropsWithChildren } from 'react';
-import { CoinflipGame, CoinflipGameStatus } from '@orisirisi/coinflip';
+import { PropsWithChildren, useEffect, useState } from 'react';
+import {
+  CoinflipGame,
+  CoinflipGameStatus,
+  formatGameWagerUSD,
+  getGameExpiryCountdown,
+} from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import {
   CheckIcon,
@@ -172,19 +177,51 @@ function GamesView({
   );
 }
 
+function useGameExpiryCountdown(gameExpiry: number) {
+  const [countDown, setCountDown] = useState(
+    getGameExpiryCountdown(gameExpiry)
+  );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCountDown((previousCountdown) => ({
+        ...previousCountdown,
+        ...getGameExpiryCountdown(gameExpiry),
+      }));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [gameExpiry]);
+
+  return countDown;
+}
 function GameCard({ game }: { game: CoinflipGame }) {
+  const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
+
+  const padDigit = (digit: number) => digit.toString().padStart(2, '0');
+
   return (
     <div className="rounded-lg h-64 bg-[rgba(0,0,0,0.25)] p-4">
-      <div>#{game.id}</div>
-      <div>
-        <h4>$ {game.wager_usd}</h4>
+      <div className="flex justify-between">
+        <div className="text-sm">#{game.id}</div>
+
+        <div className="w-4">
+          <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
+        </div>
       </div>
-      <div className="w-4">
-        <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
+      <div>
+        <h4 className="text-2xl">
+          {formatGameWagerUSD(game.max_possible_win_usd)}
+        </h4>
       </div>
       <div>
         <div></div>
-        <div>Expires in </div>
+        <div>
+          Expires in {padDigit(gameExpiryCountdown.daysLeft)}:
+          {padDigit(gameExpiryCountdown.hoursLeft)}:
+          {padDigit(gameExpiryCountdown.minutesLeft)}:
+          {padDigit(gameExpiryCountdown.secondsLeft)}
+        </div>
       </div>
       <button>Play</button>
       <button>View More</button>
