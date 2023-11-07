@@ -38,10 +38,15 @@ export function useCoinflipGames({
       return params;
     };
 
+    const fetchController = CoinflipGames.getFetchController();
     setIsLoading(true);
-    CoinflipGames.fetch(buildParams())
+    CoinflipGames.fetch(buildParams(), fetchController)
       .then((games) => setGames(games))
       .then(() => setIsLoading(false));
+
+    return () => {
+      fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
+    };
   }, [forFilter, statusFilter, currentWeb3Account]);
 
   return { games, isLoading };
