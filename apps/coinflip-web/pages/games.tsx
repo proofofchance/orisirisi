@@ -170,8 +170,8 @@ function GamesView({
 
   return (
     <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
-      {games.map((game, i) => (
-        <GameCard game={game} key={i} />
+      {games.map((game) => (
+        <GameCard game={game} key={game.id + game.chain_id} />
       ))}
     </div>
   );
