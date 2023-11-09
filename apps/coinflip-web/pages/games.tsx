@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 import {
   CoinflipGame,
   CoinflipGameStatus,
-  formatGameWagerUSD,
+  formatUSD,
   getGameExpiryCountdown,
 } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
@@ -31,13 +31,9 @@ export function GamesPage() {
 
   const { games, isLoading } = useCoinflipGames({ forFilter, statusFilter });
 
-  const { currentWeb3Account } = useCurrentWeb3Account();
-
   return (
     <div>
-      {currentWeb3Account && (
-        <GamesFilterButtons forFilter={forFilter} statusFilter={statusFilter} />
-      )}
+      <GamesFilterButtons forFilter={forFilter} statusFilter={statusFilter} />
       <GamesView games={games} isLoading={isLoading} />
     </div>
   );
@@ -45,29 +41,37 @@ export function GamesPage() {
 
 function GamesFilterButtons(filter: GamesPageFilter) {
   const isClient = useIsClient();
+  const { currentWeb3Account } = useCurrentWeb3Account();
 
   return (
     <>
       {isClient && (
-        <div className="flex w-100 justify-between text-white my-4">
-          <div className="flex w-60 justify-between">
-            <GamesForFilterButton
-              className="px-4 rounded-lg"
-              currentFilter={filter}
-              filter="all"
-            >
-              <RubikCubeIcon />
-              <span>All</span>
-            </GamesForFilterButton>
-            <GamesForFilterButton
-              className="px-4 rounded-lg"
-              currentFilter={filter}
-              filter="my_games"
-            >
-              <CurrencyDollarIcon className="h-5" />
-              <span>My Games</span>
-            </GamesForFilterButton>
-          </div>
+        <div
+          className={cn(
+            'flex w-100 justify-between text-white my-4',
+            !currentWeb3Account && 'flex-row-reverse'
+          )}
+        >
+          {currentWeb3Account && (
+            <div className="flex w-60 justify-between">
+              <GamesForFilterButton
+                className="px-4 rounded-lg"
+                currentFilter={filter}
+                filter="all"
+              >
+                <RubikCubeIcon />
+                <span>All</span>
+              </GamesForFilterButton>
+              <GamesForFilterButton
+                className="px-4 rounded-lg"
+                currentFilter={filter}
+                filter="my_games"
+              >
+                <CurrencyDollarIcon className="h-5" />
+                <span>My Games</span>
+              </GamesForFilterButton>
+            </div>
+          )}
 
           <div className="flex">
             <GamesStatusFilterButton
@@ -209,24 +213,32 @@ function GameCard({ game }: { game: CoinflipGame }) {
           <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
         </div>
       </div>
-      <div>
-        <h4 className="text-2xl">
-          {formatGameWagerUSD(game.max_possible_win_usd)}
-        </h4>
-      </div>
-      <div>
-        <div></div>
-        <div>
-          Expires in {padDigit(gameExpiryCountdown.daysLeft)}:
-          {padDigit(gameExpiryCountdown.hoursLeft)}:
-          {padDigit(gameExpiryCountdown.minutesLeft)}:
-          {padDigit(gameExpiryCountdown.secondsLeft)}
-        </div>
-      </div>
-      <button>Play</button>
-      <button>View More</button>
 
-      <div>{game.view_count}</div>
+      <div>
+        Potential Win:{' '}
+        <h4 className="text-xl">{formatUSD(game.max_possible_win_usd)}</h4>
+      </div>
+      <div className="mt-2">
+        Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
+      </div>
+      {game.is_ongoing && (
+        <div className="text-sm mt-4">
+          {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
+          {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
+          {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
+          {padDigit(gameExpiryCountdown.secondsLeft)}s left
+        </div>
+      )}
+      <div className={cn('flex gap-4 mt-4', game.is_completed && 'mt-10')}>
+        {game.is_ongoing && (
+          <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+            Play
+          </button>
+        )}
+        <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+          View
+        </button>
+      </div>
     </div>
   );
 }

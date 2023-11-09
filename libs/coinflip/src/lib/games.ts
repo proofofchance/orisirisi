@@ -12,14 +12,15 @@ export interface Game {
   chain_id: number;
   wager_usd: number;
   max_possible_win_usd: number;
-  view_count: number;
   players_left: number;
   total_players_required: number;
   max_play_count: number;
   expiry_timestamp: number;
+  is_completed: boolean;
+  is_ongoing: boolean;
 }
 
-export const formatGameWagerUSD = (wager: number) => {
+export const formatUSD = (wager: number) => {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

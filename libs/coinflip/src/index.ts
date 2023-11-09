@@ -10,7 +10,7 @@ export enum Chain {
 
 export {
   Game as CoinflipGame,
-  formatGameWagerUSD,
+  formatUSD,
   getGameExpiryCountdown,
   Games as CoinflipGames,
   GameStatus as CoinflipGameStatus,
