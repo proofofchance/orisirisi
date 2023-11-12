@@ -170,12 +170,20 @@ function GamesView({
   games: CoinflipGame[];
   isLoading: boolean;
 }) {
+  const { push } = useRouter();
+
+  const goToGamePage = (id: number) => push(`/games/${id}`);
+
   if (!isLoading && games.length == 0) return <GamesEmptyView />;
 
   return (
     <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
       {games.map((game) => (
-        <GameCard game={game} key={game.id + game.chain_id} />
+        <GameCard
+          goToGamePage={goToGamePage}
+          game={game}
+          key={game.id + game.chain_id}
+        />
       ))}
     </div>
   );
@@ -199,7 +207,13 @@ function useGameExpiryCountdown(gameExpiry: number) {
 
   return countDown;
 }
-function GameCard({ game }: { game: CoinflipGame }) {
+function GameCard({
+  game,
+  goToGamePage,
+}: {
+  game: CoinflipGame;
+  goToGamePage: (id: number) => void;
+}) {
   const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
   const padDigit = (digit: number) => digit.toString().padStart(2, '0');
@@ -235,7 +249,10 @@ function GameCard({ game }: { game: CoinflipGame }) {
             Play
           </button>
         )}
-        <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+        <button
+          onClick={() => goToGamePage(game.id)}
+          className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
+        >
           View
         </button>
       </div>
