@@ -42,7 +42,10 @@ export function useCoinflipGames({
     setIsLoading(true);
     CoinflipGames.fetch(buildParams(), fetchController)
       .then((games) => setGames(games))
-      .then(() => setIsLoading(false));
+      .then(() => setIsLoading(false))
+      .catch((error: unknown) => {
+        if (!fetchController.signal.aborted) throw error;
+      });
 
     return () => {
       fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
