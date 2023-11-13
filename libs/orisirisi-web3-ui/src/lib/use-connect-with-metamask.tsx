@@ -10,6 +10,7 @@ import {
   handleWeb3ProviderDisconnected,
   useCurrentWeb3ProviderType,
 } from './use-current-web3-provider';
+import toast from 'react-hot-toast';
 
 export function useConnectWithMetaMask() {
   const { setCurrentWeb3Account } = useCurrentWeb3Account();
@@ -23,12 +24,19 @@ export function useConnectWithMetaMask() {
       case MetaMaskError.NotInstalled:
         return Browser.openInNewTab(MetaMask.downloadLink);
       case MetaMaskError.UnAvailable:
-        console.log('MetaMask is loading. Show a toast feedback to try again');
-        return;
+        return toast.error(
+          'Something went wrong. Please try again in some minutes.',
+          {
+            position: 'bottom-right',
+          }
+        );
       case MetaMaskError.UnsupportedChain:
-        // TODO: Show Unsupported Chain Toast Here
-        console.log('Unsupported chain detected');
-        return;
+        return toast.error(
+          'Please connect with a supported network like Ethereum, Polygon, Binance Chain ...',
+          {
+            position: 'bottom-right',
+          }
+        );
     }
 
     MetaMask.handleConnectionEvents(
