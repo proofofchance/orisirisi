@@ -51,7 +51,3 @@ export function useCurrentWeb3Account() {
 
   return { currentWeb3Account, setCurrentWeb3Account };
 }
-
-const isWeb3AccountConnectedAtom = atom((get) => !!get(currentWeb3AccountAtom));
-export const useIsWeb3AccountConnected = () =>
-  useAtomValue(isWeb3AccountConnectedAtom);
