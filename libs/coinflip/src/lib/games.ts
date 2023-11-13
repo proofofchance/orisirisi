@@ -66,8 +66,7 @@ export interface FetchGamesParams {
 }
 
 export class Games {
-  static getFetchController = () => new AbortController();
-  static async fetch(
+  static async fetchGames(
     params: FetchGamesParams,
     fetchController: AbortController
   ): Promise<Game[]> {
@@ -80,5 +79,17 @@ export class Games {
     const games = response.json();
 
     return games;
+  }
+  static async fetchGame(
+    id: number,
+    fetchController: AbortController
+  ): Promise<Game> {
+    const response = await fetch(`http://127.0.0.1:4446/coinflip/games/${id}`, {
+      signal: fetchController.signal,
+    });
+
+    const game = response.json();
+
+    return game;
   }
 }

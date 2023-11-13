@@ -23,9 +23,11 @@ export function NavigationBar({ className }: WithClassName) {
           <Link href="/games" className="mr-4">
             Browse Games
           </Link>
-          <Link href="/create-game" className="mr-4">
-            Create Game
-          </Link>
+          {currentWeb3Account && (
+            <Link href="/create-game" className="mr-4">
+              Create Game
+            </Link>
+          )}
 
           {isClient && currentWeb3Account ? (
             <CurrentAccountButton publicAddress={currentWeb3Account.address!} />

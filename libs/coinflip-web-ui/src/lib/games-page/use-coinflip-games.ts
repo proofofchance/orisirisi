@@ -32,15 +32,14 @@ export function useCoinflipGames({
       if (forFilter === 'my_games') {
         params.creator_address = currentWeb3Account!.address;
       }
-
       params.status = statusFilter;
 
       return params;
     };
 
-    const fetchController = CoinflipGames.getFetchController();
+    const fetchController = new AbortController();
     setIsLoading(true);
-    CoinflipGames.fetch(buildParams(), fetchController)
+    CoinflipGames.fetchGames(buildParams(), fetchController)
       .then((games) => setGames(games))
       .then(() => setIsLoading(false))
       .catch((error: unknown) => {
@@ -53,4 +52,28 @@ export function useCoinflipGames({
   }, [forFilter, statusFilter, currentWeb3Account]);
 
   return { games, isLoading };
+}
+
+export function useCoinflipGame(id: number | null) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [game, setGame] = useState<CoinflipGame | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      const fetchController = new AbortController();
+      setIsLoading(true);
+      CoinflipGames.fetchGame(id, fetchController)
+        .then((game) => setGame(game))
+        .then(() => setIsLoading(false))
+        .catch((error: unknown) => {
+          if (!fetchController.signal.aborted) throw error;
+        });
+
+      return () => {
+        fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
+      };
+    }
+  }, [id]);
+
+  return { game, isLoading };
 }
