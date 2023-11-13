@@ -50,7 +50,7 @@ function GamesFilterButtons(filter: GamesPageFilter) {
         <div
           className={cn(
             'flex w-100 justify-between text-white my-4',
-            !currentWeb3Account && 'flex-row-reverse'
+            !currentWeb3Account && 'justify-center'
           )}
         >
           {currentWeb3Account && (
