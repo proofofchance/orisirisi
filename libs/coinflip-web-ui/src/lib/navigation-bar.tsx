@@ -23,7 +23,7 @@ export function NavigationBar({ className }: WithClassName) {
           <Link href="/games" className="mr-4">
             Browse Games
           </Link>
-          {currentWeb3Account && (
+          {isClient && currentWeb3Account && (
             <Link href="/create-game" className="mr-4">
               Create Game
             </Link>
