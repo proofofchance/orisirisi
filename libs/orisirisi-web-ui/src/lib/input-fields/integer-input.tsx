@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { isEmptyString, isValidInteger } from '@orisirisi/orisirisi-data-utils';
-import { TextInput } from './text-input';
+import { TextInput, TextInputProps } from './text-input';
 
 const isValidInputAttempt = (input: string, max = 10 ** 200) =>
   isEmptyString(input) || (isValidInteger(input) && parseInt(input, 10) <= max);
@@ -15,10 +15,9 @@ const isValidInputAttempt = (input: string, max = 10 ** 200) =>
 export const isValidIntegerInput = (input: string) =>
   isValidInteger(input) && !isEmptyString(input);
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  ref?: ForwardedRef<HTMLInputElement | null>;
-  preventSubmit?: boolean;
-  onEnter?: (e?: KeyboardEvent<HTMLInputElement>) => void;
+interface InputProps
+  extends InputHTMLAttributes<HTMLInputElement>,
+    TextInputProps {
   max?: number;
 }
 

@@ -5,10 +5,11 @@ import {
   forwardRef,
 } from 'react';
 
-interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   ref?: ForwardedRef<HTMLInputElement | null>;
   preventSubmit?: boolean;
   onEnter?: (e?: KeyboardEvent<HTMLInputElement>) => void;
+  onEnterDoNothing?: boolean;
 }
 
 export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
@@ -16,22 +17,39 @@ export const TextInput = forwardRef<HTMLInputElement | null, TextInputProps>(
 );
 
 function TextInputWithRef(
-  { onEnter, preventSubmit, ...remainingProps }: TextInputProps,
+  {
+    onEnter,
+    onEnterDoNothing,
+    preventSubmit,
+    ...remainingProps
+  }: TextInputProps,
   ref: ForwardedRef<HTMLInputElement | null>
 ) {
+  const buildOnKeyDown = () => {
+    if (onEnterDoNothing) {
+      return (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      };
+    }
+
+    if (onEnter) {
+      return (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          onEnter(e);
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      };
+    }
+  };
+
   return (
     <input
       type="text"
-      onKeyDown={
-        onEnter &&
-        ((e) => {
-          if (e.key === 'Enter') {
-            onEnter(e);
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        })
-      }
+      onKeyDown={buildOnKeyDown()}
       ref={ref}
       {...remainingProps}
     />

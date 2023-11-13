@@ -24,6 +24,8 @@ export function ExpiryFormSection() {
           className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('expiry')}
           max={getMaxExpiry(expiryUnit)}
+          preventSubmit
+          onEnterDoNothing
         />
 
         <div className="px-4 flex gap-3 justify-center items-center">

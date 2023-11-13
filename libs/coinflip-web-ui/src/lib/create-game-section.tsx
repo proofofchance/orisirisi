@@ -94,6 +94,7 @@ export function CreateGameSection() {
   const currentChain = useCurrentChain();
 
   const { push } = useRouter();
+
   const createGame = async ({
     wager,
     numberOfPlayers,
