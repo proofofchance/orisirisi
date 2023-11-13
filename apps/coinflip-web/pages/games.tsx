@@ -22,6 +22,7 @@ import {
   useCoinflipGames,
 } from '@orisirisi/coinflip-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import Link from 'next/link';
 
 export function GamesPage() {
   const { query } = useRouter();
@@ -219,7 +220,10 @@ function GameCard({
   const padDigit = (digit: number) => digit.toString().padStart(2, '0');
 
   return (
-    <div className="rounded-lg h-64 bg-[rgba(0,0,0,0.25)] p-4">
+    <Link
+      href={`/games/${game.id}`}
+      className="rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all"
+    >
       <div className="flex justify-between">
         <div className="text-sm">#{game.id}</div>
 
@@ -228,35 +232,40 @@ function GameCard({
         </div>
       </div>
 
-      <div>
-        Potential Win:{' '}
-        <h4 className="text-xl">{formatUSD(game.max_possible_win_usd)}</h4>
+      <div className="flex flex-col justify-center h-40">
+        <div>
+          Potential Win:{' '}
+          <h4 className="text-xl">{formatUSD(game.max_possible_win_usd)}</h4>
+        </div>
+        <div className="mt-2">
+          Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
+        </div>
+        {game.is_ongoing && (
+          <div className="text-sm mt-4">
+            {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
+            {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
+            {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
+            {padDigit(gameExpiryCountdown.secondsLeft)}s left
+          </div>
+        )}
       </div>
-      <div className="mt-2">
-        Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
-      </div>
-      {game.is_ongoing && (
-        <div className="text-sm mt-4">
-          {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
-          {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
-          {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
-          {padDigit(gameExpiryCountdown.secondsLeft)}s left
+
+      {false && (
+        <div className={cn('flex gap-4 mt-4', game.is_completed && 'mt-10')}>
+          {game.is_ongoing && (
+            <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+              Play
+            </button>
+          )}
+          <button
+            onClick={() => goToGamePage(game.id)}
+            className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
+          >
+            View
+          </button>
         </div>
       )}
-      <div className={cn('flex gap-4 mt-4', game.is_completed && 'mt-10')}>
-        {game.is_ongoing && (
-          <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
-            Play
-          </button>
-        )}
-        <button
-          onClick={() => goToGamePage(game.id)}
-          className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
-        >
-          View
-        </button>
-      </div>
-    </div>
+    </Link>
   );
 }
 
