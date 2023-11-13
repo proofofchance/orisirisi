@@ -68,7 +68,9 @@ contract GamePlays {
         Coin.Side coinSide,
         bytes32 playHash
     ) internal {
-        Game.PlayID gamePlayID = playCounts[gameID];
+        Game.PlayID gamePlayID = Game.PlayID.wrap(
+            Game.PlayID.unwrap(playCounts[gameID]) + 1
+        );
         Game.Player player = Game.Player.wrap(msg.sender);
         Game.Play memory play = Game.Play({
             player: player,
