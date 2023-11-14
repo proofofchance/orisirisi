@@ -12,13 +12,18 @@ import {
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
-import { WithClassName, cn, useIsClient } from '@orisirisi/orisirisi-web-ui';
+import {
+  PropsWithClassName,
+  cn,
+  useIsClient,
+} from '@orisirisi/orisirisi-web-ui';
 import {
   ChainLogo,
   GamesEmptyIcon,
   GamesPageFilter,
   GamesPageForFilter,
   RubikCubeIcon,
+  StopWatchIcon,
   useCoinflipGames,
 } from '@orisirisi/coinflip-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
@@ -106,7 +111,7 @@ function GamesForFilterButton({
   filter: GamesPageForFilter;
   currentFilter: GamesPageFilter;
 } & PropsWithChildren &
-  WithClassName) {
+  PropsWithClassName) {
   const activeClass = 'bg-[#2969FF]';
   const inactiveClass = 'border-solid border-[0.5px] border-gray-400';
 
@@ -139,7 +144,7 @@ function GamesStatusFilterButton({
   filter: CoinflipGameStatus;
   currentFilter: GamesPageFilter;
 } & PropsWithChildren &
-  WithClassName) {
+  PropsWithClassName) {
   const activeClass = 'bg-[#2969FF]';
   const inactiveClass = 'border-solid border-[0.5px] border-gray-400';
 
@@ -241,11 +246,16 @@ function GameCard({
           Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
         </div>
         {game.is_ongoing && (
-          <div className="text-sm mt-4">
-            {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
-            {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
-            {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
-            {padDigit(gameExpiryCountdown.secondsLeft)}s left
+          <div className="text-sm mt-4 flex gap-2 items-center">
+            <span className="h-4 w-4">
+              <StopWatchIcon />
+            </span>
+            <span>
+              {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
+              {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
+              {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
+              {padDigit(gameExpiryCountdown.secondsLeft)}s left
+            </span>
           </div>
         )}
       </div>
