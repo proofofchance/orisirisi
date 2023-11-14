@@ -3,20 +3,6 @@ import { useFormSteps } from './form-steps';
 import { BackButton } from './create-game-section/back-button';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
 import {
-  WagerForm,
-  WagerFormSection,
-} from './create-game-section/wager-form-section';
-import {
-  NumberOfPlayers,
-  NumberOfPlayersForm,
-  NumberOfPlayersFormSection,
-} from './create-game-section/number-of-players-form-section';
-import {
-  ExpiryForm,
-  ExpiryFormSection,
-  getExpiryTimestamp,
-} from './create-game-section/expiry-form-section';
-import {
   CoinSideForm,
   CoinSideFormSection,
 } from './create-game-section/coin-side-form-section';
@@ -24,7 +10,6 @@ import {
   ProofOfChanceForm,
   ProofOfChanceFormSection,
 } from './create-game-section/proof-of-chance-form-section';
-import { ConfirmGameDetailsFormSection } from './create-game-section/confirm-game-details-form-section';
 import { CoinflipContract } from '@orisirisi/coinflip-contracts';
 import {
   useCurrentChain,
@@ -37,16 +22,13 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { CoinflipGame } from '@orisirisi/coinflip';
 
-type CreateGameForm = WagerForm &
-  NumberOfPlayersForm &
-  ExpiryForm &
-  CoinSideForm &
-  ProofOfChanceForm;
+type PlayGameForm = CoinSideForm & ProofOfChanceForm;
 
-export function CreateGameSection() {
-  const formMethods = useForm<CreateGameForm>();
-  const { formState, trigger: triggerValidation, getValues } = formMethods;
+export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
+  const formMethods = useForm<PlayGameForm>();
+  const { formState, trigger: triggerValidation } = formMethods;
 
   const {
     stepCount,
@@ -55,15 +37,9 @@ export function CreateGameSection() {
     goToStep,
     goToNextStep,
     goToPreviousStep,
-  } = useFormSteps<CreateGameForm>();
+  } = useFormSteps<PlayGameForm>();
 
-  const createGameFormSteps = formSteps
-    .addStep(['wager'], <WagerFormSection goToNextStep={goToNextStep} />)
-    .addStep(['numberOfPlayers'], <NumberOfPlayersFormSection />)
-    .addStep(
-      ['expiry', 'expiryUnit'],
-      <ExpiryFormSection goToNextStep={goToNextStep} />
-    )
+  const playGameFormSteps = formSteps
     .addStep(['coinSide'], <CoinSideFormSection />)
     .addStep(
       ['proofOfChance'],
@@ -71,17 +47,10 @@ export function CreateGameSection() {
         stepCount={stepCount}
         goToNextStep={goToNextStep}
       />
-    )
-    .addStep(
-      [],
-      <ConfirmGameDetailsFormSection
-        goToStep={goToStep}
-        getGameDetails={getValues}
-      />
     );
 
   const currentFields = formSteps.getFields(stepCount);
-  const isLastStep = stepCount === createGameFormSteps.lastStep();
+  const isLastStep = stepCount === playGameFormSteps.lastStep();
   const isCurrentFormStepDirty = currentFields.every(
     (field) => !!formState.dirtyFields[field]
   );
@@ -98,16 +67,10 @@ export function CreateGameSection() {
 
   const { push } = useRouter();
 
-  const createGame = async ({
-    wager,
-    numberOfPlayers,
-    expiry,
-    expiryUnit,
-    coinSide,
-    proofOfChance,
-  }: CreateGameForm) => {
+  const playGame = async ({ coinSide, proofOfChance }: PlayGameForm) => {
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
+    console.log({ coinSide, proofOfChance });
     // TODO: Do something with error here
     const coinflipContract = CoinflipContract.fromSigner(
       signer!,
@@ -115,13 +78,11 @@ export function CreateGameSection() {
     );
 
     try {
-      await coinflipContract.createGame(
-        parseEther(wager).toString(),
-        NumberOfPlayers.fromString(numberOfPlayers).value,
-        getExpiryTimestamp(expiry, expiryUnit),
+      await coinflipContract.playGame(
+        game!.id,
         coinSide,
         encodeBytes32String(proofOfChance),
-        { value: parseEther(wager) }
+        { value: parseEther(game!.wager) }
       );
 
       const INDEX_GRACE_PERIOD_MS = 8000;
@@ -142,11 +103,14 @@ export function CreateGameSection() {
       }
     }
   };
+
+  if (!game) return null;
+
   return (
     <div>
       {!isFirstStep && <BackButton onClick={goToPreviousStep} />}
 
-      <form onSubmit={formMethods.handleSubmit(createGame)}>
+      <form onSubmit={formMethods.handleSubmit(playGame)}>
         <FormProvider {...formMethods}>
           {formSteps.renderStep(stepCount)}
         </FormProvider>
@@ -155,7 +119,7 @@ export function CreateGameSection() {
           <BottomNavigationButtons
             isFirstStep={isFirstStep}
             isLastStep={isLastStep}
-            enableFirstStepButton={isCurrentFormStepDirty}
+            enableFirstStepButton={true}
             isCurrentFormStepValid={isCurrentFormStepValid}
             goToNextStep={goToNextStep}
             goToPreviousStep={goToPreviousStep}

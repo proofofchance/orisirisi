@@ -1,7 +1,7 @@
 import {
   CoinflipGame,
   CoinflipGameStatus,
-  CoinflipGames,
+  CoinflipRepo,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
@@ -39,7 +39,7 @@ export function useCoinflipGames({
 
     const fetchController = new AbortController();
     setIsLoading(true);
-    CoinflipGames.fetchGames(buildParams(), fetchController)
+    CoinflipRepo.fetchGames(buildParams(), fetchController)
       .then((games) => setGames(games))
       .then(() => setIsLoading(false))
       .catch((error: unknown) => {
@@ -62,7 +62,7 @@ export function useCoinflipGame(id: number | null) {
     if (id) {
       const fetchController = new AbortController();
       setIsLoading(true);
-      CoinflipGames.fetchGame(id, fetchController)
+      CoinflipRepo.fetchGame(id, fetchController)
         .then((game) => setGame(game))
         .then(() => setIsLoading(false))
         .catch((error: unknown) => {

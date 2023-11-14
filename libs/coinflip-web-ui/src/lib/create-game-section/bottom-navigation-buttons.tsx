@@ -11,7 +11,7 @@ interface BottomNavigationBaseButtonProps extends ButtonProps {
 export interface BottomNavigationButtonsProps {
   isFirstStep: boolean;
   isLastStep: boolean;
-  isCurrentFormStepDirty: boolean;
+  enableFirstStepButton: boolean;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
   isCurrentFormStepValid: () => Promise<boolean>;
@@ -23,7 +23,7 @@ export function BottomNavigationButtons({
   goToPreviousStep,
   isFirstStep,
   isLastStep,
-  isCurrentFormStepDirty,
+  enableFirstStepButton,
   ...remainingProps
 }: BottomNavigationButtonsProps) {
   const [lastHovered, setLastHovered] = useState<'previous' | 'next'>('next');
@@ -37,7 +37,7 @@ export function BottomNavigationButtons({
     <>
       {isFirstStep && (
         <BottomNavigationButton
-          disabled={!isCurrentFormStepDirty}
+          disabled={!enableFirstStepButton}
           onClick={async () =>
             (await isCurrentFormStepValid()) && goToNextStep()
           }

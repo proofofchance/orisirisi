@@ -3,7 +3,6 @@ import {
   CoinflipGame,
   CoinflipGameStatus,
   formatUSD,
-  getGameExpiryCountdown,
 } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import {
@@ -195,21 +194,19 @@ function GamesView({
   );
 }
 
-function useGameExpiryCountdown(gameExpiry: number) {
-  const [countDown, setCountDown] = useState(
-    getGameExpiryCountdown(gameExpiry)
-  );
+function useGameExpiryCountdown(game: CoinflipGame) {
+  const [countDown, setCountDown] = useState(game.getExpiryCountdown());
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCountDown((previousCountdown) => ({
         ...previousCountdown,
-        ...getGameExpiryCountdown(gameExpiry),
+        ...game.getExpiryCountdown(),
       }));
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [gameExpiry]);
+  }, [game]);
 
   return countDown;
 }
@@ -220,7 +217,7 @@ function GameCard({
   game: CoinflipGame;
   goToGamePage: (id: number) => void;
 }) {
-  const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
+  const gameExpiryCountdown = useGameExpiryCountdown(game);
 
   const padDigit = (digit: number) => digit.toString().padStart(2, '0');
 

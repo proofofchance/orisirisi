@@ -11,8 +11,10 @@ export enum Chain {
 export {
   Game as CoinflipGame,
   formatUSD,
-  getGameExpiryCountdown,
-  Games as CoinflipGames,
   GameStatus as CoinflipGameStatus,
-  FetchGamesParams as FetchCoinflipGamesParams,
 } from './lib/games';
+
+export {
+  Repo as CoinflipRepo,
+  FetchGamesParams as FetchCoinflipGamesParams,
+} from './lib/repo';

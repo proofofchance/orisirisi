@@ -1,4 +1,3 @@
-import { buildQueryString } from '@orisirisi/orisirisi-browser';
 import {
   Countdown,
   aDay,
@@ -7,17 +6,58 @@ import {
   getDivisionAndRemainder,
 } from '@orisirisi/orisirisi-data-utils';
 
-export interface Game {
-  id: number;
-  chain_id: number;
-  wager_usd: number;
-  max_possible_win_usd: number;
-  players_left: number;
-  total_players_required: number;
-  max_play_count: number;
-  expiry_timestamp: number;
-  is_completed: boolean;
-  is_ongoing: boolean;
+export type GameStatus = 'ongoing' | 'completed';
+
+export class Game {
+  constructor(
+    public id: number,
+    public chain_id: number,
+    public wager: string,
+    public wager_usd: number,
+    public max_possible_win_usd: number,
+    public players_left: number,
+    public total_players_required: number,
+    public max_play_count: number,
+    public expiry_timestamp: number,
+    public is_completed: boolean,
+    public is_ongoing: boolean
+  ) {}
+
+  static fromJSON(json: Game): Game {
+    // @ts-ignore
+    return Object.assign(new Game(), json);
+  }
+  static manyFromJSON(jsonList: Game[]): Game[] {
+    // @ts-ignore
+    return jsonList.map((json) => Object.assign(new Game(), json));
+  }
+
+  getExpiryCountdown(): Countdown {
+    const { expiry_timestamp: expiryTimestamp } = this;
+
+    const now = Math.ceil(new Date().getTime() / 1000);
+    const timeLeft = Math.max(expiryTimestamp - now, 0);
+
+    const [daysLeft, hoursAndMinutesAndSecondsLeft] = getDivisionAndRemainder(
+      timeLeft,
+      aDay
+    );
+    const [hoursLeft, minutesAndSecondsLeft] = getDivisionAndRemainder(
+      hoursAndMinutesAndSecondsLeft,
+      anHour
+    );
+    const [minutesLeft, secondsLeft] = getDivisionAndRemainder(
+      minutesAndSecondsLeft,
+      aMinute
+    );
+
+    return {
+      daysLeft,
+      hoursLeft,
+      minutesLeft,
+      secondsLeft,
+    };
+  }
 }
 
 export const formatUSD = (wager: number) => {
@@ -32,64 +72,3 @@ export const formatUSD = (wager: number) => {
 
   return formatter.format(wager);
 };
-
-export const getGameExpiryCountdown = (gameExpiry: number): Countdown => {
-  const now = Math.ceil(new Date().getTime() / 1000);
-  const timeLeft = Math.max(gameExpiry - now, 0);
-
-  const [daysLeft, hoursAndMinutesAndSecondsLeft] = getDivisionAndRemainder(
-    timeLeft,
-    aDay
-  );
-  const [hoursLeft, minutesAndSecondsLeft] = getDivisionAndRemainder(
-    hoursAndMinutesAndSecondsLeft,
-    anHour
-  );
-  const [minutesLeft, secondsLeft] = getDivisionAndRemainder(
-    minutesAndSecondsLeft,
-    aMinute
-  );
-
-  return {
-    daysLeft,
-    hoursLeft,
-    minutesLeft,
-    secondsLeft,
-  };
-};
-
-export type GameStatus = 'ongoing' | 'completed';
-
-export interface FetchGamesParams {
-  creator_address?: string;
-  status?: GameStatus;
-}
-
-export class Games {
-  static async fetchGames(
-    params: FetchGamesParams,
-    fetchController: AbortController
-  ): Promise<Game[]> {
-    const queryString = buildQueryString(params as Record<string, string>);
-    const response = await fetch(
-      `http://127.0.0.1:4446/coinflip/games${queryString}`,
-      { signal: fetchController.signal }
-    );
-
-    const games = response.json();
-
-    return games;
-  }
-  static async fetchGame(
-    id: number,
-    fetchController: AbortController
-  ): Promise<Game> {
-    const response = await fetch(`http://127.0.0.1:4446/coinflip/games/${id}`, {
-      signal: fetchController.signal,
-    });
-
-    const game = response.json();
-
-    return game;
-  }
-}
