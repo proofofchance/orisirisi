@@ -1,4 +1,4 @@
-import { WithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
@@ -15,7 +15,7 @@ export const BackgroundWrapper = styled.div`
 export function Background({
   children,
   className,
-}: PropsWithChildren & WithClassName) {
+}: PropsWithChildren & PropsWithClassName) {
   return (
     <BackgroundWrapper
       className={cn(

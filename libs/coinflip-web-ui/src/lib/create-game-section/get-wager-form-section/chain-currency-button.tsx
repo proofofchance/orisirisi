@@ -1,11 +1,11 @@
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
-import { WithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { ChainLogo } from '../../chain-logo';
 
 export function ChainCurrencyButton({
   chain,
   className,
-}: { chain: Chain } & WithClassName) {
+}: { chain: Chain } & PropsWithClassName) {
   return (
     <button
       className={cn(

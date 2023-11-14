@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 
-export interface WithClassName {
+export interface PropsWithClassName {
   className?: string;
 }
 

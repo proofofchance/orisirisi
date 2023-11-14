@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { WithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
+import { PropsWithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
 import { ConnectWalletButton } from './navigation-bar/connect-wallet-button';
 import { CurrentAccountButton } from './navigation-bar/current-account-button';
@@ -7,7 +7,7 @@ import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 
 export { ConnectWalletOptionsModal } from './navigation-bar/connect-wallet-button';
 
-export function NavigationBar({ className }: WithClassName) {
+export function NavigationBar({ className }: PropsWithClassName) {
   const isClient = useIsClient();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
