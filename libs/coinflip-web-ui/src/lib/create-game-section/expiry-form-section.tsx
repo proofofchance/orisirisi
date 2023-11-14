@@ -5,27 +5,77 @@ import {
   currentTimeInSeconds,
   daysToSeconds,
   hoursToSeconds,
+  parseInteger,
 } from '@orisirisi/orisirisi-data-utils';
+import { ErrorMessageParagraph } from './error-message-paragraph';
+import { useEffect } from 'react';
 
 export interface ExpiryForm {
   expiry: string;
   expiryUnit: ExpiryUnit;
 }
-export function ExpiryFormSection() {
-  const { register, watch, setValue } = useFormContext<ExpiryForm>();
+export function ExpiryFormSection({
+  goToNextStep,
+}: {
+  goToNextStep: () => void;
+}) {
+  const {
+    register,
+    formState,
+    watch,
+    setValue,
+    trigger: triggerValidation,
+  } = useFormContext<ExpiryForm>();
+
+  const errorMessage = formState.errors['expiry']?.message as string;
 
   const expiryUnit = watch('expiryUnit') ?? DEFAULT_EXPIRY_UNIT;
-  setValue('expiry', getDefaultExpiry(expiryUnit).toString());
+  const hasExpiryFieldBeenTouched = formState.touchedFields['expiry'];
+
+  useEffect(() => {
+    if (!hasExpiryFieldBeenTouched) {
+      setValue('expiry', getDefaultExpiry(expiryUnit).toString());
+      triggerValidation('expiry');
+    }
+  }, [
+    expiryUnit,
+    hasExpiryFieldBeenTouched,
+    watch,
+    setValue,
+    triggerValidation,
+  ]);
+
+  const isValidExpiryValue = async () =>
+    (await triggerValidation('expiry')) && !formState.errors['expiry'];
+
+  const validate = (expiry: string) => {
+    if (!expiry) return 'An expiry duration is required';
+
+    const minExpiry = getMinExpiry(expiryUnit);
+    if (parseInteger(expiry)! < minExpiry)
+      return `Expiry must be ${minExpiry} ${expiryUnit} at least. Consider switching to ${getOtherExpiryUnit(
+        expiryUnit
+      )}.`;
+
+    const maxExpiry = getMaxExpiry(expiryUnit);
+    if (parseInteger(expiry)! > maxExpiry)
+      return `Expiry must be ${maxExpiry} ${expiryUnit} at most. Consider switching to ${getOtherExpiryUnit(
+        expiryUnit
+      )}.`;
+
+    return true;
+  };
 
   return (
     <FormSectionShell title="Set Game Expiry">
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <IntegerInput
           className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
-          {...register('expiry')}
-          max={getMaxExpiry(expiryUnit)}
+          {...register('expiry', { validate })}
+          max={getMaxExpiry(DEFAULT_EXPIRY_UNIT)}
+          defaultValue={getDefaultExpiry(expiryUnit).toString()}
           preventSubmit
-          onEnterDoNothing
+          onEnter={async () => (await isValidExpiryValue()) && goToNextStep()}
         />
 
         <div className="px-4 flex gap-3 justify-center items-center">
@@ -40,6 +90,7 @@ export function ExpiryFormSection() {
           />
         </div>
       </div>
+      <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />
     </FormSectionShell>
   );
 }
@@ -70,6 +121,15 @@ const getDefaultExpiry = (expiryUnit: ExpiryUnit) => {
   }
 };
 
+const getOtherExpiryUnit = (expiryUnit: ExpiryUnit) => {
+  switch (expiryUnit) {
+    case 'hours':
+      return 'days';
+    case 'days':
+      return 'hours';
+  }
+};
+
 const MAX_HOURS = 24;
 const MAX_DAYS = 30;
 
@@ -79,5 +139,16 @@ const getMaxExpiry = (expiryUnit: ExpiryUnit) => {
       return MAX_HOURS;
     case 'days':
       return MAX_DAYS;
+  }
+};
+
+const MIN_HOURS = 1;
+const MIN_DAYS = 1;
+const getMinExpiry = (expiryUnit: ExpiryUnit) => {
+  switch (expiryUnit) {
+    case 'hours':
+      return MIN_HOURS;
+    case 'days':
+      return MIN_DAYS;
   }
 };

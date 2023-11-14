@@ -60,7 +60,10 @@ export function CreateGameSection() {
   const createGameFormSteps = formSteps
     .addStep(['wager'], <WagerFormSection goToNextStep={goToNextStep} />)
     .addStep(['numberOfPlayers'], <NumberOfPlayersFormSection />)
-    .addStep(['expiry', 'expiryUnit'], <ExpiryFormSection />)
+    .addStep(
+      ['expiry', 'expiryUnit'],
+      <ExpiryFormSection goToNextStep={goToNextStep} />
+    )
     .addStep(['coinSide'], <CoinSideFormSection />)
     .addStep(
       ['proofOfChance'],

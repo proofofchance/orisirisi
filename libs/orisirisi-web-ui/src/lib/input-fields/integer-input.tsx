@@ -2,15 +2,14 @@ import {
   ChangeEvent,
   ForwardedRef,
   InputHTMLAttributes,
-  KeyboardEvent,
   forwardRef,
   useState,
 } from 'react';
 import { isEmptyString, isValidInteger } from '@orisirisi/orisirisi-data-utils';
 import { TextInput, TextInputProps } from './text-input';
 
-const isValidInputAttempt = (input: string, max = 10 ** 200) =>
-  isEmptyString(input) || (isValidInteger(input) && parseInt(input, 10) <= max);
+export const isValidInputAttempt = (input: string) =>
+  isEmptyString(input) || isValidInteger(input);
 
 export const isValidIntegerInput = (input: string) =>
   isValidInteger(input) && !isEmptyString(input);
@@ -18,6 +17,7 @@ export const isValidIntegerInput = (input: string) =>
 interface InputProps
   extends InputHTMLAttributes<HTMLInputElement>,
     TextInputProps {
+  defaultValue?: string;
   max?: number;
 }
 
@@ -26,14 +26,16 @@ export const IntegerInput = forwardRef<HTMLInputElement | null, InputProps>(
 );
 
 function IntegerInputWithRef(
-  { onChange, max, ...remainingProps }: InputProps,
+  { onChange, max, defaultValue, ...remainingProps }: InputProps,
   ref: ForwardedRef<HTMLInputElement | null>
 ) {
-  const [cachedAttemptedInput, cacheAttemptedInput] = useState('');
+  const [cachedAttemptedInput, cacheAttemptedInput] = useState(
+    defaultValue ?? ''
+  );
 
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const attemptedInput = event.target.value;
-    const input = isValidInputAttempt(attemptedInput, max)
+    const input = isValidInputAttempt(attemptedInput)
       ? attemptedInput
       : cachedAttemptedInput;
     cacheAttemptedInput(input);

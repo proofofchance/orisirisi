@@ -10,8 +10,8 @@ export const decimalRegex = (decimalSize: number) =>
 export const isValidDecimal = (value: string, decimalSize: number) =>
   decimalRegex(decimalSize).test(value);
 
-export const isValidInteger = (value: string) =>
-  Number.isInteger(parseInt(value, 10));
+export const integerRegex = /^-?\d+$/;
+export const isValidInteger = (value: string) => integerRegex.test(value);
 export const parseInteger = (value: string | number) =>
   value ? parseInt(`${value}`, 10) : null;
 
