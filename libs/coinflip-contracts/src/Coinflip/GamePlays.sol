@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
@@ -15,7 +15,7 @@ contract GamePlays {
 
     error InvalidPlayProof();
     error MaxedOutPlaysError(Game.ID gameID);
-    error allMatchingPlaysError(Game.ID gameID);
+    error AllMatchingPlaysError(Game.ID gameID, Coin.Side availableCoinSide);
 
     event GamePlayCreated(
         Game.PlayID gamePlayID,
@@ -57,7 +57,14 @@ contract GamePlays {
         uint16 tailPlayCount = uint16(players[gameID][Coin.Side.Tail].length);
 
         if (playsLeft == 1 && (headPlayCount == 0 || tailPlayCount == 0)) {
-            revert allMatchingPlaysError(gameID);
+            Coin.Side availableCoinSide = getAvailableCoinSide(
+                headPlayCount,
+                tailPlayCount
+            );
+
+            if (coinSide != availableCoinSide) {
+                revert AllMatchingPlaysError(gameID, availableCoinSide);
+            }
         }
 
         _;
@@ -99,6 +106,18 @@ contract GamePlays {
         return
             Game.PlayID.unwrap(playProofCounts[gameID]) ==
             Game.PlayID.unwrap(playCounts[gameID]);
+    }
+
+    function getAvailableCoinSide(
+        uint16 headPlayCount,
+        uint16 tailPlayCount
+    ) private returns (Coin.Side) {
+        if (headPlayCount == 0) {
+            return Coin.Side.Head;
+        }
+
+        assert(tailPlayCount == 0);
+        return Coin.Side.Tail;
     }
 
     function incrementPlayCount(Game.ID gameID) private {
