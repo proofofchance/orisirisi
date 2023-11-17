@@ -32,7 +32,7 @@ export function useConnectWithMetaMask() {
         );
       case MetaMaskError.UnsupportedChain:
         return toast.error(
-          'Please connect with a supported network like Ethereum, Polygon, Binance Chain ...',
+          'Unsupported network. Please connect with a supported network like Ethereum, Polygon, ...',
           {
             position: 'bottom-right',
           }

@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ArrowDownTrayIcon, FaceSmileIcon } from '@heroicons/react/24/outline';
 import { countWords } from '@orisirisi/orisirisi-data-utils';
@@ -6,7 +5,7 @@ import { InsideFormShellButton } from './common-buttons';
 import { FormSectionShell } from './form-section-shell';
 import { ErrorMessageParagraph } from './error-message-paragraph';
 import { Browser } from '@orisirisi/orisirisi-browser';
-import { useSetGoToNextFormStepHandler } from '../form-steps';
+import { useSetSubmitFormStepHandler } from '../form-steps';
 
 export interface ProofOfChanceForm {
   proofOfChance: string;
@@ -15,12 +14,12 @@ export interface ProofOfChanceForm {
 
 interface ProofOfChanceFormSectionProps {
   stepCount: number;
-  goToNextStep: () => void;
+  onSubmit?: () => void;
 }
 
 export function ProofOfChanceFormSection({
   stepCount,
-  goToNextStep,
+  onSubmit,
 }: ProofOfChanceFormSectionProps) {
   const {
     register,
@@ -55,15 +54,15 @@ export function ProofOfChanceFormSection({
     }
   };
 
-  const maybeGoToNextStep = async () => {
+  const maybeSubmit = async () => {
     await triggerAllValidations();
 
     if (!errorMessage()) {
-      return goToNextStep();
+      return onSubmit?.();
     }
   };
 
-  useSetGoToNextFormStepHandler(stepCount, maybeGoToNextStep);
+  useSetSubmitFormStepHandler(stepCount, maybeSubmit);
 
   return (
     <FormSectionShell
@@ -81,7 +80,7 @@ export function ProofOfChanceFormSection({
         <textarea
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              maybeGoToNextStep();
+              maybeSubmit();
 
               e.stopPropagation();
               e.preventDefault();
@@ -115,7 +114,7 @@ export function ProofOfChanceFormSection({
           label="Download Proof of Chance"
           icon={<ArrowDownTrayIcon className="h-5" />}
           onClick={async () => {
-            Browser.downloadTextFile(
+            Browser.downloadFile(
               proofOfChance,
               `coinflip-${new Date().toISOString()}`,
               'poc'

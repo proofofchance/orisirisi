@@ -14,11 +14,7 @@ export interface ExpiryForm {
   expiry: string;
   expiryUnit: ExpiryUnit;
 }
-export function ExpiryFormSection({
-  goToNextStep,
-}: {
-  goToNextStep: () => void;
-}) {
+export function ExpiryFormSection({ onSubmit }: { onSubmit?: () => void }) {
   const {
     register,
     formState,
@@ -75,7 +71,7 @@ export function ExpiryFormSection({
           max={getMaxExpiry(DEFAULT_EXPIRY_UNIT)}
           defaultValue={getDefaultExpiry(expiryUnit).toString()}
           preventSubmit
-          onEnter={async () => (await isValidExpiryValue()) && goToNextStep()}
+          onEnter={async () => (await isValidExpiryValue()) && onSubmit?.()}
         />
 
         <div className="px-4 flex gap-3 justify-center items-center">

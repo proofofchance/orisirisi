@@ -14,10 +14,10 @@ export interface WagerForm {
 }
 
 interface Props {
-  goToNextStep: () => void;
+  onSubmit?: () => void;
 }
 
-export function WagerFormSection({ goToNextStep }: Props) {
+export function WagerFormSection({ onSubmit }: Props) {
   const {
     register,
     formState,
@@ -49,7 +49,7 @@ export function WagerFormSection({ goToNextStep }: Props) {
           placeholder={`${MINIMUM_WAGER}`}
           className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', { validate })}
-          onEnter={async () => (await isValidWagerValue()) && goToNextStep()}
+          onEnter={async () => (await isValidWagerValue()) && onSubmit?.()}
           preventSubmit
         />
         {chain && <ChainCurrencyButton className="px-4" chain={chain} />}

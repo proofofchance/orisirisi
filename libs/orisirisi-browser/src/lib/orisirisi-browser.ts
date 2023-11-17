@@ -7,11 +7,7 @@ export class Browser {
 
   static reloadWindow = () => window.location.reload();
 
-  static downloadTextFile(
-    text: string,
-    fileName: string,
-    fileExtension: string
-  ) {
+  static downloadFile(text: string, fileName: string, fileExtension: string) {
     const blob = new Blob([text], { type: 'text/plain' });
 
     const link = document.createElement('a');

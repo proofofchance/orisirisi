@@ -28,16 +28,10 @@ type PlayGameForm = CoinSideForm & ProofOfChanceForm;
 
 export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
   const formMethods = useForm<PlayGameForm>();
-  const { formState, trigger: triggerValidation } = formMethods;
+  const { formState, getValues, trigger: triggerValidation } = formMethods;
 
-  const {
-    stepCount,
-    formSteps,
-    isFirstStep,
-    goToStep,
-    goToNextStep,
-    goToPreviousStep,
-  } = useFormSteps<PlayGameForm>();
+  const { stepCount, formSteps, isFirstStep, goToNextStep, goToPreviousStep } =
+    useFormSteps<PlayGameForm>();
 
   const playGameFormSteps = formSteps
     .addStep(['coinSide'], <CoinSideFormSection />)
@@ -45,15 +39,12 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
       ['proofOfChance'],
       <ProofOfChanceFormSection
         stepCount={stepCount}
-        goToNextStep={goToNextStep}
+        onSubmit={() => playGame(getValues())}
       />
     );
 
   const currentFields = formSteps.getFields(stepCount);
   const isLastStep = stepCount === playGameFormSteps.lastStep();
-  const isCurrentFormStepDirty = currentFields.every(
-    (field) => !!formState.dirtyFields[field]
-  );
   const isCurrentFormStepValid = async () => {
     await Promise.all(
       currentFields.map(async (field) => await triggerValidation(field))
@@ -68,9 +59,15 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
   const { push } = useRouter();
 
   const playGame = async ({ coinSide, proofOfChance }: PlayGameForm) => {
+    console.log({ formStateErrors: formState.errors });
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
-    console.log({ coinSide, proofOfChance });
+    console.log({
+      coinSide,
+      proofOfChance: encodeBytes32String(proofOfChance),
+      wager: game?.wager,
+      value: parseEther(game!.wager.toString()),
+    });
     // TODO: Do something with error here
     const coinflipContract = CoinflipContract.fromSigner(
       signer!,
@@ -82,23 +79,27 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         game!.id,
         coinSide,
         encodeBytes32String(proofOfChance),
-        { value: parseEther(game!.wager) }
+        { value: parseEther(game!.wager.toString()) }
       );
 
       const INDEX_GRACE_PERIOD_MS = 8000;
-      toast.loading('Creating Game', {
+      toast.loading('Creating your Game Play', {
         position: 'bottom-right',
         duration: INDEX_GRACE_PERIOD_MS,
       });
 
       setTimeout(() => {
-        toast.success('Successfully created!', { position: 'bottom-right' });
+        toast.success('Game play successfully created!', {
+          position: 'bottom-right',
+        });
         push('/games?for=my_games');
       }, INDEX_GRACE_PERIOD_MS);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:
-          console.log('User Rejected. TODO: Add a toast here');
+          toast.error("Oops! Looks like you've rejected the transaction.", {
+            position: 'bottom-right',
+          });
           break;
       }
     }

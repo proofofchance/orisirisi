@@ -12,7 +12,7 @@ export class Game {
   constructor(
     public id: number,
     public chain_id: number,
-    public wager: string,
+    public wager: number,
     public wager_usd: number,
     public max_possible_win_usd: number,
     public players_left: number,
