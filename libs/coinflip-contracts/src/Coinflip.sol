@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
@@ -42,17 +42,6 @@ contract Coinflip is
 
     receive() external payable {
         payGameWager();
-    }
-
-    modifier mustHaveGameWager(Game.ID gameID) {
-        uint myBalance = wallets.getWalletBalance(msg.sender);
-        uint gameWager = getGameWager(gameID);
-
-        if (myBalance < gameWager) {
-            revert InsufficientWalletBalance();
-        }
-
-        _;
     }
 
     /// @dev Creates a new game
@@ -98,7 +87,6 @@ contract Coinflip is
         mustBeOperational
         mustBeOngoingGame(gameID)
         mustAvoidGameWithMaxedOutPlays(gameID)
-        mustHaveGameWager(gameID)
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
     {
         maybePayGameWager();
