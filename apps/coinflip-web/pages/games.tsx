@@ -224,6 +224,8 @@ function GameCard({
 
   const padDigit = (digit: number) => digit.toString().padStart(2, '0');
 
+  if (gameExpiryCountdown.isFinished()) return null;
+
   return (
     <Link
       href={`/games/${game.id}`}
