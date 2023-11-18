@@ -27,6 +27,7 @@ import {
 } from '@orisirisi/coinflip-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import Link from 'next/link';
+import { Countdown } from '@orisirisi/orisirisi-data-utils';
 
 export function GamesPage() {
   const { query } = useRouter();
@@ -195,13 +196,15 @@ function GamesView({
 }
 
 function useGameExpiryCountdown(game: CoinflipGame) {
-  const [countDown, setCountDown] = useState(game.getExpiryCountdown());
+  const [countDown, setCountDown] = useState(
+    Countdown.getNext(game.expiry_timestamp)
+  );
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCountDown((previousCountdown) => ({
         ...previousCountdown,
-        ...game.getExpiryCountdown(),
+        ...Countdown.getNext(game.expiry_timestamp),
       }));
     }, 1000);
 

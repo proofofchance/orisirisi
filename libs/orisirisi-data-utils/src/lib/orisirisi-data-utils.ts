@@ -65,9 +65,37 @@ export const currentTimeInSeconds = () =>
 export const hoursToSeconds = (hours: number) => hours * 60 * 60;
 export const daysToSeconds = (days: number) => days * 24 * 60 * 60;
 
-export interface Countdown {
-  daysLeft: number;
-  hoursLeft: number;
-  minutesLeft: number;
-  secondsLeft: number;
+export class Countdown {
+  constructor(
+    public daysLeft: number,
+    public hoursLeft: number,
+    public minutesLeft: number,
+    public secondsLeft: number
+  ) {}
+
+  static getNext(untilTimestamp: number): Countdown {
+    const now = Math.ceil(new Date().getTime() / 1000);
+    const timeLeft = Math.max(untilTimestamp - now, 0);
+
+    const [daysLeft, hoursAndMinutesAndSecondsLeft] = getDivisionAndRemainder(
+      timeLeft,
+      aDay
+    );
+    const [hoursLeft, minutesAndSecondsLeft] = getDivisionAndRemainder(
+      hoursAndMinutesAndSecondsLeft,
+      anHour
+    );
+    const [minutesLeft, secondsLeft] = getDivisionAndRemainder(
+      minutesAndSecondsLeft,
+      aMinute
+    );
+
+    return new Countdown(daysLeft, hoursLeft, minutesLeft, secondsLeft);
+  }
+
+  isFinished = () =>
+    this.daysLeft === 0 &&
+    this.hoursLeft === 0 &&
+    this.minutesLeft === 0 &&
+    this.secondsLeft === 0;
 }

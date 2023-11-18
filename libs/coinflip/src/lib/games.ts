@@ -1,11 +1,3 @@
-import {
-  Countdown,
-  aDay,
-  aMinute,
-  anHour,
-  getDivisionAndRemainder,
-} from '@orisirisi/orisirisi-data-utils';
-
 export type GameStatus = 'ongoing' | 'completed';
 
 export class Game {
@@ -30,33 +22,6 @@ export class Game {
   static manyFromJSON(jsonList: Game[]): Game[] {
     // @ts-ignore
     return jsonList.map((json) => Object.assign(new Game(), json));
-  }
-
-  getExpiryCountdown(): Countdown {
-    const { expiry_timestamp: expiryTimestamp } = this;
-
-    const now = Math.ceil(new Date().getTime() / 1000);
-    const timeLeft = Math.max(expiryTimestamp - now, 0);
-
-    const [daysLeft, hoursAndMinutesAndSecondsLeft] = getDivisionAndRemainder(
-      timeLeft,
-      aDay
-    );
-    const [hoursLeft, minutesAndSecondsLeft] = getDivisionAndRemainder(
-      hoursAndMinutesAndSecondsLeft,
-      anHour
-    );
-    const [minutesLeft, secondsLeft] = getDivisionAndRemainder(
-      minutesAndSecondsLeft,
-      aMinute
-    );
-
-    return {
-      daysLeft,
-      hoursLeft,
-      minutesLeft,
-      secondsLeft,
-    };
   }
 }
 
