@@ -75,5 +75,5 @@ export function useCoinflipGame(id: number | null) {
     }
   }, [id]);
 
-  return { game, isLoading };
+  return { game, isLoading, hasLoaded: game !== null };
 }
