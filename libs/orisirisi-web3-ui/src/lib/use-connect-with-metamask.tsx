@@ -57,7 +57,7 @@ export function useConnectWithMetaMask() {
       switch (error.code) {
         case Web3ProviderErrorCode.UserRejected:
           return toast.error(
-            'Could not connect to Metamask because you have rejected!',
+            'Could not connect to Metamask because you canceled!',
             {
               position: 'bottom-right',
             }
