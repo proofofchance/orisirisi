@@ -1,6 +1,6 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers';
-import { Web3Provider, Web3ProviderType } from './providers';
+import { Web3Provider, Web3ProviderError, Web3ProviderType } from './providers';
 
 export enum Web3AccountError {
   Generic,
@@ -40,14 +40,13 @@ export class Web3Account {
 
   private static async getSigner(
     provider: BrowserProvider
-  ): Promise<Result<JsonRpcSigner, null> | Result<null, Web3AccountError>> {
+  ): Promise<Result<JsonRpcSigner, null> | Result<null, Web3ProviderError>> {
     try {
       const signer = await provider.getSigner();
 
       return new Result(signer, null);
     } catch (error: unknown) {
-      console.log({ error });
-      return new Result(null, Web3AccountError.Generic);
+      return new Result(null, Web3ProviderError.from(error));
     }
   }
 

@@ -3,6 +3,7 @@ import {
   MetaMask,
   MetaMaskError,
   Web3Account,
+  Web3ProviderErrorCode,
 } from '@orisirisi/orisirisi-web3';
 import { useCache } from './use-cache';
 import { useCurrentWeb3Account } from './use-current-web3-account';
@@ -49,11 +50,24 @@ export function useConnectWithMetaMask() {
 
     setCurrentWeb3ProviderType(MetaMask.type);
     cacheWeb3ProviderType(MetaMask.type);
-    const currentWeb3Account = await Web3Account.getCurrentAccount(
-      MetaMask.type
-    );
+    const { ok: currentWeb3Account, error } =
+      await Web3Account.getCurrentAccount(MetaMask.type);
 
-    await setCurrentWeb3Account(currentWeb3Account.ok!);
+    if (error) {
+      switch (error.code) {
+        case Web3ProviderErrorCode.UserRejected:
+          return toast.error(
+            'Could not connect to Metamask because you have rejected!',
+            {
+              position: 'bottom-right',
+            }
+          );
+        default:
+          return;
+      }
+    }
+
+    return await setCurrentWeb3Account(currentWeb3Account!);
   };
 
   return connectWithMetaMask;
