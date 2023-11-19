@@ -21,6 +21,7 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         Game.ID gameID,
         Coin.Side coinSide,
+        address creator,
         bytes32 playHash
     );
 
@@ -90,7 +91,13 @@ contract GamePlays {
         players[gameID][coinSide].push(player);
         incrementPlayCount(gameID);
 
-        emit GamePlayCreated(gamePlayID, gameID, coinSide, playHash);
+        emit GamePlayCreated(
+            gamePlayID,
+            gameID,
+            coinSide,
+            msg.sender,
+            playHash
+        );
     }
 
     function createGamePlayProof(
