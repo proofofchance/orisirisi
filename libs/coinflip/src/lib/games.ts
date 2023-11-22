@@ -1,3 +1,5 @@
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
+
 export type GameStatus = 'ongoing' | 'completed';
 
 export class Game {
@@ -14,6 +16,10 @@ export class Game {
     public is_completed: boolean,
     public is_ongoing: boolean
   ) {}
+
+  getChain(): Chain {
+    return Chain.fromChainID(this.chain_id);
+  }
 
   static fromJSON(json: Game): Game {
     // @ts-ignore

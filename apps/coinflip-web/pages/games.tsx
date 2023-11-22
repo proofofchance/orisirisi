@@ -25,7 +25,6 @@ import {
   StopWatchIcon,
   useCoinflipGames,
 } from '@orisirisi/coinflip-web-ui';
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import Link from 'next/link';
 import { Countdown } from '@orisirisi/orisirisi-data-utils';
 
@@ -235,7 +234,7 @@ function GameCard({
         <div className="text-sm">#{game.id}</div>
 
         <div className="w-4">
-          <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
+          <ChainLogo chain={game.getChain()} />
         </div>
       </div>
 

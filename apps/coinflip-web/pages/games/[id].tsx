@@ -1,7 +1,7 @@
+import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import { ChainLogo, useCoinflipGame } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 
@@ -20,23 +20,17 @@ export default function GamePage() {
         <div className="flex justify-between">
           <h2 className="text-xl">GAME #{id}</h2>
           <div className="w-4">
-            <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
+            <ChainLogo chain={game.getChain()} />
           </div>
         </div>
 
         <Tabs
           className="mt-4"
+          defaultTabIndex={0}
           tabs={[
             {
               title: 'Details',
-              body: (
-                <div id="game-details-container">
-                  <div className="flex justify-between">
-                    <div>Game</div>
-                    <div></div>
-                  </div>
-                </div>
-              ),
+              body: <GameDetails game={game} />,
             },
             {
               title: 'Activities',
@@ -63,12 +57,58 @@ export default function GamePage() {
   );
 }
 
+function GameDetails({ game }: { game: CoinflipGame }) {
+  const gameChainCurrency = game.getChain().getCurrency();
+
+  return (
+    <div className="flex justify-center mt-4">
+      <div id="game-details-container" className="w-96">
+        <GameDetailRow
+          label="Wager"
+          detail={`${game.wager} ${gameChainCurrency} ~ USD ${formatUSD(
+            game.wager_usd
+          )}`}
+        />
+        <GameDetailRow
+          label="Number of players"
+          detail={`${game.total_players_required}`}
+        />
+        <GameDetailRow
+          label="Required Players For Completion"
+          detail={`${game.players_left}`}
+        />
+      </div>
+    </div>
+  );
+}
+function GameDetailRow({
+  label,
+  detail,
+}: {
+  label: string;
+  detail: ReactNode;
+}) {
+  return (
+    <div className="flex justify-between">
+      <div>{label}</div>
+      <div>{detail}</div>
+    </div>
+  );
+}
+
+interface TabsProps extends PropsWithClassName {
+  tabs: { title: string; body: ReactNode }[];
+  defaultTabIndex?: number;
+  bodyClassName?: string;
+}
 function Tabs({
   tabs,
   className,
-}: { tabs: { title: string; body: ReactNode }[] } & PropsWithClassName) {
+  defaultTabIndex = 0,
+  bodyClassName,
+}: TabsProps) {
   const bodies = tabs.map(({ body }) => body);
-  const [activeBodyIndex, setActiveBodyIndex] = useState(0);
+  const [activeBodyIndex, setActiveBodyIndex] = useState(defaultTabIndex);
 
   const titles = tabs.map(({ title }) => title);
   const isActiveTitle = (i: number) => i === activeBodyIndex;
@@ -97,7 +137,9 @@ function Tabs({
           );
         })}
       </div>
-      <div className="px-4">{bodies[activeBodyIndex]}</div>
+      <div id="tab-body" className={cn('px-4', bodyClassName)}>
+        {bodies[activeBodyIndex]}
+      </div>
     </div>
   );
 }
