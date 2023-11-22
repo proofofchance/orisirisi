@@ -1,6 +1,7 @@
-import { useCoinflipGame } from '@orisirisi/coinflip-web-ui';
+import { ChainLogo, useCoinflipGame } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 
@@ -15,8 +16,13 @@ export default function GamePage() {
 
   return (
     <>
-      <div className="text-white">
-        <h2 className="text-2xl">GAME #{id}</h2>
+      <div className="text-white mt-4">
+        <div className="flex justify-between">
+          <h2 className="text-xl">GAME #{id}</h2>
+          <div className="w-4">
+            <ChainLogo chain={Chain.fromChainID(game.chain_id)} />
+          </div>
+        </div>
 
         <Tabs
           className="mt-4"
