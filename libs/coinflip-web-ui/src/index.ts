@@ -4,3 +4,7 @@ export { CreateGameSection } from './lib/create-game-section';
 export { PlayGameSection } from './lib/play-game-section';
 export * from './lib/games-page';
 export { ChainLogo } from './lib/chain-logo';
+export {
+  GameExpiryCountdown,
+  useGameExpiryCountdown,
+} from './lib/game-expiry-countdown';

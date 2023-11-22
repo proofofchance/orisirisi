@@ -1,5 +1,10 @@
 import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
-import { ChainLogo, useCoinflipGame } from '@orisirisi/coinflip-web-ui';
+import {
+  ChainLogo,
+  GameExpiryCountdown,
+  useCoinflipGame,
+  useGameExpiryCountdown,
+} from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { useRouter } from 'next/router';
@@ -59,6 +64,7 @@ export default function GamePage() {
 
 function GameDetails({ game }: { game: CoinflipGame }) {
   const gameChainCurrency = game.getChain().getCurrency();
+  const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
   return (
     <div className="flex justify-center mt-4">
@@ -69,6 +75,12 @@ function GameDetails({ game }: { game: CoinflipGame }) {
             game.wager_usd
           )}`}
         />
+
+        <GameDetailRow
+          label="Time left to participate"
+          detail={<GameExpiryCountdown countdown={gameExpiryCountdown} />}
+        />
+
         <GameDetailRow
           label="Number of players"
           detail={`${game.total_players_required}`}

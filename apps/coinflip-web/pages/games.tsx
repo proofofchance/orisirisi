@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren } from 'react';
 import {
   CoinflipGame,
   CoinflipGameStatus,
@@ -18,15 +18,16 @@ import {
 } from '@orisirisi/orisirisi-web-ui';
 import {
   ChainLogo,
+  GameExpiryCountdown,
   GamesEmptyIcon,
   GamesPageFilter,
   GamesPageForFilter,
   RubikCubeIcon,
   StopWatchIcon,
   useCoinflipGames,
+  useGameExpiryCountdown,
 } from '@orisirisi/coinflip-web-ui';
 import Link from 'next/link';
-import { Countdown } from '@orisirisi/orisirisi-data-utils';
 
 export function GamesPage() {
   const { query } = useRouter();
@@ -194,24 +195,6 @@ function GamesView({
   );
 }
 
-function useGameExpiryCountdown(game: CoinflipGame) {
-  const [countDown, setCountDown] = useState(
-    Countdown.getNext(game.expiry_timestamp)
-  );
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCountDown((previousCountdown) => ({
-        ...previousCountdown,
-        ...Countdown.getNext(game.expiry_timestamp),
-      }));
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [game]);
-
-  return countDown;
-}
 function GameCard({
   game,
   goToGamePage,
@@ -219,9 +202,7 @@ function GameCard({
   game: CoinflipGame;
   goToGamePage: (id: number) => void;
 }) {
-  const gameExpiryCountdown = useGameExpiryCountdown(game);
-
-  const padDigit = (digit: number) => digit.toString().padStart(2, '0');
+  const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
   if (game.is_ongoing && gameExpiryCountdown.isFinished()) return null;
 
@@ -252,10 +233,7 @@ function GameCard({
               <StopWatchIcon />
             </span>
             <span>
-              {padDigit(gameExpiryCountdown.daysLeft)}d :{' '}
-              {padDigit(gameExpiryCountdown.hoursLeft)}h :{' '}
-              {padDigit(gameExpiryCountdown.minutesLeft)}m :{' '}
-              {padDigit(gameExpiryCountdown.secondsLeft)}s left
+              <GameExpiryCountdown countdown={gameExpiryCountdown} />
             </span>
           </div>
         )}
