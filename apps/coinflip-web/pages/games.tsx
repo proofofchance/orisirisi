@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import {
   CoinflipGame,
   CoinflipGameStatus,
@@ -180,7 +180,13 @@ function GamesView({
 
   const goToGamePage = (id: number) => push(`/games/${id}`);
 
-  if (!isLoading && games.length == 0) return <GamesEmptyView />;
+  const [expiredGameCardsCount, setExpiredGameCardsCount] = useState(0);
+
+  if (
+    !isLoading &&
+    (games.length == 0 || games.length == expiredGameCardsCount)
+  )
+    return <GamesEmptyView />;
 
   return (
     <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8">
@@ -189,6 +195,9 @@ function GamesView({
           goToGamePage={goToGamePage}
           game={game}
           key={game.id + game.chain_id}
+          incrementExpiredGameCardsCount={() =>
+            setExpiredGameCardsCount((c) => c + 1)
+          }
         />
       ))}
     </div>
@@ -198,13 +207,19 @@ function GamesView({
 function GameCard({
   game,
   goToGamePage,
+  incrementExpiredGameCardsCount,
 }: {
   game: CoinflipGame;
   goToGamePage: (id: number) => void;
+  incrementExpiredGameCardsCount: () => void;
 }) {
   const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
-  if (game.is_ongoing && gameExpiryCountdown.isFinished()) return null;
+  if (game.is_ongoing && gameExpiryCountdown.isFinished()) {
+    incrementExpiredGameCardsCount();
+
+    return null;
+  }
 
   return (
     <Link
