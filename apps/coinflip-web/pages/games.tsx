@@ -1,15 +1,7 @@
 import { PropsWithChildren, useState } from 'react';
-import {
-  CoinflipGame,
-  CoinflipGameStatus,
-  formatUSD,
-} from '@orisirisi/coinflip';
+import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
-import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-} from '@heroicons/react/24/outline';
+import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import {
   PropsWithClassName,
@@ -33,13 +25,12 @@ export function GamesPage() {
   const { query } = useRouter();
 
   const forFilter = (query.for ?? 'all') as GamesPageForFilter;
-  const statusFilter = (query.status ?? 'ongoing') as CoinflipGameStatus;
 
-  const { games, isLoading } = useCoinflipGames({ forFilter, statusFilter });
+  const { games, isLoading } = useCoinflipGames({ forFilter });
 
   return (
     <div>
-      <GamesFilterButtons forFilter={forFilter} statusFilter={statusFilter} />
+      <GamesFilterButtons forFilter={forFilter} />
       <GamesView games={games} isLoading={isLoading} />
     </div>
   );
@@ -78,25 +69,6 @@ function GamesFilterButtons(filter: GamesPageFilter) {
               </GamesForFilterButton>
             </div>
           )}
-
-          <div className="flex">
-            <GamesStatusFilterButton
-              className="rounded-l-2xl px-4"
-              currentFilter={filter}
-              filter="ongoing"
-            >
-              <ClockIcon className="h-5" />
-              <span>Ongoing</span>
-            </GamesStatusFilterButton>
-            <GamesStatusFilterButton
-              className="rounded-r-2xl px-4"
-              currentFilter={filter}
-              filter="completed"
-            >
-              <CheckIcon className="h-5" />
-              <span>Completed</span>
-            </GamesStatusFilterButton>
-          </div>
         </div>
       )}
     </>
@@ -122,45 +94,12 @@ function GamesForFilterButton({
       onClick={() =>
         push({
           pathname: 'games',
-          query: { for: filter, status: currentFilter.statusFilter },
+          query: { for: filter },
         })
       }
       className={cn(
         'flex items-center gap-2 p-1 pl-4',
         filter === currentFilter.forFilter ? activeClass : inactiveClass,
-        className
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-function GamesStatusFilterButton({
-  filter,
-  currentFilter,
-  children,
-  className,
-}: {
-  filter: CoinflipGameStatus;
-  currentFilter: GamesPageFilter;
-} & PropsWithChildren &
-  PropsWithClassName) {
-  const activeClass = 'bg-[#2969FF]';
-  const inactiveClass = 'border-solid border-[0.5px] border-gray-400';
-
-  const { push } = useRouter();
-
-  return (
-    <button
-      onClick={() =>
-        push({
-          pathname: 'games',
-          query: { status: filter, for: currentFilter.forFilter },
-        })
-      }
-      className={cn(
-        'flex items-center gap-2 p-1 pl-4',
-        filter === currentFilter.statusFilter ? activeClass : inactiveClass,
         className
       )}
     >

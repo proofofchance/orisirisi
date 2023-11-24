@@ -11,7 +11,6 @@ export type GamesPageForFilter = 'all' | 'my_games';
 
 export interface GamesPageFilter {
   forFilter: GamesPageForFilter;
-  statusFilter: CoinflipGameStatus;
 }
 
 export function useCoinflipGames({
