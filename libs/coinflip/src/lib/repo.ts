@@ -4,6 +4,8 @@ import { Game, GameStatus } from './games';
 export interface FetchGamesParams {
   creator_address?: string;
   status?: GameStatus;
+  id_to_ignore?: number;
+  page_size?: number;
 }
 
 export class Repo {

@@ -13,20 +13,35 @@ export interface GamesPageFilter {
   forFilter: GamesPageForFilter;
 }
 
+interface UseCoinflipGamesParams {
+  forFilter?: GamesPageForFilter;
+  statusFilter?: CoinflipGameStatus;
+  idToIgnore?: number;
+  pageSize?: number;
+}
+
 export function useCoinflipGames({
   forFilter,
   statusFilter,
-}: {
-  forFilter?: GamesPageForFilter;
-  statusFilter?: CoinflipGameStatus;
-}) {
+  idToIgnore,
+  pageSize,
+}: UseCoinflipGamesParams) {
+  console.log({
+    forFilter,
+    statusFilter,
+    idToIgnore,
+    pageSize,
+  });
   const { currentWeb3Account } = useCurrentWeb3Account();
   const [isLoading, setIsLoading] = useState(false);
-  const [games, setGames] = useState<CoinflipGame[]>([]);
+  const [games, setGames] = useState<CoinflipGame[] | null>(null);
 
   useEffect(() => {
     const buildParams = (): FetchCoinflipGamesParams => {
-      const params: FetchCoinflipGamesParams = {};
+      const params: FetchCoinflipGamesParams = {
+        id_to_ignore: idToIgnore,
+        page_size: pageSize,
+      };
 
       if (forFilter === 'my_games') {
         params.creator_address = currentWeb3Account!.address;
@@ -48,9 +63,9 @@ export function useCoinflipGames({
     return () => {
       fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
     };
-  }, [forFilter, statusFilter, currentWeb3Account]);
+  }, [forFilter, statusFilter, idToIgnore, pageSize, currentWeb3Account]);
 
-  return { games, isLoading };
+  return { games, isLoading, hasLoaded: games !== null };
 }
 
 export function useCoinflipGame(id: number | null) {
@@ -69,7 +84,7 @@ export function useCoinflipGame(id: number | null) {
         });
 
       return () => {
-        fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
+        fetchController.abort('STALE_COINFLIP_GAME_REQUEST');
       };
     }
   }, [id]);

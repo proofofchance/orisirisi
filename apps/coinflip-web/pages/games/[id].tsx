@@ -9,7 +9,9 @@ import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import {
   ChainLogo,
   GameExpiryCountdown,
+  GamesView,
   useCoinflipGame,
+  useCoinflipGames,
   useGameExpiryCountdown,
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
@@ -66,12 +68,36 @@ export default function GamePage() {
           </button>
         )}
       </div>
+      <ExploreOtherGamesView gameId={game.id} className="mt-20" />
+
       <CopyGameLinkButton className="fixed bottom-20" />
       <MainControlButtons
         gameId={game.id}
         className="fixed bottom-8 right-20"
       />
     </>
+  );
+}
+
+function ExploreOtherGamesView({
+  gameId,
+  className,
+}: { gameId: number } & PropsWithClassName) {
+  const { hasLoaded, isLoading, games } = useCoinflipGames({
+    idToIgnore: gameId,
+    pageSize: 10,
+    statusFilter: 'ongoing',
+  });
+
+  if (!hasLoaded) return null;
+
+  console.log({ gameId });
+
+  return (
+    <div className={cn('text-white', className)}>
+      <h3 className="text-2xl">Explore Other Games</h3>
+      <GamesView className="mt-4" games={games!} isLoading={isLoading} />
+    </div>
   );
 }
 
