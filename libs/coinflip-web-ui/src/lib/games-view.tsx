@@ -62,7 +62,7 @@ function GameCard({
 }) {
   const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
-  if (game.is_ongoing && gameExpiryCountdown.isFinished()) {
+  if (game.isOngoing() && gameExpiryCountdown.isFinished()) {
     incrementExpiredGameCardsCount();
 
     return null;
@@ -89,7 +89,7 @@ function GameCard({
         <div className="mt-2">
           Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
         </div>
-        {game.is_ongoing && (
+        {game.isOngoing() && (
           <div className="text-sm mt-4 flex gap-2 items-center">
             <span className="h-4 w-4">
               <StopWatchIcon />
@@ -102,8 +102,8 @@ function GameCard({
       </div>
 
       {false && (
-        <div className={cn('flex gap-4 mt-4', game.is_completed && 'mt-10')}>
-          {game.is_ongoing && (
+        <div className={cn('flex gap-4 mt-4', game.isCompleted() && 'mt-10')}>
+          {game.isOngoing() && (
             <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
               Play
             </button>

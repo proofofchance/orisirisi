@@ -26,12 +26,6 @@ export function useCoinflipGames({
   idToIgnore,
   pageSize,
 }: UseCoinflipGamesParams) {
-  console.log({
-    forFilter,
-    statusFilter,
-    idToIgnore,
-    pageSize,
-  });
   const { currentWeb3Account } = useCurrentWeb3Account();
   const [isLoading, setIsLoading] = useState(false);
   const [games, setGames] = useState<CoinflipGame[] | null>(null);

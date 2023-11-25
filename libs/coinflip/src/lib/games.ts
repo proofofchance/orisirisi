@@ -1,6 +1,6 @@
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
-export type GameStatus = 'ongoing' | 'completed';
+export type GameStatus = 'ongoing' | 'expired' | 'completed';
 
 export class Game {
   constructor(
@@ -13,12 +13,21 @@ export class Game {
     public total_players_required: number,
     public max_play_count: number,
     public expiry_timestamp: number,
-    public is_completed: boolean,
-    public is_ongoing: boolean
+    public status: GameStatus
   ) {}
 
   getChain(): Chain {
     return Chain.fromChainID(this.chain_id);
+  }
+
+  isOngoing(): boolean {
+    return this.status === 'ongoing';
+  }
+  isExpired(): boolean {
+    return this.status === 'expired';
+  }
+  isCompleted(): boolean {
+    return this.status === 'completed';
   }
 
   static fromJSON(json: Game): Game {

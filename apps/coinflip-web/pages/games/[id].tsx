@@ -59,7 +59,7 @@ export default function GamePage() {
         />
       </div>
       <div className="text-center">
-        {game.is_ongoing && (
+        {game.isOngoing() && (
           <button
             onClick={() => push(`/games/${id}/play`)}
             className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
@@ -94,7 +94,7 @@ function ExploreOtherGamesView({
   if (games!.length === 0) return null;
 
   return (
-    <div className={cn('text-white', className)}>
+    <div className={cn('text-white mb-72', className)}>
       <h3 className="text-2xl">Explore Other Ongoing Games</h3>
       <GamesView className="mt-4" games={games!} isLoading={isLoading} />
     </div>
@@ -175,7 +175,7 @@ function GameDetails({ game }: { game: CoinflipGame }) {
             game.wager_usd
           )}`}
         />
-        {game.is_ongoing ||
+        {game.isOngoing() ||
           (!gameExpiryCountdown.isFinished() && (
             <GameDetailRow
               label="Time left to participate"
