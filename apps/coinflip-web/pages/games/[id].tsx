@@ -58,16 +58,6 @@ export default function GamePage() {
           ]}
         />
       </div>
-      <div className="text-center">
-        {game.isOngoing() && (
-          <button
-            onClick={() => push(`/games/${id}/play`)}
-            className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
-          >
-            Play
-          </button>
-        )}
-      </div>
       <ExploreOtherGamesView gameId={game.id} className="mt-20" />
 
       <CopyGameLinkButton className="fixed bottom-20" />
