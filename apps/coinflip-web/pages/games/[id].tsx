@@ -91,11 +91,11 @@ function ExploreOtherGamesView({
 
   if (!hasLoaded) return null;
 
-  console.log({ gameId });
+  if (games!.length === 0) return null;
 
   return (
     <div className={cn('text-white', className)}>
-      <h3 className="text-2xl">Explore Other Games</h3>
+      <h3 className="text-2xl">Explore Other Ongoing Games</h3>
       <GamesView className="mt-4" games={games!} isLoading={isLoading} />
     </div>
   );
