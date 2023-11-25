@@ -175,13 +175,12 @@ function GameDetails({ game }: { game: CoinflipGame }) {
             game.wager_usd
           )}`}
         />
-        {game.isOngoing() ||
-          (!gameExpiryCountdown.isFinished() && (
-            <GameDetailRow
-              label="Time left to participate"
-              detail={<GameExpiryCountdown countdown={gameExpiryCountdown} />}
-            />
-          ))}
+        {(game.isOngoing() || !gameExpiryCountdown.isFinished()) && (
+          <GameDetailRow
+            label="Time left to participate"
+            detail={<GameExpiryCountdown countdown={gameExpiryCountdown} />}
+          />
+        )}
         <GameDetailRow
           label="Number of players"
           detail={`${game.total_players_required}`}
