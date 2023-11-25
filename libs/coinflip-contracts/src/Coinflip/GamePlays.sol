@@ -21,8 +21,15 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         Game.ID gameID,
         Coin.Side coinSide,
-        address creator,
+        address player,
         bytes32 playHash
+    );
+
+    event GamePlayProofCreated(
+        Game.PlayID gamePlayID,
+        Game.ID gameID,
+        address player,
+        bytes32 playProof
     );
 
     modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
@@ -107,6 +114,8 @@ contract GamePlays {
     ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
         plays[gameID][gamePlayID].proof = playProof;
         incrementPlayProofCount(gameID);
+
+        emit GamePlayProofCreated(gamePlayID, gameID, msg.sender, playProof);
     }
 
     function allProofsAreUploaded(Game.ID gameID) internal view returns (bool) {
