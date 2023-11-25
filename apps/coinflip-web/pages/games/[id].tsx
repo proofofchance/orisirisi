@@ -1,3 +1,4 @@
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -15,13 +16,17 @@ import {
   useGameExpiryCountdown,
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
-import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import {
+  ButtonProps,
+  PropsWithClassName,
+  cn,
+} from '@orisirisi/orisirisi-web-ui';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function GamePage() {
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const id = parseInteger(query.id as string);
   const maybeGame = useCoinflipGame(id);
 
@@ -60,11 +65,8 @@ export default function GamePage() {
       </div>
       <ExploreOtherGamesView gameId={game.id} className="mt-20" />
 
-      <CopyGameLinkButton className="fixed bottom-20" />
-      <MainControlButtons
-        gameId={game.id}
-        className="fixed bottom-8 right-20"
-      />
+      {game.isOngoing() && <CopyGameLinkButton className="fixed bottom-20" />}
+      <MainControlButtons game={game} className="fixed bottom-8 right-20" />
     </>
   );
 }
@@ -116,9 +118,9 @@ function CopyGameLinkButton({ className }: PropsWithClassName) {
 }
 
 function MainControlButtons({
-  gameId,
+  game,
   className,
-}: { gameId: number } & PropsWithClassName) {
+}: { game: CoinflipGame } & PropsWithClassName) {
   const { push } = useRouter();
 
   return (
@@ -132,15 +134,20 @@ function MainControlButtons({
         <button>
           <ChevronLeftIcon className="h-8" />
         </button>
-        <button
-          onClick={() => push(`/games/${gameId}/play`)}
-          className="bg-transparent text-white hover:bg-white hover:text-black fill-current focus:outline-none border-[1px] border-white w-24 h-24 flex justify-center items-center rounded-full shadow-md"
-        >
-          <span className="flex flex-col gap-1 justify-center items-center">
-            <PlayIcon className="h-8" />
-            <span className="text-[10px]">Play</span>
-          </span>
-        </button>
+        {game.isOngoing() && (
+          <MainButton
+            onClick={() => push(`/games/${game.id}/play`)}
+            icon={<PlayIcon className="h-8" />}
+            label="Play"
+          />
+        )}
+        {game.isExpired() && (
+          <MainButton
+            onClick={() => push(`/games/${game.id}/prove`)}
+            icon={<ShieldCheckIcon className="h-8" />}
+            label="Prove"
+          />
+        )}
         <button>
           <ChevronRightIcon className="h-8" />
         </button>
@@ -149,6 +156,23 @@ function MainControlButtons({
         <ChevronDownIcon className="h-8" />
       </button>
     </div>
+  );
+}
+function MainButton({
+  onClick,
+  icon,
+  label,
+}: ButtonProps & { icon: ReactNode; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-transparent text-white hover:bg-white hover:text-black fill-current focus:outline-none border-[1px] border-white w-24 h-24 flex justify-center items-center rounded-full shadow-md"
+    >
+      <span className="flex flex-col gap-1 justify-center items-center">
+        {icon}
+        <span className="text-[10px]">{label}</span>
+      </span>
+    </button>
   );
 }
 
