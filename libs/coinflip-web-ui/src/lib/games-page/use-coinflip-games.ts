@@ -2,6 +2,7 @@ import {
   CoinflipGame,
   CoinflipGameStatus,
   CoinflipRepo,
+  FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
@@ -62,15 +63,15 @@ export function useCoinflipGames({
   return { games, isLoading, hasLoaded: games !== null };
 }
 
-export function useCoinflipGame(id: number | null) {
+export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [game, setGame] = useState<CoinflipGame | null>(null);
 
   useEffect(() => {
-    if (id) {
+    if (params) {
       const fetchController = new AbortController();
       setIsLoading(true);
-      CoinflipRepo.fetchGame(id, fetchController)
+      CoinflipRepo.fetchGame(params, fetchController)
         .then((game) => setGame(game))
         .then(() => setIsLoading(false))
         .catch((error: unknown) => {
@@ -81,7 +82,7 @@ export function useCoinflipGame(id: number | null) {
         fetchController.abort('STALE_COINFLIP_GAME_REQUEST');
       };
     }
-  }, [id]);
+  }, [params]);
 
   return { game, isLoading, hasLoaded: game !== null };
 }

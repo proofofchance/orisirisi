@@ -13,7 +13,9 @@ export class Game {
     public total_players_required: number,
     public max_play_count: number,
     public expiry_timestamp: number,
-    public status: GameStatus
+    public status: GameStatus,
+    public is_in_play_phase: boolean,
+    public is_awaiting_my_play_proof: boolean
   ) {}
 
   getChain(): Chain {

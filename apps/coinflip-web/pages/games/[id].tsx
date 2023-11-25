@@ -1,4 +1,4 @@
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ArrowUpTrayIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -21,18 +21,71 @@ import {
   PropsWithClassName,
   cn,
 } from '@orisirisi/orisirisi-web-ui';
+import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useRouter } from 'next/router';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+
+type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
 
 export default function GamePage() {
   const { query } = useRouter();
+
   const id = parseInteger(query.id as string);
-  const maybeGame = useCoinflipGame(id);
+  const { currentWeb3Account } = useCurrentWeb3Account();
+
+  const fetchGameParams = useMemo(
+    () => (id ? { id, playerAddress: currentWeb3Account?.address } : null),
+    [id, currentWeb3Account]
+  );
+  const maybeGame = useCoinflipGame(fetchGameParams);
 
   if (!maybeGame.hasLoaded) return null;
 
   const game = maybeGame.game!;
+
+  const getDefaultTabId = (): GamePageTabId => {
+    if (game.isOngoing()) {
+      return 'details';
+    } else if (game.is_awaiting_my_play_proof) {
+      return 'proofs-of-chance';
+    }
+
+    return 'activities';
+  };
+
+  const getTabs = () => {
+    const tabs = [
+      {
+        title: 'Details',
+        id: 'details',
+        body: <GameDetails game={game} />,
+      },
+      {
+        title: 'Activities',
+        id: 'activities',
+        body: (
+          <div id="activities">
+            <div id="activity-01">Some activity</div>
+          </div>
+        ),
+      },
+    ];
+
+    if (!game.is_in_play_phase) {
+      tabs.push({
+        title: 'Proofs Of Chance',
+        id: 'proofs-of-chance',
+        body: (
+          <div id="proofs-of-chance">
+            <div>List proofs Of Chance Here</div>
+          </div>
+        ),
+      });
+    }
+
+    return tabs;
+  };
 
   return (
     <>
@@ -46,23 +99,8 @@ export default function GamePage() {
 
         <Tabs
           className="mt-4"
-          defaultTabId={game.isOngoing() ? 'details' : 'activities'}
-          tabs={[
-            {
-              title: 'Details',
-              id: 'details',
-              body: <GameDetails game={game} />,
-            },
-            {
-              title: 'Activities',
-              id: 'activities',
-              body: (
-                <div id="activities">
-                  <div id="activity-01">Some activity</div>
-                </div>
-              ),
-            },
-          ]}
+          defaultTabId={getDefaultTabId()}
+          tabs={getTabs()}
         />
       </div>
       <ExploreOtherGamesView gameId={game.id} className="mt-20" />
@@ -125,6 +163,36 @@ function MainControlButtons({
 }: { game: CoinflipGame } & PropsWithClassName) {
   const { push } = useRouter();
 
+  const renderMainButton = () => {
+    if (game.isExpired()) {
+      return (
+        <MainButton
+          onClick={() => push(`/games/${game.id}/prove`)}
+          icon={<ShieldCheckIcon className="h-8" />}
+          label="Prove"
+        />
+      );
+    } else if (game.is_awaiting_my_play_proof) {
+      return (
+        <MainButton
+          onClick={() => console.log('Should trigger uploading proof')}
+          icon={<ArrowUpTrayIcon className="h-8" />}
+          label="Upload Proof"
+        />
+      );
+    } else if (game.isOngoing()) {
+      return (
+        <MainButton
+          onClick={() => push(`/games/${game.id}/play`)}
+          icon={<PlayIcon className="h-8" />}
+          label="Play"
+        />
+      );
+    }
+
+    throw new Error('Game state not handled for MainButton');
+  };
+
   return (
     <div
       className={cn('text-white flex flex-col items-center gap-2', className)}
@@ -136,20 +204,7 @@ function MainControlButtons({
         <button>
           <ChevronLeftIcon className="h-8" />
         </button>
-        {game.isOngoing() && (
-          <MainButton
-            onClick={() => push(`/games/${game.id}/play`)}
-            icon={<PlayIcon className="h-8" />}
-            label="Play"
-          />
-        )}
-        {game.isExpired() && (
-          <MainButton
-            onClick={() => push(`/games/${game.id}/prove`)}
-            icon={<ShieldCheckIcon className="h-8" />}
-            label="Prove"
-          />
-        )}
+        {renderMainButton()}
         <button>
           <ChevronRightIcon className="h-8" />
         </button>

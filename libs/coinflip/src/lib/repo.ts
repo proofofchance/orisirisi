@@ -8,6 +8,11 @@ export interface FetchGamesParams {
   page_size?: number;
 }
 
+export interface FetchGameParams {
+  id: number;
+  playerAddress?: string;
+}
+
 export class Repo {
   static async fetchGames(
     params: FetchGamesParams,
@@ -24,10 +29,15 @@ export class Repo {
     return Game.manyFromJSON(games);
   }
   static async fetchGame(
-    id: number,
+    params: FetchGameParams,
     fetchController: AbortController
   ): Promise<Game> {
-    const response = await fetch(`http://127.0.0.1:4446/coinflip/games/${id}`, {
+    let endpointUrl = `http://127.0.0.1:4446/coinflip/games/${params.id}`;
+    if (params.playerAddress) {
+      endpointUrl = endpointUrl + `?player_address=${params.playerAddress}`;
+    }
+
+    const response = await fetch(endpointUrl, {
       signal: fetchController.signal,
     });
 

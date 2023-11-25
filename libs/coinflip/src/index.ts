@@ -17,4 +17,5 @@ export {
 export {
   Repo as CoinflipRepo,
   FetchGamesParams as FetchCoinflipGamesParams,
+  FetchGameParams as FetchCoinflipGameParams,
 } from './lib/repo';
