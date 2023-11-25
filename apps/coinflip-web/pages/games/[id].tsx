@@ -46,14 +46,16 @@ export default function GamePage() {
 
         <Tabs
           className="mt-4"
-          defaultTabIndex={0}
+          defaultTabId={game.isOngoing() ? 'details' : 'activities'}
           tabs={[
             {
               title: 'Details',
+              id: 'details',
               body: <GameDetails game={game} />,
             },
             {
               title: 'Activities',
+              id: 'activities',
               body: (
                 <div id="activities">
                   <div id="activity-01">Some activity</div>
@@ -222,18 +224,19 @@ function GameDetailRow({
   );
 }
 
-interface TabsProps extends PropsWithClassName {
-  tabs: { title: string; body: ReactNode }[];
-  defaultTabIndex?: number;
+interface TabsProps<TabId> extends PropsWithClassName {
+  tabs: { title: string; id: TabId; body: ReactNode }[];
+  defaultTabId?: TabId;
   bodyClassName?: string;
 }
-function Tabs({
+function Tabs<TabId>({
   tabs,
   className,
-  defaultTabIndex = 0,
+  defaultTabId,
   bodyClassName,
-}: TabsProps) {
+}: TabsProps<TabId>) {
   const bodies = tabs.map(({ body }) => body);
+  const defaultTabIndex = tabs.findIndex((tab) => tab.id === defaultTabId) || 0;
   const [activeBodyIndex, setActiveBodyIndex] = useState(defaultTabIndex);
 
   const titles = tabs.map(({ title }) => title);
