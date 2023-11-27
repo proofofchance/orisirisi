@@ -145,7 +145,7 @@ function CopyGameLinkButton({ className }: PropsWithClassName) {
     <button
       onClick={copyLink}
       className={cn(
-        'bg-transparent text-white hover:bg-white hover:text-black fill-current focus:outline-none border-[1px] border-white w-16 h-16 flex justify-center items-center rounded-full shadow-md',
+        'bg-white hover:bg-slate-100 text-black fill-current focus:outline-none border-[1px] border-white w-16 h-16 hover:w-[66px] hover:h-[66px] flex justify-center items-center rounded-full shadow-md transition duration-75 ease-in-out',
         className
       )}
     >
