@@ -4,6 +4,8 @@ import { BackgroundWrapper } from './background';
 import { ConnectWalletButton } from './navigation-bar/connect-wallet-button';
 import { CurrentAccountButton } from './navigation-bar/current-account-button';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+import { useCoinflipOngoingGameActivities } from './hooks';
+import { BrowserStorage } from '@orisirisi/orisirisi-browser';
 
 export { ConnectWalletOptionsModal } from './navigation-bar/connect-wallet-button';
 
@@ -28,7 +30,11 @@ export function NavigationBar({ className }: PropsWithClassName) {
               Create Game
             </Link>
           )}
-
+          {isClient && currentWeb3Account && (
+            <UnreadGameActivityCount
+              publicAddress={currentWeb3Account.address!}
+            />
+          )}
           {isClient && currentWeb3Account ? (
             <CurrentAccountButton publicAddress={currentWeb3Account.address!} />
           ) : (
@@ -38,4 +44,53 @@ export function NavigationBar({ className }: PropsWithClassName) {
       </div>
     </BackgroundWrapper>
   );
+}
+
+export function UnreadGameActivityCount({
+  publicAddress,
+}: {
+  publicAddress: string;
+}) {
+  const { gameActivities: ongoingGameActivities, hasLoaded } =
+    useCoinflipOngoingGameActivities(publicAddress);
+
+  if (!hasLoaded) return null;
+
+  const lastReadGameActivityBlockTimestamp =
+    LastReadGameActivityBlockTimestamp.get();
+
+  const unreadGameActivities = ongoingGameActivities!.filter(
+    (gameActivity) =>
+      gameActivity.block_timestamp > lastReadGameActivityBlockTimestamp
+  );
+
+  const readUnreadGameActivities = () => {
+    const latestGameActivityBlockTimestamp = Math.max(
+      ...unreadGameActivities.map((a) => a.block_timestamp)
+    );
+
+    LastReadGameActivityBlockTimestamp.set(latestGameActivityBlockTimestamp);
+  };
+
+  return (
+    <div onClick={readUnreadGameActivities}>{unreadGameActivities.length}</div>
+  );
+}
+
+class LastReadGameActivityBlockTimestamp {
+  private static key = 'LAST_READ_GAME_ACTIVITY_BLOCK_NUMBER';
+
+  static set(blockTimestamp: number) {
+    BrowserStorage.set(this.key, blockTimestamp);
+  }
+
+  static get() {
+    const { ok: blockTimestamp } = BrowserStorage.get(this.key);
+
+    return blockTimestamp ? parseInt(blockTimestamp) : 0;
+  }
+
+  static clear() {
+    BrowserStorage.clear(this.key);
+  }
 }
