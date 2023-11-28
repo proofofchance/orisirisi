@@ -6,7 +6,6 @@ import {
 import { GamesEmptyIcon, StopWatchIcon } from './games-page';
 import { ChainLogo } from './chain-logo';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 
