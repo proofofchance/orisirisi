@@ -1,5 +1,5 @@
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
-import { Game, GameStatus } from './games';
+import { Game, GameActivity, GameStatus } from './games';
 
 export interface FetchGamesParams {
   creator_address?: string;
@@ -44,5 +44,18 @@ export class Repo {
     const game = await response.json();
 
     return Game.fromJSON(game);
+  }
+  static async fetchOngoingGameActivities(
+    publicAddress: string,
+    fetchController: AbortController
+  ): Promise<GameActivity[]> {
+    const endpointUrl = `http://127.0.0.1:4446/coinflip/game_activities/ongoing/${publicAddress}`;
+    const response = await fetch(endpointUrl, {
+      signal: fetchController.signal,
+    });
+
+    const game_activities = await response.json();
+
+    return GameActivity.manyFromJSON(game_activities);
   }
 }

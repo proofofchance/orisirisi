@@ -10,6 +10,7 @@ export enum Chain {
 
 export {
   Game as CoinflipGame,
+  GameActivity as CoinflipGameActivity,
   formatUSD,
   GameStatus as CoinflipGameStatus,
 } from './lib/games';

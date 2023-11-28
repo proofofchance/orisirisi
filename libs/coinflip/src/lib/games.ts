@@ -37,8 +37,7 @@ export class Game {
     return Object.assign(new Game(), json);
   }
   static manyFromJSON(jsonList: Game[]): Game[] {
-    // @ts-ignore
-    return jsonList.map((json) => Object.assign(new Game(), json));
+    return jsonList.map(this.fromJSON);
   }
 }
 
@@ -54,3 +53,19 @@ export const formatUSD = (wager: number) => {
 
   return formatter.format(wager);
 };
+
+export class GameActivity {
+  constructor(
+    public id: number,
+    public game_id: number,
+    public block_timestamp: number
+  ) {}
+
+  static fromJSON(json: GameActivity): GameActivity {
+    // @ts-ignore
+    return Object.assign(new GameActivity(), json);
+  }
+  static manyFromJSON(jsonList: GameActivity[]): GameActivity[] {
+    return jsonList.map(this.fromJSON);
+  }
+}
