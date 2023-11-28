@@ -22,13 +22,7 @@ export function GamesView({
 
   const goToGamePage = (id: number) => push(`/games/${id}`);
 
-  const [expiredGameCardsCount, setExpiredGameCardsCount] = useState(0);
-
-  if (
-    !isLoading &&
-    (games.length === 0 || games.length === expiredGameCardsCount)
-  )
-    return <GamesEmptyView />;
+  if (!isLoading && games.length === 0) return <GamesEmptyView />;
 
   return (
     <div
@@ -42,9 +36,6 @@ export function GamesView({
           goToGamePage={goToGamePage}
           game={game}
           key={game.id + game.chain_id}
-          incrementExpiredGameCardsCount={() =>
-            setExpiredGameCardsCount((c) => c + 1)
-          }
         />
       ))}
     </div>
@@ -54,19 +45,11 @@ export function GamesView({
 function GameCard({
   game,
   goToGamePage,
-  incrementExpiredGameCardsCount,
 }: {
   game: CoinflipGame;
   goToGamePage: (id: number) => void;
-  incrementExpiredGameCardsCount: () => void;
 }) {
   const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
-
-  if (game.isOngoing() && gameExpiryCountdown.isFinished()) {
-    incrementExpiredGameCardsCount();
-
-    return null;
-  }
 
   return (
     <Link
