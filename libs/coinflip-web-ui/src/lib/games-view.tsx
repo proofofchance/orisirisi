@@ -1,8 +1,5 @@
 import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
-import {
-  GameExpiryCountdown,
-  useGameExpiryCountdown,
-} from './game-expiry-countdown';
+import { GameExpiryCountdown, useGameExpiryCountdown } from './hooks';
 import { GamesEmptyIcon, StopWatchIcon } from './games-page';
 import { ChainLogo } from './chain-logo';
 import Link from 'next/link';
