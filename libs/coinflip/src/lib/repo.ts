@@ -16,12 +16,12 @@ export interface FetchGameParams {
 export class Repo {
   static async fetchGames(
     params: FetchGamesParams,
-    fetchController: AbortController
+    signal: AbortSignal
   ): Promise<Game[]> {
     const queryString = buildQueryString(params as Record<string, string>);
     const response = await fetch(
       `http://127.0.0.1:4446/coinflip/games${queryString}`,
-      { signal: fetchController.signal }
+      { signal: signal }
     );
 
     const games = await response.json();
@@ -30,7 +30,7 @@ export class Repo {
   }
   static async fetchGame(
     params: FetchGameParams,
-    fetchController: AbortController
+    signal: AbortSignal
   ): Promise<Game> {
     let endpointUrl = `http://127.0.0.1:4446/coinflip/games/${params.id}`;
     if (params.playerAddress) {
@@ -38,7 +38,7 @@ export class Repo {
     }
 
     const response = await fetch(endpointUrl, {
-      signal: fetchController.signal,
+      signal,
     });
 
     const game = await response.json();
@@ -47,11 +47,24 @@ export class Repo {
   }
   static async fetchOngoingGameActivities(
     publicAddress: string,
-    fetchController: AbortController
+    signal: AbortSignal
   ): Promise<GameActivity[]> {
     const endpointUrl = `http://127.0.0.1:4446/coinflip/game_activities/ongoing/${publicAddress}`;
     const response = await fetch(endpointUrl, {
-      signal: fetchController.signal,
+      signal,
+    });
+
+    const game_activities = await response.json();
+
+    return GameActivity.manyFromJSON(game_activities);
+  }
+  static async fetchGameActivities(
+    gameId: number,
+    signal: AbortSignal
+  ): Promise<GameActivity[]> {
+    const endpointUrl = `http://127.0.0.1:4446/coinflip/games/${gameId}/activities`;
+    const response = await fetch(endpointUrl, {
+      signal,
     });
 
     const game_activities = await response.json();

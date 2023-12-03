@@ -12,6 +12,7 @@ import {
   GameExpiryCountdown,
   GamesView,
   useCoinflipGame,
+  useCoinflipGameActivities,
   useCoinflipGames,
   useGameExpiryCountdown,
 } from '@orisirisi/coinflip-web-ui';
@@ -39,6 +40,10 @@ export default function GamePage() {
     [id, currentWeb3Account]
   );
   const maybeGame = useCoinflipGame(fetchGameParams);
+
+  const gameActivities = useCoinflipGameActivities(id);
+
+  console.log({ gameActivities });
 
   if (!maybeGame.hasLoaded) return null;
 
