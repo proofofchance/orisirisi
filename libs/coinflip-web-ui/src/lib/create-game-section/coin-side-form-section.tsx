@@ -4,7 +4,11 @@ import {
   ArrowSmallUpIcon,
   ArrowSmallDownIcon,
 } from '@heroicons/react/24/outline';
-import { CoinSide, getRandomCoinSide } from '@orisirisi/coinflip';
+import {
+  CoinSide,
+  getRandomCoinSide,
+  oppositeCoinSide,
+} from '@orisirisi/coinflip';
 import { FormSectionShell } from './form-section-shell';
 import { InsideFormShellButton } from './common-buttons';
 import { ErrorMessageParagraph } from './error-message-paragraph';
@@ -13,7 +17,11 @@ export interface CoinSideForm {
   coinSide: CoinSide;
 }
 
-export function CoinSideFormSection() {
+export function CoinSideFormSection({
+  disabledCoinSide,
+}: {
+  disabledCoinSide?: CoinSide;
+}) {
   const {
     register,
     formState,
@@ -29,12 +37,17 @@ export function CoinSideFormSection() {
     setValue('coinSide', coinSide);
     await triggerValidation('coinSide');
   };
+
+  const isHeadDisabled = disabledCoinSide === CoinSide.Head;
+  const isTailDisabled = disabledCoinSide === CoinSide.Tail;
+
   return (
     <FormSectionShell title="Pick a Coin Side">
       <div className="mt-8 flex gap-4 items-center">
         <InsideFormShellButton
           selected={coinSide === CoinSide.Head}
           icon={<ArrowSmallUpIcon className="h-6" />}
+          disabled={isHeadDisabled}
           label="Head"
           onClick={async () => await pickCoinSide(CoinSide.Head)}
         />
@@ -42,6 +55,7 @@ export function CoinSideFormSection() {
         <InsideFormShellButton
           selected={coinSide === CoinSide.Tail}
           icon={<ArrowSmallDownIcon className="h-6" />}
+          disabled={isTailDisabled}
           label="Tail"
           onClick={async () => await pickCoinSide(CoinSide.Tail)}
         />
@@ -49,7 +63,13 @@ export function CoinSideFormSection() {
         <InsideFormShellButton
           icon={<ArrowPathIcon className="h-6" />}
           label="Pick Random"
-          onClick={async () => await pickCoinSide(getRandomCoinSide())}
+          onClick={async () => {
+            if (isHeadDisabled || isTailDisabled) {
+              await pickCoinSide(oppositeCoinSide(disabledCoinSide!));
+            } else {
+              await pickCoinSide(getRandomCoinSide());
+            }
+          }}
         />
       </div>
       <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />

@@ -37,6 +37,7 @@ export function InsideFormShellButton({
   icon,
   label,
   className,
+  onClick,
   ...remainingProps
 }: InsideFormShellButtonProps) {
   return (
@@ -49,6 +50,7 @@ export function InsideFormShellButton({
         'hover:bg-white hover:text-black focus:outline-none focus:ring focus:ring-blue-200',
         className
       )}
+      onClick={disabled ? () => null : onClick}
       {...remainingProps}
     >
       <div className="flex justify-center items-center gap-2">

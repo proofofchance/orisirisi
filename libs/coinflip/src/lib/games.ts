@@ -1,4 +1,5 @@
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { CoinSide } from './coin';
 
 export type GameStatus = 'ongoing' | 'expired' | 'completed';
 
@@ -15,7 +16,8 @@ export class Game {
     public expiry_timestamp: number,
     public status: GameStatus,
     public is_in_play_phase: boolean,
-    public is_awaiting_my_play_proof: boolean
+    public is_awaiting_my_play_proof: boolean,
+    public unavailable_coin_side?: CoinSide
   ) {}
 
   getChain(): Chain {
@@ -55,7 +57,7 @@ export const formatUSD = (wager: number) => {
 };
 
 interface GamePlayCreatedActivityData {
-  coin_side: boolean;
+  coin_side: CoinSide;
   public_hash: string;
 }
 

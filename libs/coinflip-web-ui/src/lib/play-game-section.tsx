@@ -34,7 +34,10 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     useFormSteps<PlayGameForm>();
 
   const playGameFormSteps = formSteps
-    .addStep(['coinSide'], <CoinSideFormSection />)
+    .addStep(
+      ['coinSide'],
+      <CoinSideFormSection disabledCoinSide={game?.unavailable_coin_side} />
+    )
     .addStep(
       ['proofOfChance'],
       <ProofOfChanceFormSection
