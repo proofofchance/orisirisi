@@ -9,6 +9,7 @@ import {
 import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import {
   ChainLogo,
+  GameActivity,
   GameExpiryCountdown,
   GamesView,
   useCoinflipGame,
@@ -23,6 +24,7 @@ import {
   cn,
 } from '@orisirisi/orisirisi-web-ui';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+
 import { useRouter } from 'next/router';
 import { ReactNode, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -33,6 +35,7 @@ export default function GamePage() {
   const { query } = useRouter();
 
   const id = parseInteger(query.id as string);
+
   const { currentWeb3Account } = useCurrentWeb3Account();
 
   const fetchGameParams = useMemo(
@@ -41,13 +44,12 @@ export default function GamePage() {
   );
   const maybeGame = useCoinflipGame(fetchGameParams);
 
-  const gameActivities = useCoinflipGameActivities(id);
+  const maybeGameActivities = useCoinflipGameActivities(id);
 
-  console.log({ gameActivities });
-
-  if (!maybeGame.hasLoaded) return null;
+  if (!(maybeGame.hasLoaded && maybeGameActivities.hasLoaded)) return null;
 
   const game = maybeGame.game!;
+  const gameActivities = maybeGameActivities.gameActivities!;
 
   const getDefaultTabId = (): GamePageTabId => {
     if (game.isOngoing()) {
@@ -71,7 +73,9 @@ export default function GamePage() {
         id: 'activities',
         body: (
           <div id="activities">
-            <div id="activity-01">Some activity</div>
+            {gameActivities.map((gameActivity, i) => (
+              <GameActivity key={i} gameActivity={gameActivity} />
+            ))}
           </div>
         ),
       },

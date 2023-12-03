@@ -54,11 +54,23 @@ export const formatUSD = (wager: number) => {
   return formatter.format(wager);
 };
 
+interface GamePlayCreatedActivityData {
+  coin_side: boolean;
+  public_hash: string;
+}
+
 export class GameActivity {
   constructor(
     public id: number,
     public game_id: number,
-    public block_timestamp: number
+    public trigger_public_address: string,
+    public data: GamePlayCreatedActivityData | Record<string, never>,
+    public kind:
+      | 'game_created'
+      | 'game_play_created'
+      | 'game_play_proof_created',
+    public block_timestamp: number,
+    public transaction_hash: string
   ) {}
 
   static fromJSON(json: GameActivity): GameActivity {

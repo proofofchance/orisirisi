@@ -6,3 +6,5 @@ export * from './lib/hooks';
 export * from './lib/games-page';
 export * from './lib/games-view';
 export { ChainLogo } from './lib/chain-logo';
+export * from './lib/data-utils';
+export * from './lib/game-activity';

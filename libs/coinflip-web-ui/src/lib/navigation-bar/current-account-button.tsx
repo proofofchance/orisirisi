@@ -1,12 +1,9 @@
 import { WalletIcon } from '@heroicons/react/24/outline';
 import Button from './current-account-button/button';
+import { shortenPublicAddress } from '../data-utils';
 
 interface CurrentAccountProps {
   publicAddress: string;
-}
-
-function shortPublicAddress(publicAddress: string, prefixLength = 6) {
-  return `${publicAddress.slice(0, prefixLength)}...${publicAddress.slice(-4)}`;
 }
 
 export function CurrentAccountButton({ publicAddress }: CurrentAccountProps) {
@@ -14,7 +11,7 @@ export function CurrentAccountButton({ publicAddress }: CurrentAccountProps) {
     <Button className="rounded-[40px] px-7 py-4">
       <div className="flex gap-x-2 items-center">
         <WalletIcon className="h-5 mt-[0.5px]" />
-        <div>{`${shortPublicAddress(publicAddress)}`}</div>
+        <div>{`${shortenPublicAddress(publicAddress)}`}</div>
       </div>
     </Button>
   );
