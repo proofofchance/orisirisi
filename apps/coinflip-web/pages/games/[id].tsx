@@ -52,10 +52,10 @@ export default function GamePage() {
   const gameActivities = maybeGameActivities.gameActivities!;
 
   const getDefaultTabId = (): GamePageTabId => {
-    if (game.isOngoing()) {
-      return 'details';
-    } else if (game.is_awaiting_my_play_proof) {
+    if (game.is_awaiting_my_play_proof) {
       return 'proofs-of-chance';
+    } else if (game.isOngoing()) {
+      return 'details';
     }
 
     return 'activities';
