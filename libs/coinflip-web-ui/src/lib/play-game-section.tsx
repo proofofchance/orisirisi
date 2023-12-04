@@ -23,6 +23,7 @@ import {
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { CoinflipGame } from '@orisirisi/coinflip';
+import { useEffect, useState } from 'react';
 
 type PlayGameForm = CoinSideForm & ProofOfChanceForm;
 
@@ -48,21 +49,31 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
 
   const currentFields = formSteps.getFields(stepCount);
   const isLastStep = stepCount === playGameFormSteps.lastStep();
-  const isCurrentFormStepValid = async () => {
+
+  const [maybeGoToNextStepRequest, setMaybeGoToNextStepRequest] =
+    useState<Date | null>(null);
+  useEffect(() => {
+    const areAllFieldsValid = () =>
+      currentFields.every((field) => !formState.errors[field]);
+
+    if (maybeGoToNextStepRequest && areAllFieldsValid()) {
+      goToNextStep();
+    }
+
+    setMaybeGoToNextStepRequest(null);
+  }, [maybeGoToNextStepRequest]);
+
+  const triggerAllValidations = async () => {
     await Promise.all(
       currentFields.map(async (field) => await triggerValidation(field))
     );
-
-    return currentFields.every((field) => !formState.errors[field]);
   };
-
   const { currentWeb3Account } = useCurrentWeb3Account();
   const currentChain = useCurrentChain();
 
   const { push } = useRouter();
 
   const playGame = async ({ coinSide, proofOfChance }: PlayGameForm) => {
-    console.log({ formStateErrors: formState.errors });
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     console.log({
@@ -124,8 +135,8 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
             isFirstStep={isFirstStep}
             isLastStep={isLastStep}
             enableFirstStepButton={true}
-            isCurrentFormStepValid={isCurrentFormStepValid}
-            goToNextStep={goToNextStep}
+            triggerAllValidations={triggerAllValidations}
+            maybeGoToNextStep={() => setMaybeGoToNextStepRequest(new Date())}
             goToPreviousStep={goToPreviousStep}
           />
         </div>

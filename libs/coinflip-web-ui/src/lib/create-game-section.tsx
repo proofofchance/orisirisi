@@ -37,6 +37,7 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -82,12 +83,23 @@ export function CreateGameSection() {
   const isCurrentFormStepDirty = currentFields.every(
     (field) => !!formState.dirtyFields[field]
   );
-  const isCurrentFormStepValid = async () => {
+  const [maybeGoToNextStepRequest, setMaybeGoToNextStepRequest] =
+    useState<Date | null>(null);
+  useEffect(() => {
+    const areAllFieldsValid = () =>
+      currentFields.every((field) => !formState.errors[field]);
+
+    if (maybeGoToNextStepRequest && areAllFieldsValid()) {
+      goToNextStep();
+    }
+
+    setMaybeGoToNextStepRequest(null);
+  }, [maybeGoToNextStepRequest]);
+
+  const triggerAllValidations = async () => {
     await Promise.all(
       currentFields.map(async (field) => await triggerValidation(field))
     );
-
-    return currentFields.every((field) => !formState.errors[field]);
   };
 
   const { currentWeb3Account } = useCurrentWeb3Account();
@@ -153,8 +165,8 @@ export function CreateGameSection() {
             isFirstStep={isFirstStep}
             isLastStep={isLastStep}
             enableFirstStepButton={isCurrentFormStepDirty}
-            isCurrentFormStepValid={isCurrentFormStepValid}
-            goToNextStep={goToNextStep}
+            triggerAllValidations={triggerAllValidations}
+            maybeGoToNextStep={() => setMaybeGoToNextStepRequest(new Date())}
             goToPreviousStep={goToPreviousStep}
           />
         </div>

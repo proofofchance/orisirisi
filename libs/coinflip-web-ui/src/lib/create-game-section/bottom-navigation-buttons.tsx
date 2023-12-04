@@ -12,14 +12,14 @@ export interface BottomNavigationButtonsProps {
   isFirstStep: boolean;
   isLastStep: boolean;
   enableFirstStepButton: boolean;
-  goToNextStep: () => void;
+  maybeGoToNextStep: () => void;
   goToPreviousStep: () => void;
-  isCurrentFormStepValid: () => Promise<boolean>;
+  triggerAllValidations: () => Promise<void>;
 }
 
 export function BottomNavigationButtons({
-  isCurrentFormStepValid,
-  goToNextStep,
+  triggerAllValidations,
+  maybeGoToNextStep,
   goToPreviousStep,
   isFirstStep,
   isLastStep,
@@ -38,9 +38,10 @@ export function BottomNavigationButtons({
       {isFirstStep && (
         <BottomNavigationButton
           disabled={!enableFirstStepButton}
-          onClick={async () =>
-            (await isCurrentFormStepValid()) && goToNextStep()
-          }
+          onClick={async () => {
+            await triggerAllValidations();
+            maybeGoToNextStep();
+          }}
           active
           {...remainingProps}
         >
@@ -67,9 +68,10 @@ export function BottomNavigationButtons({
           onMouseEnter={() =>
             isLastHoveredPreviousButton && setLastHovered('next')
           }
-          onClick={async () =>
-            (await isCurrentFormStepValid()) && goToNextStep()
-          }
+          onClick={async () => {
+            await triggerAllValidations();
+            maybeGoToNextStep();
+          }}
           {...remainingProps}
         >
           Next
