@@ -75,6 +75,8 @@ export class GameActivity {
     public transaction_hash: string
   ) {}
 
+  getPlayCreatedData = () => this.data as GamePlayCreatedActivityData;
+
   static fromJSON(json: GameActivity): GameActivity {
     // @ts-ignore
     return Object.assign(new GameActivity(), json);

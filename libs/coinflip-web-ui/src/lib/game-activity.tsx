@@ -1,7 +1,4 @@
-import {
-  CoinflipGameActivity,
-  coinSideBooleanToString,
-} from '@orisirisi/coinflip';
+import { CoinflipGameActivity, coinSideToString } from '@orisirisi/coinflip';
 import { shortenPublicAddress } from './data-utils';
 
 export function GameActivity({
@@ -18,7 +15,9 @@ export function GameActivity({
       case 'game_play_created':
         return `Player with address: ${shortenPublicAddress(
           gameActivity.trigger_public_address
-        )} chose ${coinSideBooleanToString(gameActivity.data.coin_side)}`;
+        )} played ${coinSideToString(
+          gameActivity.getPlayCreatedData().coin_side
+        )}`;
       case 'game_play_proof_created':
         return `Game proof was created`;
     }

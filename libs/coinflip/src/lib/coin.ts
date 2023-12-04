@@ -25,13 +25,6 @@ export function coinSideToString(coinSide: CoinSide): string {
   }
 }
 
-export function coinSideBooleanToString(coinSide: boolean): string {
-  if (!coinSide) {
-    return 'Head';
-  }
-  return 'Tail';
-}
-
 export function totalCoinSides() {
   return Object.keys(CoinSide).length / 2;
 }
