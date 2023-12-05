@@ -26,7 +26,7 @@ import {
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 
 import { useRouter } from 'next/router';
-import { ReactNode, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, ReactNode, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
@@ -166,6 +166,27 @@ function CopyGameLinkButton({ className }: PropsWithClassName) {
   );
 }
 
+const readFileAsync = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Failed to read file as text.'));
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error('Error reading the file.'));
+    };
+
+    // Read the content of the file as text
+    reader.readAsText(file);
+  });
+};
+
 function MainControlButtons({
   game,
   className,
@@ -173,6 +194,16 @@ function MainControlButtons({
   const { push } = useRouter();
 
   const uploadProofButtonRef = useRef<HTMLInputElement>(null);
+  const uploadProofOfChance = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+
+    if (files && files.length > 0) {
+      const file = files[0];
+      console.log({ file });
+      const proofOfChance = await readFileAsync(file);
+      console.log({ proofOfChance });
+    }
+  };
 
   const renderMainButton = () => {
     if (game.isExpired()) {
@@ -190,6 +221,8 @@ function MainControlButtons({
             style={{ display: 'none' }}
             type="file"
             accept=".poc"
+            multiple={false}
+            onChange={uploadProofOfChance}
             ref={uploadProofButtonRef}
           />
           <MainButton
