@@ -88,6 +88,7 @@ contract Coinflip is
         mustBeOngoingGame(gameID)
         mustAvoidGameWithMaxedOutPlays(gameID)
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
+        mustAvoidPlayingAgain(gameID)
     {
         maybePayGameWager();
         debitGameWager(getGameWager(gameID));

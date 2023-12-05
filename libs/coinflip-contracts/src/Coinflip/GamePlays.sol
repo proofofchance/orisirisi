@@ -5,17 +5,22 @@ import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
 
 contract GamePlays {
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => Game.Play play)) plays;
+    mapping(Game.ID gameID => mapping(address player => Game.PlayID playID)) playRecord;
+
+    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playHash)) playHashes;
+    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playProof)) playProofs;
+
     mapping(Game.ID gameID => mapping(Coin.Side coinSide => Game.Player[] player)) players;
+    mapping(Game.ID gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
 
     mapping(Game.ID gameID => Game.PlayID playCount) playCounts;
     mapping(Game.ID gameID => Game.PlayID maxPlayCount) maxPlayCounts;
-
     mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
     error InvalidPlayProof();
     error MaxedOutPlaysError(Game.ID gameID);
     error AllMatchingPlaysError(Game.ID gameID, Coin.Side availableCoinSide);
+    error AlreadyPlayedError(Game.ID gameID, Game.PlayID playID);
 
     event GamePlayCreated(
         Game.PlayID gamePlayID,
@@ -50,7 +55,7 @@ contract GamePlays {
     ) {
         if (
             keccak256(abi.encodePacked(playProof)) !=
-            plays[gameID][gamePlayID].playHash
+            playHashes[gameID][gamePlayID]
         ) {
             revert InvalidPlayProof();
         }
@@ -61,8 +66,9 @@ contract GamePlays {
     modifier mustAvoidAllGamePlaysMatching(Game.ID gameID, Coin.Side coinSide) {
         uint16 playsLeft = Game.PlayID.unwrap(maxPlayCounts[gameID]) -
             Game.PlayID.unwrap(playCounts[gameID]);
-        uint16 headPlayCount = uint16(players[gameID][Coin.Side.Head].length);
-        uint16 tailPlayCount = uint16(players[gameID][Coin.Side.Tail].length);
+
+        uint16 headPlayCount = coinSideCounts[gameID][Coin.Side.Head];
+        uint16 tailPlayCount = coinSideCounts[gameID][Coin.Side.Tail];
 
         if (playsLeft == 1 && (headPlayCount == 0 || tailPlayCount == 0)) {
             Coin.Side availableCoinSide = getAvailableCoinSide(
@@ -78,6 +84,16 @@ contract GamePlays {
         _;
     }
 
+    modifier mustAvoidPlayingAgain(Game.ID gameID) {
+        Game.PlayID myPlayID = playRecord[gameID][msg.sender];
+
+        if (Game.PlayID.unwrap(myPlayID) > 0) {
+            revert AlreadyPlayedError(gameID, myPlayID);
+        }
+
+        _;
+    }
+
     function createGamePlay(
         Game.ID gameID,
         Coin.Side coinSide,
@@ -86,16 +102,11 @@ contract GamePlays {
         Game.PlayID gamePlayID = Game.PlayID.wrap(
             Game.PlayID.unwrap(playCounts[gameID]) + 1
         );
+        playRecord[gameID][msg.sender] = gamePlayID;
+        playHashes[gameID][gamePlayID] = playHash;
         Game.Player player = Game.Player.wrap(msg.sender);
-        Game.Play memory play = Game.Play({
-            player: player,
-            coinSide: coinSide,
-            proof: '',
-            playHash: playHash
-        });
-
-        plays[gameID][gamePlayID] = play;
         players[gameID][coinSide].push(player);
+        coinSideCounts[gameID][coinSide]++;
         incrementPlayCount(gameID);
 
         emit GamePlayCreated(
@@ -112,7 +123,7 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         bytes32 playProof
     ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
-        plays[gameID][gamePlayID].proof = playProof;
+        playProofs[gameID][gamePlayID] = playProof;
         incrementPlayProofCount(gameID);
 
         emit GamePlayProofCreated(gamePlayID, gameID, msg.sender, playProof);
