@@ -16,9 +16,17 @@ export class Game {
     public expiry_timestamp: number,
     public status: GameStatus,
     public is_in_play_phase: boolean,
-    public is_awaiting_my_play_proof: boolean,
-    public unavailable_coin_side?: CoinSide
+    public unavailable_coin_side?: CoinSide,
+    public is_awaiting_my_play_proof?: boolean,
+    public my_game_play_id?: number
   ) {}
+
+  iHavePlayed(): boolean {
+    return !!this.my_game_play_id;
+  }
+  iHaveNotPlayed(): boolean {
+    return !this.my_game_play_id;
+  }
 
   getChain(): Chain {
     return Chain.fromChainID(this.chain_id);
