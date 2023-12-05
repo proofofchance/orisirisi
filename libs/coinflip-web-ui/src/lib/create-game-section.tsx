@@ -38,6 +38,7 @@ import {
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { COINFLIP_INDEX_GRACE_PERIOD } from '@orisirisi/coinflip';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -94,6 +95,7 @@ export function CreateGameSection() {
     }
 
     setMaybeGoToNextStepRequest(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maybeGoToNextStepRequest]);
 
   const triggerAllValidations = async () => {
@@ -133,16 +135,15 @@ export function CreateGameSection() {
         { value: parseEther(wager) }
       );
 
-      const INDEX_GRACE_PERIOD_MS = 8000;
       toast.loading('Creating Game', {
         position: 'bottom-right',
-        duration: INDEX_GRACE_PERIOD_MS,
+        duration: COINFLIP_INDEX_GRACE_PERIOD,
       });
 
       setTimeout(() => {
         toast.success('Successfully created!', { position: 'bottom-right' });
         push('/games?for=my_games');
-      }, INDEX_GRACE_PERIOD_MS);
+      }, COINFLIP_INDEX_GRACE_PERIOD);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:

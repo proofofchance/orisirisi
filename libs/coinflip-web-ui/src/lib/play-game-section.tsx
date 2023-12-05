@@ -22,7 +22,7 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { CoinflipGame } from '@orisirisi/coinflip';
+import { COINFLIP_INDEX_GRACE_PERIOD, CoinflipGame } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 
 type PlayGameForm = CoinSideForm & ProofOfChanceForm;
@@ -97,10 +97,9 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         { value: parseEther(game!.wager.toString()) }
       );
 
-      const INDEX_GRACE_PERIOD_MS = 8000;
       toast.loading('Creating your Game Play', {
         position: 'bottom-right',
-        duration: INDEX_GRACE_PERIOD_MS,
+        duration: COINFLIP_INDEX_GRACE_PERIOD,
       });
 
       setTimeout(() => {
@@ -108,7 +107,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
           position: 'bottom-right',
         });
         push('/games?for=my_games');
-      }, INDEX_GRACE_PERIOD_MS);
+      }, COINFLIP_INDEX_GRACE_PERIOD);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:

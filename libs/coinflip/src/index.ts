@@ -20,3 +20,5 @@ export {
   FetchGamesParams as FetchCoinflipGamesParams,
   FetchGameParams as FetchCoinflipGameParams,
 } from './lib/repo';
+
+export const COINFLIP_INDEX_GRACE_PERIOD = 8000;
