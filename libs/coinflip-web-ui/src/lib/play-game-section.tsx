@@ -61,6 +61,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     }
 
     setMaybeGoToNextStepRequest(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maybeGoToNextStepRequest]);
 
   const triggerAllValidations = async () => {

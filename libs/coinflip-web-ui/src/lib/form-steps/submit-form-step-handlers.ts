@@ -41,5 +41,6 @@ export function useSetSubmitFormStepHandler(
     setSubmitFormStepHandler(handler);
 
     return () => removeSubmitFormStepHandler();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
