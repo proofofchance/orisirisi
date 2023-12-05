@@ -15,7 +15,7 @@ export function GameActivity({
       case 'game_play_created':
         return `Player with address: ${shortenPublicAddress(
           gameActivity.trigger_public_address
-        )} played ${coinSideToString(
+        )} predicts ${coinSideToString(
           gameActivity.getPlayCreatedData().coin_side
         )}`;
       case 'game_play_proof_created':

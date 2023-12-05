@@ -105,7 +105,7 @@ function GamesEmptyView() {
       <GamesEmptyIcon />
       <h4 className="mt-5 w-80 text-lg">Oops! No games found currently</h4>
       <p className="text-[#BDBDBD] w-56">
-        Please try again later or use a different filter
+        Please come back later and try again
       </p>
     </div>
   );
