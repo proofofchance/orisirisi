@@ -26,7 +26,7 @@ import {
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 
 import { useRouter } from 'next/router';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
@@ -172,6 +172,8 @@ function MainControlButtons({
 }: { game: CoinflipGame } & PropsWithClassName) {
   const { push } = useRouter();
 
+  const uploadProofButtonRef = useRef<HTMLInputElement>(null);
+
   const renderMainButton = () => {
     if (game.isExpired()) {
       return (
@@ -183,11 +185,19 @@ function MainControlButtons({
       );
     } else if (game.is_awaiting_my_play_proof) {
       return (
-        <MainButton
-          onClick={() => console.log('Should trigger uploading proof')}
-          icon={<ArrowUpTrayIcon className="h-8" />}
-          label="Upload Proof"
-        />
+        <>
+          <input
+            style={{ display: 'none' }}
+            type="file"
+            accept=".poc"
+            ref={uploadProofButtonRef}
+          />
+          <MainButton
+            onClick={() => uploadProofButtonRef.current!.click()}
+            icon={<ArrowUpTrayIcon className="h-8" />}
+            label="Upload Proof"
+          />
+        </>
       );
     } else if (game.isOngoing()) {
       return (
