@@ -98,7 +98,7 @@ contract Coinflip is
     /// @param proofOfChance should contain 32 words. First 24 should be
     /// from the user system's entropy + Last 8 digits of current
     /// timestamp.
-    function proveGamePlay(
+    function uploadGamePlayProof(
         Game.ID gameID,
         Game.PlayID gamePlayID,
         bytes32 proofOfChance
