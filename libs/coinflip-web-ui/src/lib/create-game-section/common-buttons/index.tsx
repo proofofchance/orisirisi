@@ -48,6 +48,7 @@ export function InsideFormShellButton({
         selected && 'bg-white text-black',
         disabled && 'opacity-25',
         'hover:bg-white hover:text-black focus:outline-none focus:ring focus:ring-blue-200',
+        disabled && 'cursor-not-allowed',
         className
       )}
       onClick={disabled ? () => null : onClick}
