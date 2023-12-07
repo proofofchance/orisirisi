@@ -68,7 +68,7 @@ function GameCard({
         <div className="mt-2">
           Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
         </div>
-        {game.isOngoing() && (
+        {!gameExpiryCountdown.isFinished() && (
           <div className="text-sm mt-4 flex gap-2 items-center">
             <span className="h-4 w-4">
               <StopWatchIcon />
