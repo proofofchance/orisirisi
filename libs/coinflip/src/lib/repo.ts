@@ -2,7 +2,7 @@ import { buildQueryString } from '@orisirisi/orisirisi-browser';
 import { Game, GameActivity, GameStatus } from './games';
 
 export interface FetchGamesParams {
-  creator_address?: string;
+  player_address?: string;
   status?: GameStatus;
   id_to_ignore?: number;
   page_size?: number;

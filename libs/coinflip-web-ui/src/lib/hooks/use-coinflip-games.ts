@@ -39,7 +39,7 @@ export function useCoinflipGames({
       };
 
       if (forFilter === 'my_games') {
-        params.creator_address = currentWeb3Account!.address;
+        params.player_address = currentWeb3Account!.address;
       }
       params.status = statusFilter;
 
