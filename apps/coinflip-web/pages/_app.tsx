@@ -7,8 +7,10 @@ import {
   NavigationBar,
 } from '@orisirisi/coinflip-web-ui';
 import { Toaster } from 'react-hot-toast';
+import { useIsClient } from '@orisirisi/orisirisi-web-ui';
 
-function CustomApp({ Component, pageProps }: AppProps) {
+function CoinflipWebApp({ Component, pageProps }: AppProps) {
+  const isClient = useIsClient();
   return (
     <>
       <Head>
@@ -17,7 +19,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
       <main className="app">
         <ConnectWalletOptionsModal />
-        <Toaster />
+        {isClient && <Toaster />}
         <Background className="px-4 sm:px-20">
           <NavigationBar className="py-4" />
           <Component {...pageProps} />
@@ -27,4 +29,4 @@ function CustomApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default CustomApp;
+export default CoinflipWebApp;
