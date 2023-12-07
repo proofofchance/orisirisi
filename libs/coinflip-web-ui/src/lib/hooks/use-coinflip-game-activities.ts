@@ -1,7 +1,10 @@
 import { CoinflipGameActivity, CoinflipRepo } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 
-export function useCoinflipOngoingGameActivities(playerAddress: string | null) {
+export function useCoinflipOngoingGameActivities(
+  playerAddress: string | null,
+  interval?: number
+) {
   const [isLoading, setIsLoading] = useState(false);
   const [gameActivities, setGameActivities] = useState<
     CoinflipGameActivity[] | null
@@ -10,22 +13,33 @@ export function useCoinflipOngoingGameActivities(playerAddress: string | null) {
   useEffect(() => {
     if (playerAddress) {
       const fetchController = new AbortController();
-      setIsLoading(true);
-      CoinflipRepo.fetchOngoingGameActivities(
-        playerAddress,
-        fetchController.signal
-      )
-        .then((game) => setGameActivities(game))
-        .then(() => setIsLoading(false))
-        .catch((error: unknown) => {
-          if (!fetchController.signal.aborted) throw error;
-        });
+
+      const fetchAndSetOngoingGameActivities = () => {
+        setIsLoading(true);
+        CoinflipRepo.fetchOngoingGameActivities(
+          playerAddress,
+          fetchController.signal
+        )
+          .then((game) => setGameActivities(game))
+          .then(() => setIsLoading(false))
+          .catch((error: unknown) => {
+            if (!fetchController.signal.aborted) throw error;
+          });
+      };
+
+      if (interval) {
+        setInterval(() => {
+          fetchAndSetOngoingGameActivities();
+        }, interval);
+      } else {
+        fetchAndSetOngoingGameActivities();
+      }
 
       return () => {
         fetchController.abort('STALE_COINFLIP_ONGOING_GAME_ACTIVITIES_REQUEST');
       };
     }
-  }, [playerAddress]);
+  }, [playerAddress, interval]);
 
   return { gameActivities, isLoading, hasLoaded: gameActivities !== null };
 }
