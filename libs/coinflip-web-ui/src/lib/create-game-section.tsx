@@ -21,16 +21,16 @@ import {
   CoinSideFormSection,
 } from './create-game-section/coin-side-form-section';
 import {
-  ProofOfChanceForm,
-  ProofOfChanceFormSection,
-} from './create-game-section/proof-of-chance-form-section';
+  ChanceForm,
+  ChanceFormSection,
+} from './create-game-section/chance-form-section';
 import { ConfirmGameDetailsFormSection } from './create-game-section/confirm-game-details-form-section';
 import { CoinflipContract } from '@orisirisi/coinflip-contracts';
 import {
   useCurrentChain,
   useCurrentWeb3Account,
 } from '@orisirisi/orisirisi-web3-ui';
-import { encodeBytes32String, parseEther } from 'ethers';
+import { parseEther } from 'ethers';
 import {
   Web3ProviderError,
   Web3ProviderErrorCode,
@@ -39,16 +39,20 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { COINFLIP_INDEX_GRACE_PERIOD } from '@orisirisi/coinflip';
+import { ProofOfChance } from './proof-of-chance';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
   ExpiryForm &
   CoinSideForm &
-  ProofOfChanceForm;
+  ChanceForm;
 
 export function CreateGameSection() {
   const formMethods = useForm<CreateGameForm>();
   const { formState, trigger: triggerValidation, getValues } = formMethods;
+  const [proofOfChance, setProofOfChance] = useState<ProofOfChance | null>(
+    null
+  );
 
   const {
     stepCount,
@@ -68,8 +72,13 @@ export function CreateGameSection() {
     )
     .addStep(['coinSide'], <CoinSideFormSection />)
     .addStep(
-      ['proofOfChance'],
-      <ProofOfChanceFormSection stepCount={stepCount} onSubmit={goToNextStep} />
+      ['chance'],
+      <ChanceFormSection
+        stepCount={stepCount}
+        proofOfChance={proofOfChance}
+        setProofOfChance={setProofOfChance}
+        onSubmit={goToNextStep}
+      />
     )
     .addStep(
       [],
@@ -115,7 +124,6 @@ export function CreateGameSection() {
     expiry,
     expiryUnit,
     coinSide,
-    proofOfChance,
   }: CreateGameForm) => {
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
@@ -131,7 +139,7 @@ export function CreateGameSection() {
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
         coinSide,
-        encodeBytes32String(proofOfChance),
+        await proofOfChance!.toPlayHash(),
         { value: parseEther(wager) }
       );
 

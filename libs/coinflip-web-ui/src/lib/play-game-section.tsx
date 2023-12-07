@@ -7,15 +7,15 @@ import {
   CoinSideFormSection,
 } from './create-game-section/coin-side-form-section';
 import {
-  ProofOfChanceForm,
-  ProofOfChanceFormSection,
-} from './create-game-section/proof-of-chance-form-section';
+  ChanceForm,
+  ChanceFormSection,
+} from './create-game-section/chance-form-section';
 import { CoinflipContract } from '@orisirisi/coinflip-contracts';
 import {
   useCurrentChain,
   useCurrentWeb3Account,
 } from '@orisirisi/orisirisi-web3-ui';
-import { encodeBytes32String, parseEther } from 'ethers';
+import { parseEther } from 'ethers';
 import {
   Web3ProviderError,
   Web3ProviderErrorCode,
@@ -24,12 +24,16 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { COINFLIP_INDEX_GRACE_PERIOD, CoinflipGame } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
+import { ProofOfChance } from './proof-of-chance';
 
-type PlayGameForm = CoinSideForm & ProofOfChanceForm;
+type PlayGameForm = CoinSideForm & ChanceForm;
 
 export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
   const formMethods = useForm<PlayGameForm>();
   const { formState, getValues, trigger: triggerValidation } = formMethods;
+  const [proofOfChance, setProofOfChance] = useState<ProofOfChance | null>(
+    null
+  );
 
   const { stepCount, formSteps, isFirstStep, goToNextStep, goToPreviousStep } =
     useFormSteps<PlayGameForm>();
@@ -40,9 +44,11 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
       <CoinSideFormSection disabledCoinSide={game?.unavailable_coin_side} />
     )
     .addStep(
-      ['proofOfChance'],
-      <ProofOfChanceFormSection
+      ['chance'],
+      <ChanceFormSection
         stepCount={stepCount}
+        proofOfChance={proofOfChance}
+        setProofOfChance={setProofOfChance}
         onSubmit={() => playGame(getValues())}
       />
     );
@@ -74,15 +80,9 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
 
   const { push } = useRouter();
 
-  const playGame = async ({ coinSide, proofOfChance }: PlayGameForm) => {
+  const playGame = async ({ coinSide }: PlayGameForm) => {
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
-    console.log({
-      coinSide,
-      proofOfChance: encodeBytes32String(proofOfChance),
-      wager: game?.wager,
-      value: parseEther(game!.wager.toString()),
-    });
     // TODO: Do something with error here
     const coinflipContract = CoinflipContract.fromSigner(
       signer!,
@@ -93,7 +93,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
       await coinflipContract.playGame(
         game!.id,
         coinSide,
-        encodeBytes32String(proofOfChance),
+        await proofOfChance!.toPlayHash(),
         { value: parseEther(game!.wager.toString()) }
       );
 
