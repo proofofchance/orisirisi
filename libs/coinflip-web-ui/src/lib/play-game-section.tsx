@@ -106,7 +106,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         toast.success('Game play successfully created!', {
           position: 'bottom-right',
         });
-        push('/games?for=my_games');
+        push(`/games/${game!.id}`);
       }, COINFLIP_INDEX_GRACE_PERIOD);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
