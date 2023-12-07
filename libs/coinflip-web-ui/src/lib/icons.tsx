@@ -7,7 +7,7 @@ export const RubikCubeIcon = () => (
   </svg>
 );
 
-export const GamesEmptyIcon = () => (
+export const MagnifyingGlassInCloudIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width={81} height={80} fill="none">
     <g clipPath="url(#a)">
       <mask

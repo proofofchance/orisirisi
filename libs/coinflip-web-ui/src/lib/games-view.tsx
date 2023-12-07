@@ -1,6 +1,6 @@
 import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import { GameExpiryCountdown, useGameExpiryCountdown } from './hooks';
-import { GamesEmptyIcon, StopWatchIcon } from './games-page';
+import { MagnifyingGlassInCloudIcon, StopWatchIcon } from './icons';
 import { ChainLogo } from './chain-logo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -102,7 +102,7 @@ function GameCard({
 function GamesEmptyView() {
   return (
     <div className="flex flex-col justify-center items-center text-white mt-28 text-center">
-      <GamesEmptyIcon />
+      <MagnifyingGlassInCloudIcon />
       <h4 className="mt-5 w-80 text-lg">Oops! No games found currently</h4>
       <p className="text-[#BDBDBD] w-56">
         Please come back later and try again
