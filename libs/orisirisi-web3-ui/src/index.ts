@@ -1,4 +1,7 @@
-export { useCurrentWeb3Account } from './lib/use-current-web3-account';
+export {
+  useCurrentWeb3Account,
+  useIsWeb3AccountConnected,
+} from './lib/use-current-web3-account';
 export {
   useCurrentChain,
   useCurrentWeb3Provider,

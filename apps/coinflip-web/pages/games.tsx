@@ -12,11 +12,14 @@ import {
   GamesPageForFilter,
   GamesView,
   RubikCubeIcon,
+  useAuthErrorToastRequest,
   useCoinflipGames,
 } from '@orisirisi/coinflip-web-ui';
 
 export function GamesPage() {
   const { query } = useRouter();
+
+  useAuthErrorToastRequest();
 
   const forFilter = (query.for ?? 'all') as GamesPageForFilter;
 

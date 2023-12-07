@@ -3,7 +3,7 @@ import {
   Web3Account,
   Web3ProviderType,
 } from '@orisirisi/orisirisi-web3';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { CachedWeb3ProviderType, useCache } from './use-cache';
 import { handleWeb3ProviderDisconnected } from './use-current-web3-provider';
 
@@ -51,3 +51,7 @@ export function useCurrentWeb3Account() {
 
   return { currentWeb3Account, setCurrentWeb3Account };
 }
+
+const isWeb3AccountConnectedAtom = atom((get) => !!get(currentWeb3AccountAtom));
+export const useIsWeb3AccountConnected = () =>
+  useAtomValue(isWeb3AccountConnectedAtom);
