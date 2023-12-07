@@ -34,10 +34,14 @@ export const isEmptyString = (value: string) => value === '';
 const whiteSpaceRegex = /(\s+)/;
 const isWhiteSpace = (value: string) => whiteSpaceRegex.test(value);
 const isNotWhiteSpace = (value: string) => !isWhiteSpace(value);
+const asciiStringRegex = /^[ -~]+$/;
+export const isAsciiString = (value: string) => asciiStringRegex.test(value);
+
 const extractWordsAsArray = (value: string) =>
   value.split(whiteSpaceRegex).filter(isNotWhiteSpace);
 export const countWords = (value?: string) =>
   value ? extractWordsAsArray(value).length : 0;
+export const countCharacters = (value?: string) => (value ? value.length : 0);
 
 export const countAllOccurrences = (
   inputString: string,
