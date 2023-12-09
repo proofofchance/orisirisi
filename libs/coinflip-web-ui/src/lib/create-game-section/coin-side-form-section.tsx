@@ -20,7 +20,7 @@ export interface CoinSideForm {
 export function CoinSideFormSection({
   disabledCoinSide,
 }: {
-  disabledCoinSide?: CoinSide;
+  disabledCoinSide: CoinSide | null;
 }) {
   const {
     register,
