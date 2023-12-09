@@ -6,7 +6,7 @@ class FormStep<Field> {
   constructor(
     public readonly stepCount: StepCount,
     public readonly fields: Field[],
-    public readonly reactElement: ReactElement
+    public readonly reactElement: ReactElement | null
   ) {}
 }
 
@@ -14,7 +14,7 @@ export class FormSteps<Form> {
   private lastStepCount = 0;
   private value: Map<number, FormStep<keyof Form>> = new Map();
 
-  addStep(fields: (keyof Form)[], reactElement: ReactElement) {
+  addStep(fields: (keyof Form)[], reactElement: ReactElement | null) {
     this.value.set(
       this.lastStepCount,
       new FormStep(this.lastStepCount, fields, reactElement)
