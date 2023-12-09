@@ -41,7 +41,9 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
   const playGameFormSteps = formSteps
     .addStep(
       ['coinSide'],
-      <CoinSideFormSection disabledCoinSide={game?.unavailable_coin_side} />
+      game && (
+        <CoinSideFormSection disabledCoinSide={game.unavailable_coin_side} />
+      )
     )
     .addStep(
       ['chance'],
@@ -81,6 +83,13 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
   const { push } = useRouter();
 
   const playGame = async ({ coinSide }: PlayGameForm) => {
+    //TODO: Remove this hack
+    if (!formMethods.getValues('isProofOfChanceDownloaded')) {
+      return formMethods.setError('isProofOfChanceDownloaded', {
+        message: 'Your proof of chance must be downloaded first.',
+      });
+    }
+
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     // TODO: Do something with error here
