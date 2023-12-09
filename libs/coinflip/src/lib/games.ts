@@ -16,9 +16,9 @@ export class Game {
     public expiry_timestamp: number,
     public status: GameStatus,
     public is_in_play_phase: boolean,
-    public unavailable_coin_side?: CoinSide,
-    public is_awaiting_my_play_proof?: boolean,
-    public my_game_play_id?: number
+    public unavailable_coin_side: CoinSide | null,
+    public is_awaiting_my_play_proof: boolean | null,
+    public my_game_play_id: number | null
   ) {}
 
   iHavePlayed(): boolean {
