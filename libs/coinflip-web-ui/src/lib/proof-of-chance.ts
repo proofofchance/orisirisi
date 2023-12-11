@@ -1,5 +1,7 @@
+import { encodeBytes32String } from 'ethers';
 export class ProofOfChance {
   static DELIMITER = '+';
+  static FILE_EXTENSION = '.txt';
   static CHANCE_MAX_LENGTH = 26;
   private constructor(
     private readonly chance: string,
@@ -38,6 +40,9 @@ export class ProofOfChance {
   }
   private static getFromFileContent(fileContent: string, leadingPart: string) {
     return fileContent.split(leadingPart)[1].split('\n')[0].trim();
+  }
+  toBytes32() {
+    return encodeBytes32String(this.toString());
   }
   toString() {
     return `${this.chance}+${this.getNumericalTimestampLast6Digits()}`;
