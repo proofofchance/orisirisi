@@ -58,7 +58,7 @@ contract Coinflip is
             revert MinimumPlayCountError();
         }
         maybePayGameWager();
-        debitGameWager(wager);
+        lockGameWager(wager);
         Game.ID newGameID = Game.ID.wrap(gamesCount + 1);
         createGameWager(newGameID, wager);
         setMaxGamePlayCount(newGameID, maxGamePlayCount);
@@ -91,7 +91,7 @@ contract Coinflip is
         mustAvoidPlayingAgain(gameID)
     {
         maybePayGameWager();
-        debitGameWager(getGameWager(gameID));
+        lockGameWager(getGameWager(gameID));
         createGamePlay(gameID, coinSide, playHash);
     }
 
@@ -168,14 +168,14 @@ contract Coinflip is
         wallets.transfer(msg.sender, msg.value);
     }
 
-    function debitGameWager(uint wager) private {
+    function lockGameWager(uint wager) private {
         if (wager > wallets.getBalance(msg.sender)) {
             revert InsufficientWalletBalance();
         }
 
-        bool debited = wallets.debit(msg.sender, wager);
+        bool locked = wallets.lock(msg.sender, wager);
 
-        require(debited);
+        require(locked);
     }
 
     function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {

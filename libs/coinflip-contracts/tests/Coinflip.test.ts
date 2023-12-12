@@ -9,16 +9,63 @@ import { getRandomInteger } from '@orisirisi/orisirisi-data-utils';
 describe('Coinflip.createGame', () => {
   context('When using valid parameters', () => {
     context('Game Wager', () => {
-      it('pays the game wager value sent', async () => {
-        // TODO
+      it("credits and lock creator's wallet with the sent game wager value", async () => {
+        const { deployer, coinflipContract, walletsContract } =
+          await deployCoinflipContracts();
+
+        const createGameParams = await CreateGameParams.new(coinflipContract);
+
+        expect(await walletsContract.getBalance(deployer)).to.equal(0);
+
+        await coinflipContract.createGame(...createGameParams.toArgs(), {
+          value: createGameParams.wager,
+        });
+
+        expect(await walletsContract.getBalance(deployer)).to.equal(
+          createGameParams.wager
+        );
+        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+          0
+        );
       });
 
-      it('debits from my wallet balance when no game wager value sent', async () => {
-        // TODO
+      it('simply locks from my wallet balance when no game wager value is sent', async () => {
+        const { deployer, coinflipContract, walletsContract } =
+          await deployCoinflipContracts();
+
+        const createGameParams = await CreateGameParams.new(coinflipContract);
+
+        await walletsContract.credit({
+          value: createGameParams.wager,
+        });
+
+        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+          createGameParams.wager
+        );
+
+        await coinflipContract.createGame(...createGameParams.toArgs());
+
+        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+          0
+        );
       });
 
-      it('reverts when I do not have enough game wager in my wallet', async () => {
-        // TODO
+      it('reverts InsufficientWalletBalance when I do not have enough game wager in my wallet', async () => {
+        const { deployer, coinflipContract, walletsContract } =
+          await deployCoinflipContracts();
+
+        const createGameParams = await CreateGameParams.new(coinflipContract);
+
+        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+          0
+        );
+
+        expect(
+          coinflipContract.createGame(...createGameParams.toArgs())
+        ).to.be.revertedWithCustomError(
+          coinflipContract,
+          'InsufficientWalletBalance'
+        );
       });
     });
 
@@ -61,6 +108,7 @@ export async function deployCoinflipContracts() {
   await wallets.addApp(coinflipContract.getAddress());
 
   return {
+    deployer,
     walletsContract,
     serviceProviderContract,
     coinflipContract,
@@ -74,8 +122,8 @@ class CreateGameParams {
   playHash: string;
 
   private constructor(public expiryTimestamp: number) {
-    this.wager = parseEther(`${getRandomInteger(20)}`);
-    this.numberOfPlayers = getRandomInteger(20);
+    this.wager = parseEther(`${getRandomInteger(20, 1)}`);
+    this.numberOfPlayers = getRandomInteger(20, 2);
     this.coinSide = getRandomCoinSide();
     this.playHash =
       '0x4299a2c05eaaf9f217898179738f3feb40669058bff3b6cb1017aecd48d6dd84';

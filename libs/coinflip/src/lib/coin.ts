@@ -30,5 +30,5 @@ export function totalCoinSides() {
 }
 
 export function getRandomCoinSide(): CoinSide {
-  return getRandomInteger(totalCoinSides());
+  return getRandomInteger(1);
 }
