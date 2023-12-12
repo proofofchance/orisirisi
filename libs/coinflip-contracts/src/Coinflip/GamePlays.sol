@@ -13,12 +13,13 @@ contract GamePlays {
     mapping(Game.ID gameID => mapping(Coin.Side coinSide => Game.Player[] player)) players;
     mapping(Game.ID gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
 
-    mapping(Game.ID gameID => Game.PlayID playCount) playCounts;
+    mapping(Game.ID gameID => Game.PlayID playCount) public playCounts;
     mapping(Game.ID gameID => Game.PlayID maxPlayCount) maxPlayCounts;
     mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
 
     error InvalidPlayProof();
     error MaxedOutPlaysError(Game.ID gameID);
+    error PendingGamePlaysError(Game.ID gameID, uint16 pendingGamePlaysCount);
     error AllMatchingPlaysError(Game.ID gameID, Coin.Side availableCoinSide);
     error AlreadyPlayedError(Game.ID gameID, Game.PlayID playID);
 
@@ -43,6 +44,17 @@ contract GamePlays {
             Game.PlayID.unwrap(maxPlayCounts[gameID])
         ) {
             revert MaxedOutPlaysError(gameID);
+        }
+
+        _;
+    }
+
+    modifier mustBeGameWithMaxedOutPlays(Game.ID gameID) {
+        uint16 playCount = Game.PlayID.unwrap(playCounts[gameID]);
+        uint16 maxPlayCount = Game.PlayID.unwrap(maxPlayCounts[gameID]);
+
+        if (playCount < maxPlayCount) {
+            revert PendingGamePlaysError(gameID, maxPlayCount - playCount);
         }
 
         _;

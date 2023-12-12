@@ -1,36 +1,41 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
-import { parseEther } from 'ethers';
-import { CoinSide, getRandomCoinSide } from '@orisirisi/coinflip';
+import { BytesLike, parseEther } from 'ethers';
+import {
+  CoinSide,
+  getRandomCoinSide,
+  oppositeCoinSide,
+} from '@orisirisi/coinflip';
 import { WalletsContract } from '../src';
 import { Coinflip } from '../typechain-types';
 import { getRandomInteger } from '@orisirisi/orisirisi-data-utils';
+import { ProofOfChance } from '@orisirisi/proof-of-chance';
 
-describe('Coinflip.createGame', () => {
+describe('createGame', () => {
   context('When using valid parameters', () => {
     context('Game Wager', () => {
       it("credits and lock creator's wallet with the sent game wager value", async () => {
-        const { deployer, coinflipContract, walletsContract } =
+        const { creator, coinflipContract, walletsContract } =
           await deployCoinflipContracts();
 
         const createGameParams = await CreateGameParams.new(coinflipContract);
 
-        expect(await walletsContract.getBalance(deployer)).to.equal(0);
+        expect(await walletsContract.getBalance(creator)).to.equal(0);
 
         await coinflipContract.createGame(...createGameParams.toArgs(), {
           value: createGameParams.wager,
         });
 
-        expect(await walletsContract.getBalance(deployer)).to.equal(
+        expect(await walletsContract.getBalance(creator)).to.equal(
           createGameParams.wager
         );
-        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+        expect(await walletsContract.getWithdrawableBalance(creator)).to.equal(
           0
         );
       });
 
       it('simply locks from my wallet balance when no game wager value is sent', async () => {
-        const { deployer, coinflipContract, walletsContract } =
+        const { creator, coinflipContract, walletsContract } =
           await deployCoinflipContracts();
 
         const createGameParams = await CreateGameParams.new(coinflipContract);
@@ -39,24 +44,24 @@ describe('Coinflip.createGame', () => {
           value: createGameParams.wager,
         });
 
-        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+        expect(await walletsContract.getWithdrawableBalance(creator)).to.equal(
           createGameParams.wager
         );
 
         await coinflipContract.createGame(...createGameParams.toArgs());
 
-        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+        expect(await walletsContract.getWithdrawableBalance(creator)).to.equal(
           0
         );
       });
 
       it('reverts InsufficientWalletBalance when I do not have enough game wager in my wallet', async () => {
-        const { deployer, coinflipContract, walletsContract } =
+        const { creator, coinflipContract, walletsContract } =
           await deployCoinflipContracts();
 
         const createGameParams = await CreateGameParams.new(coinflipContract);
 
-        expect(await walletsContract.getWithdrawableBalance(deployer)).to.equal(
+        expect(await walletsContract.getWithdrawableBalance(creator)).to.equal(
           0
         );
 
@@ -84,8 +89,38 @@ describe('Coinflip.createGame', () => {
   });
 });
 
+describe('playGame', () => {
+  context('When using valid parameters', () => {
+    it('increments a game play count', async () => {
+      const { coinflipContract, anotherPlayer } =
+        await deployCoinflipContracts();
+
+      const createGameParams = await CreateGameParams.new(coinflipContract);
+
+      await coinflipContract.createGame(...createGameParams.toArgs(), {
+        value: createGameParams.wager,
+      });
+
+      const gameId = 1;
+
+      await coinflipContract
+        .connect(anotherPlayer)
+        .playGame(
+          gameId,
+          oppositeCoinSide(createGameParams.coinSide),
+          await ProofOfChance.fromChance('some-chance').toPlayHash(),
+          {
+            value: createGameParams.wager,
+          }
+        );
+
+      expect(await coinflipContract.playCounts(gameId)).to.equal(2);
+    });
+  });
+});
+
 export async function deployCoinflipContracts() {
-  const [deployer] = await ethers.getSigners();
+  const [deployer, anotherPlayer] = await ethers.getSigners();
 
   const walletsContract = await ethers.deployContract('Wallets', deployer);
   const walletsAddress = await walletsContract.getAddress();
@@ -108,7 +143,8 @@ export async function deployCoinflipContracts() {
   await wallets.addApp(coinflipContract.getAddress());
 
   return {
-    deployer,
+    creator: deployer,
+    anotherPlayer,
     walletsContract,
     serviceProviderContract,
     coinflipContract,
@@ -127,6 +163,9 @@ class CreateGameParams {
     this.coinSide = getRandomCoinSide();
     this.playHash =
       '0x4299a2c05eaaf9f217898179738f3feb40669058bff3b6cb1017aecd48d6dd84';
+  }
+  withPlayHash(playHash: BytesLike) {
+    this.playHash = 'Ox' + playHash.toString();
   }
 
   toArgs = (): [bigint, number, number, CoinSide, string] => [

@@ -103,7 +103,12 @@ contract Coinflip is
         Game.ID gameID,
         Game.PlayID gamePlayID,
         bytes32 proofOfChance
-    ) external mustBeOperational mustBeOngoingGame(gameID) {
+    )
+        external
+        mustBeOperational
+        mustBeOngoingGame(gameID)
+        mustBeGameWithMaxedOutPlays(gameID)
+    {
         createGamePlayProof(gameID, gamePlayID, proofOfChance);
         updateGameOutcome(gameID, proofOfChance);
 
