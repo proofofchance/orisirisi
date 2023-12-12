@@ -13,7 +13,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     error UnAuthorizedApp();
 
     receive() external payable {
-        _creditWallet(msg.sender, msg.value);
+        _credit(msg.sender, msg.value);
     }
 
     function addApp(address app) external onlyOwner {
@@ -45,17 +45,17 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             revert InvalidAddress();
         }
 
-        if (getWalletBalance(msg.sender) < amount) {
+        if (getBalance(msg.sender) < amount) {
             revert InsufficientFunds();
         }
 
-        _debitWallet(msg.sender, amount);
-        _creditWallet(to, amount);
+        _debit(msg.sender, amount);
+        _credit(to, amount);
 
         return true;
     }
 
-    function debitWallet(
+    function debit(
         address owner,
         uint amount
     ) external nonReentrant onlyApp returns (bool) {
@@ -63,11 +63,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             revert InvalidAddress();
         }
 
-        if (getWalletBalance(owner) < amount) {
+        if (getBalance(owner) < amount) {
             revert InsufficientFunds();
         }
 
-        _debitWallet(owner, amount);
+        _debit(owner, amount);
 
         return true;
     }
@@ -84,7 +84,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         Payments.pay(payable(msg.sender), balance);
     }
 
-    function getWalletBalance(address owner) public view returns (uint) {
+    function getBalance(address owner) public view returns (uint) {
         return wallets[owner];
     }
 
@@ -92,11 +92,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         return address(this).balance;
     }
 
-    function _creditWallet(address owner, uint amount) private {
+    function _credit(address owner, uint amount) private {
         wallets[owner] += amount;
     }
 
-    function _debitWallet(address owner, uint amount) private {
+    function _debit(address owner, uint amount) private {
         wallets[owner] -= amount;
     }
 }
