@@ -8,7 +8,7 @@ import coinflipLocalDeployment from '../deployments/localhost/Coinflip.json';
 import walletsLocalDeployment from '../deployments/localhost/Wallets.json';
 
 export class CoinflipContract {
-  static fromSigner(signer: Signer, chainId: ChainID) {
+  static fromSignerAndChain(signer: Signer, chainId: ChainID) {
     return Coinflip__factory.connect(this.getAddress(chainId), signer);
   }
   static getAddress(chainId: ChainID) {
@@ -22,7 +22,10 @@ export class CoinflipContract {
 }
 
 export class WalletsContract {
-  static fromSigner(signer: Signer, chainId: ChainID) {
+  static fromSignerAndAddress(signer: Signer, address: string) {
+    return Wallets__factory.connect(address, signer);
+  }
+  static fromSignerAndChain(signer: Signer, chainId: ChainID) {
     return Wallets__factory.connect(this.getAddress(chainId), signer);
   }
 

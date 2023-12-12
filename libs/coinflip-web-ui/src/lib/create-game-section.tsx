@@ -128,7 +128,7 @@ export function CreateGameSection() {
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     // TODO: Do something with error here
-    const coinflipContract = CoinflipContract.fromSigner(
+    const coinflipContract = CoinflipContract.fromSignerAndChain(
       signer!,
       currentChain!.id
     );
