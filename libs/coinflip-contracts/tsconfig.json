@@ -24,6 +24,8 @@
     "./typechain-types"
   ],
   "references": [
+    { "path": "../coinflip" },
+    { "path": "../orisirisi-web3-chains" },
     {
       "path": "./tsconfig.lib.json"
     },
