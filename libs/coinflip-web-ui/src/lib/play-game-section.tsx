@@ -24,7 +24,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { COINFLIP_INDEX_GRACE_PERIOD, CoinflipGame } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
-import { ProofOfChance } from './proof-of-chance';
+import { ProofOfChance } from '@orisirisi/proof-of-chance';
 
 type PlayGameForm = CoinSideForm & ChanceForm;
 
@@ -93,7 +93,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     // TODO: Do something with error here
-    const coinflipContract = CoinflipContract.fromSigner(
+    const coinflipContract = CoinflipContract.fromSignerAndChain(
       signer!,
       currentChain!.id
     );

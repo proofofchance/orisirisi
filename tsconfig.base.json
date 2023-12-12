@@ -31,6 +31,7 @@
         "libs/orisirisi-web3-chains/src/index.ts"
       ],
       "@orisirisi/orisirisi-web3-ui": ["libs/orisirisi-web3-ui/src/index.ts"],
+      "@orisirisi/proof-of-chance": ["libs/proof-of-chance/src/index.ts"],
       "@orisirisi/synarktech-web3": ["libs/synarktech-web3/src/index.ts"]
     }
   },

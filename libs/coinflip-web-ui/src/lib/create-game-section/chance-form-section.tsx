@@ -11,8 +11,8 @@ import { ErrorMessageParagraph } from './error-message-paragraph';
 import { Browser } from '@orisirisi/orisirisi-browser';
 import { useSetSubmitFormStepHandler } from '../form-steps';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
-import { ProofOfChance } from '../proof-of-chance';
 import { useEffect } from 'react';
+import { ProofOfChance } from '@orisirisi/proof-of-chance';
 
 export interface ChanceForm {
   chance: string;
