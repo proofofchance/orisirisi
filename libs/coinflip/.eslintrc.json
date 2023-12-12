@@ -4,14 +4,14 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
       "rules": {
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/ban-ts-comment": "off"
       }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
     },
     {
       "files": ["*.js", "*.jsx"],
