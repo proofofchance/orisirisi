@@ -19,7 +19,7 @@ contract Coinflip is
     MaybeOperational
 {
     mapping(Game.ID => Coin.Side) outcomes;
-    uint gamesCount;
+    uint public gamesCount;
 
     Wallets public immutable wallets;
     ServiceProvider public immutable serviceProvider;
@@ -169,11 +169,11 @@ contract Coinflip is
     }
 
     function debitGameWager(uint wager) private {
-        if (wager > wallets.getWalletBalance(msg.sender)) {
+        if (wager > wallets.getBalance(msg.sender)) {
             revert InsufficientWalletBalance();
         }
 
-        bool debited = wallets.debitWallet(msg.sender, wager);
+        bool debited = wallets.debit(msg.sender, wager);
 
         require(debited);
     }

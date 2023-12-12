@@ -138,7 +138,7 @@ contract GamePlays {
     function getAvailableCoinSide(
         uint16 headPlayCount,
         uint16 tailPlayCount
-    ) private returns (Coin.Side) {
+    ) private pure returns (Coin.Side) {
         if (headPlayCount == 0) {
             return Coin.Side.Head;
         }
