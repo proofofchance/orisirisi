@@ -119,6 +119,46 @@ describe('playGame', () => {
   });
 });
 
+describe('uploadGamePlayProof', () => {
+  context('When using valid parameters', () => {
+    it('uploads game proof successfully', async () => {
+      const { coinflipContract, anotherPlayer } =
+        await deployCoinflipContracts();
+
+      const createGameParams = (
+        await CreateGameParams.new(coinflipContract)
+      ).withNumberOfPlayers(2);
+
+      await coinflipContract.createGame(...createGameParams.toArgs(), {
+        value: createGameParams.wager,
+      });
+
+      const gameId = 1;
+      const gamePlayId = 2;
+
+      const anotherPlayerPOC = ProofOfChance.fromChance('some-chance');
+      await coinflipContract
+        .connect(anotherPlayer)
+        .playGame(
+          gameId,
+          oppositeCoinSide(createGameParams.coinSide),
+          await anotherPlayerPOC.toPlayHash(),
+          {
+            value: createGameParams.wager,
+          }
+        );
+
+      await coinflipContract
+        .connect(anotherPlayer)
+        .uploadGamePlayProof(gameId, gamePlayId, anotherPlayerPOC.getProof());
+
+      expect(await coinflipContract.playProofs(gameId, gamePlayId)).to.equal(
+        anotherPlayerPOC.getProof()
+      );
+    });
+  });
+});
+
 export async function deployCoinflipContracts() {
   const [deployer, anotherPlayer] = await ethers.getSigners();
 
@@ -166,8 +206,12 @@ class CreateGameParams {
   }
   withPlayHash(playHash: BytesLike) {
     this.playHash = 'Ox' + playHash.toString();
+    return this;
   }
-
+  withNumberOfPlayers(numberOfPlayers: number) {
+    this.numberOfPlayers = numberOfPlayers;
+    return this;
+  }
   toArgs = (): [bigint, number, number, CoinSide, string] => [
     this.wager,
     this.numberOfPlayers,
