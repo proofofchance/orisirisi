@@ -1,4 +1,4 @@
-import { subtle } from 'crypto';
+import * as crypto from 'crypto';
 import { encodeBytes32String } from 'ethers';
 
 export class ProofOfChance {
@@ -21,8 +21,8 @@ export class ProofOfChance {
     Your chance a.k.a Lucky Charm: ${this.chance}
 
     Creation timestamp: ${this.creationTimestamp.toString()}
-    Its numerical value: ${this.getNumericalTimestamp()}
-    Its last 6 digits (prevents someone from using your chance against you): ${this.getNumericalTimestampLast6Digits()}
+    Its numerical value: ${this.creationTimestamp.getTime()}
+    Its last 6 digits (prevents someone from using your chance against you): ${this.getCreationTimestampLast6Digits()}
 
     Proof hash (A shareable SHA-256 hash of chance and last6digits): ${await this.toPlayHash()}
     Proof upload (Only shareable after every player has played): ${this.getProof()}
@@ -33,12 +33,11 @@ export class ProofOfChance {
       fileContent,
       'Your chance a.k.a Lucky Charm:'
     );
-    const creationTimestampInString = this.getFromFileContent(
-      fileContent,
-      'Creation timestamp:'
+    const creationTimestampNumericalValue = parseInt(
+      this.getFromFileContent(fileContent, 'Its numerical value:')
     );
 
-    return new ProofOfChance(chance, new Date(creationTimestampInString));
+    return new ProofOfChance(chance, new Date(creationTimestampNumericalValue));
   }
   private static getFromFileContent(fileContent: string, leadingPart: string) {
     return fileContent.split(leadingPart)[1].split('\n')[0].trim();
@@ -47,13 +46,15 @@ export class ProofOfChance {
     return encodeBytes32String(this.getProof());
   }
   getProof() {
-    return `${this.chance}+${this.getNumericalTimestampLast6Digits()}`;
+    return `${this.chance}+${this.getCreationTimestampLast6Digits()}`;
   }
-  private getNumericalTimestampLast6Digits() {
-    return `${this.getNumericalTimestamp().toString().slice(-6)}`;
+  getCreationTimestampLast6Digits() {
+    return ProofOfChance.getLast6digits(
+      this.creationTimestamp.getTime().toString()
+    );
   }
-  private getNumericalTimestamp() {
-    return this.creationTimestamp.getTime();
+  private static getLast6digits(value: string) {
+    return value.toString().slice(-6);
   }
   async toPlayHash() {
     return `0x${await sha256(this.getProof())}`;
@@ -65,9 +66,7 @@ async function sha256(message: string) {
   const msgBuffer = new TextEncoder().encode(message);
 
   // hash the message
-  const hashBuffer = crypto
-    ? await crypto.subtle.digest('SHA-256', msgBuffer)
-    : await subtle.digest('SHA-256', msgBuffer);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
 
   // convert ArrayBuffer to Array
   const hashArray = Array.from(new Uint8Array(hashBuffer));
