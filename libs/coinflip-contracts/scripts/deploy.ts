@@ -1,5 +1,4 @@
 import { ethers, deployments } from 'hardhat';
-import { WalletsContract } from '../src';
 
 async function main() {
   const { walletsAddress, serviceProviderAddress, coinflipAddress } =
@@ -42,12 +41,6 @@ export async function deployCoinflipContracts() {
     ...deployOptions,
     args: [walletsAddress, serviceProviderAddress],
   });
-
-  const wallets = await WalletsContract.fromSignerAndAddress(
-    deployer,
-    walletsAddress
-  );
-  await wallets.addApp(coinflipAddress);
 
   return {
     walletsAddress,
