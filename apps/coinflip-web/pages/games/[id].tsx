@@ -96,7 +96,11 @@ export default function GamePage() {
         body: (
           <div id="activities">
             {gameActivities.map((gameActivity, i) => (
-              <GameActivity key={i} gameActivity={gameActivity} />
+              <GameActivity
+                key={i}
+                currentAccountAddress={currentWeb3Account.getAddress()}
+                gameActivity={gameActivity}
+              />
             ))}
           </div>
         ),

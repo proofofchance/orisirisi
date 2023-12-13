@@ -14,7 +14,10 @@ export class Web3Account {
     private providerType: Web3ProviderType
   ) {}
 
-  public async getSigner() {
+  getAddress() {
+    return this.address.toLowerCase();
+  }
+  async getSigner() {
     if (this.signer) return new Result(this.signer, null);
 
     const { ok: account, error } = await Web3Account.getCurrentAccount(
