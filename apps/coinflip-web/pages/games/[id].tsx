@@ -6,7 +6,12 @@ import {
   ChevronUpIcon,
   PlayIcon,
 } from '@heroicons/react/24/solid';
-import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
+import {
+  COINFLIP_INDEX_GRACE_PERIOD,
+  CoinflipGame,
+  formatUSD,
+} from '@orisirisi/coinflip';
+import { CoinflipContract } from '@orisirisi/coinflip-contracts';
 import {
   ChainLogo,
   GameActivity,
@@ -23,7 +28,16 @@ import {
   PropsWithClassName,
   cn,
 } from '@orisirisi/orisirisi-web-ui';
-import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+import {
+  Web3Account,
+  Web3ProviderError,
+  Web3ProviderErrorCode,
+} from '@orisirisi/orisirisi-web3';
+import {
+  useCurrentChain,
+  useCurrentWeb3Account,
+} from '@orisirisi/orisirisi-web3-ui';
+import { ProofOfChance } from '@orisirisi/proof-of-chance';
 
 import { useRouter } from 'next/router';
 import { ChangeEvent, ReactNode, useMemo, useRef, useState } from 'react';
@@ -46,7 +60,14 @@ export default function GamePage() {
 
   const maybeGameActivities = useCoinflipGameActivities(id);
 
-  if (!(maybeGame.hasLoaded && maybeGameActivities.hasLoaded)) return null;
+  if (
+    !(
+      currentWeb3Account &&
+      maybeGame.hasLoaded &&
+      maybeGameActivities.hasLoaded
+    )
+  )
+    return null;
 
   const game = maybeGame.game!;
   const gameActivities = maybeGameActivities.gameActivities!;
@@ -54,7 +75,8 @@ export default function GamePage() {
   const getDefaultTabId = (): GamePageTabId => {
     if (game.is_awaiting_my_play_proof) {
       return 'proofs-of-chance';
-    } else if (game.isOngoing()) {
+    }
+    if (game.isOngoing() && game.iHaveNotPlayed()) {
       return 'details';
     }
 
@@ -112,10 +134,15 @@ export default function GamePage() {
           tabs={getTabs()}
         />
       </div>
+
       <ExploreOtherGamesView gameId={game.id} className="mt-20" />
 
       {game.isOngoing() && <CopyGameLinkButton className="fixed bottom-20" />}
-      <MainControlButtons game={game} className="fixed bottom-8 right-20" />
+      <MainControlButtons
+        currentWeb3Account={currentWeb3Account}
+        game={game}
+        className="fixed bottom-8 right-20"
+      />
     </>
   );
 }
@@ -188,39 +215,73 @@ const readFileAsync = (file: File): Promise<string> => {
 };
 
 function MainControlButtons({
+  currentWeb3Account,
   game,
   className,
-}: { game: CoinflipGame } & PropsWithClassName) {
+}: {
+  currentWeb3Account: Web3Account;
+  game: CoinflipGame;
+} & PropsWithClassName) {
   const { push } = useRouter();
+  const currentChain = useCurrentChain();
 
   const uploadProofButtonRef = useRef<HTMLInputElement>(null);
   const uploadProofOfChance = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
 
     if (files && files.length > 0) {
-      const file = files[0];
-      console.log({ file });
-      const proofOfChance = await readFileAsync(file);
-      console.log({ proofOfChance });
+      const proofOfChancefile = files[0];
+      const proofOfChance = ProofOfChance.fromFileContent(
+        await readFileAsync(proofOfChancefile)
+      );
+
+      const { ok: signer, error } = await currentWeb3Account!.getSigner();
+
+      // TODO: Do something with error here
+      const coinflipContract = CoinflipContract.fromSignerAndChain(
+        signer!,
+        currentChain!.id
+      );
+
+      try {
+        await coinflipContract.uploadGamePlayProof(
+          game!.id,
+          game.my_game_play_id!,
+          proofOfChance.getProof()
+        );
+
+        toast.loading('Uploading your Game Play Proof', {
+          position: 'bottom-right',
+          duration: COINFLIP_INDEX_GRACE_PERIOD,
+        });
+
+        setTimeout(() => {
+          toast.success('Game play proof successfully uploaded!', {
+            position: 'bottom-right',
+          });
+          push('/games?for=my_games');
+        }, COINFLIP_INDEX_GRACE_PERIOD);
+      } catch (e) {
+        console.log({ e });
+        switch (Web3ProviderError.from(e).code) {
+          case Web3ProviderErrorCode.UserRejected:
+            toast.error("Oops! Looks like you've rejected the transaction.", {
+              position: 'bottom-right',
+            });
+            break;
+        }
+      }
     }
   };
 
   const renderMainButton = () => {
-    if (game.isExpired()) {
-      return (
-        <MainButton
-          onClick={() => push(`/games/${game.id}/prove`)}
-          icon={<ShieldCheckIcon className="h-8" />}
-          label="Prove"
-        />
-      );
-    } else if (game.is_awaiting_my_play_proof) {
+    if (game.is_awaiting_my_play_proof) {
       return (
         <>
           <input
             style={{ display: 'none' }}
             type="file"
-            accept=".poc"
+            accept={ProofOfChance.FILE_EXTENSION}
             multiple={false}
             onChange={uploadProofOfChance}
             ref={uploadProofButtonRef}
@@ -232,7 +293,8 @@ function MainControlButtons({
           />
         </>
       );
-    } else if (game.isOngoing()) {
+    }
+    if (game.isOngoing() && game.iHaveNotPlayed()) {
       return (
         <MainButton
           onClick={() => push(`/games/${game.id}/play`)}
@@ -242,7 +304,13 @@ function MainControlButtons({
       );
     }
 
-    throw new Error('Game state not handled for MainButton');
+    return (
+      <MainButton
+        onClick={() => push(`/games/${game.id}/prove`)}
+        icon={<ShieldCheckIcon className="h-8" />}
+        label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}
+      />
+    );
   };
 
   return (
