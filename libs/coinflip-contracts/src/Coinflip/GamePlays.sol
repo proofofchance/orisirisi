@@ -7,8 +7,10 @@ import {Game} from './Game.sol';
 contract GamePlays {
     mapping(Game.ID gameID => mapping(address player => Game.PlayID playID)) playRecord;
 
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playHash)) playHashes;
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playProof)) playProofs;
+    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playHash))
+        public playHashes;
+    mapping(Game.ID gameID => mapping(Game.PlayID playID => string playProof))
+        public playProofs;
 
     mapping(Game.ID gameID => mapping(Coin.Side coinSide => Game.Player[] player)) players;
     mapping(Game.ID gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
@@ -35,7 +37,7 @@ contract GamePlays {
         Game.PlayID gamePlayID,
         Game.ID gameID,
         address player,
-        bytes32 playProof
+        string playProof
     );
 
     modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
@@ -63,10 +65,10 @@ contract GamePlays {
     modifier mustBeValidPlayProof(
         Game.ID gameID,
         Game.PlayID gamePlayID,
-        bytes32 playProof
+        string memory playProof
     ) {
         if (
-            keccak256(abi.encodePacked(playProof)) !=
+            sha256(abi.encodePacked(playProof)) !=
             playHashes[gameID][gamePlayID]
         ) {
             revert InvalidPlayProof();
@@ -133,7 +135,7 @@ contract GamePlays {
     function createGamePlayProof(
         Game.ID gameID,
         Game.PlayID gamePlayID,
-        bytes32 playProof
+        string memory playProof
     ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
         playProofs[gameID][gamePlayID] = playProof;
         incrementPlayProofCount(gameID);

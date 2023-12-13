@@ -102,7 +102,7 @@ contract Coinflip is
     function uploadGamePlayProof(
         Game.ID gameID,
         Game.PlayID gamePlayID,
-        bytes32 proofOfChance
+        string memory proofOfChance
     )
         external
         mustBeOperational
@@ -183,7 +183,10 @@ contract Coinflip is
         require(locked);
     }
 
-    function updateGameOutcome(Game.ID gameID, bytes32 proofOfChance) private {
+    function updateGameOutcome(
+        Game.ID gameID,
+        string memory proofOfChance
+    ) private {
         outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
     }
 
