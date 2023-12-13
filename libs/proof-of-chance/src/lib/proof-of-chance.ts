@@ -25,7 +25,7 @@ export class ProofOfChance {
     Its last 6 digits (prevents someone from using your chance against you): ${this.getNumericalTimestampLast6Digits()}
 
     Proof hash (A shareable SHA-256 hash of chance and last6digits): ${await this.toPlayHash()}
-    Proof upload (Only shareable after every player has played): ${this.toString()}
+    Proof upload (Only shareable after every player has played): ${this.getProof()}
     `;
   }
   static fromFileContent(fileContent: string) {
@@ -44,9 +44,9 @@ export class ProofOfChance {
     return fileContent.split(leadingPart)[1].split('\n')[0].trim();
   }
   toBytes32() {
-    return encodeBytes32String(this.toString());
+    return encodeBytes32String(this.getProof());
   }
-  toString() {
+  getProof() {
     return `${this.chance}+${this.getNumericalTimestampLast6Digits()}`;
   }
   private getNumericalTimestampLast6Digits() {
@@ -56,7 +56,7 @@ export class ProofOfChance {
     return this.creationTimestamp.getTime();
   }
   async toPlayHash() {
-    return `0x${await sha256(this.toString())}`;
+    return `0x${await sha256(this.getProof())}`;
   }
 }
 
