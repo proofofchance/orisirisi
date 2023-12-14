@@ -78,7 +78,8 @@ export class GameActivity {
     public kind:
       | 'game_created'
       | 'game_play_created'
-      | 'game_play_proof_created',
+      | 'game_play_proof_created'
+      | 'game_expired',
     public block_timestamp: number,
     public transaction_hash: string
   ) {}

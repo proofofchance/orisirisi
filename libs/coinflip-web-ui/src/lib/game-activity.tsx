@@ -22,6 +22,10 @@ export function GameActivity({
         )}`;
       case 'game_play_proof_created':
         return getPlayProofReport();
+      case 'game_expired':
+        return 'Game expired!';
+      default:
+        throw new Error(`Unknown game activity kind ${gameActivity.kind}`);
     }
   };
 
