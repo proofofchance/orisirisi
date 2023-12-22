@@ -13,7 +13,7 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import { COINFLIP_INDEX_GRACE_PERIOD, CoinflipGame } from '@orisirisi/coinflip';
 
-export function UploadMainButton({
+export function UploadProofMainButton({
   game,
   currentWeb3Account,
 }: {

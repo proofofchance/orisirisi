@@ -11,7 +11,7 @@ import {
   PlayIcon,
 } from '@heroicons/react/24/solid';
 import { MainButton } from './main-control-buttons/main-button';
-import { UploadMainButton } from './main-control-buttons/upload-main-button';
+import { UploadProofMainButton } from './main-control-buttons/upload-proof-main-button';
 
 export function MainControlButtons({
   currentWeb3Account,
@@ -26,7 +26,10 @@ export function MainControlButtons({
   const renderMainButton = () => {
     if (game.is_awaiting_my_play_proof) {
       return (
-        <UploadMainButton game={game} currentWeb3Account={currentWeb3Account} />
+        <UploadProofMainButton
+          game={game}
+          currentWeb3Account={currentWeb3Account}
+        />
       );
     }
     if (game.isOngoing() && game.iHaveNotPlayed()) {
