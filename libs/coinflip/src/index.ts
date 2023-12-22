@@ -21,6 +21,7 @@ export {
   RepoErrorType as CoinflipRepoErrorType,
   FetchGamesParams as FetchCoinflipGamesParams,
   FetchGameParams as FetchCoinflipGameParams,
+  UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
 } from './lib/repo';
 
 export const COINFLIP_INDEX_GRACE_PERIOD = 8000;

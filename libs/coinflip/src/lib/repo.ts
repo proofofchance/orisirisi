@@ -14,23 +14,32 @@ export interface FetchGameParams {
   playerAddress?: string;
 }
 
+export interface UpdateMyGamePlayParams {
+  game_id: number;
+  public_address: string;
+  game_play_proof: string;
+}
+
 export enum RepoErrorType {
   NotFound = 'not found',
+  Generic = 'generic',
 }
 export class RepoError extends Error {
-  constructor(public readonly type: RepoErrorType) {
-    super(type);
+  constructor(public readonly type: RepoErrorType, message?: string) {
+    super(message || type);
   }
 }
 
 export class Repo {
+  private static baseUrl = 'http://127.0.0.1:4446/coinflip';
+
   static async fetchGames(
     params: FetchGamesParams,
     signal: AbortSignal
   ): Promise<Game[]> {
     const queryString = buildQueryString(params as Record<string, string>);
     const response = await fetch(
-      `http://127.0.0.1:4446/coinflip/games${queryString}`,
+      Repo.appendPathWithBaseUrl(`/games${queryString}`),
       { signal: signal }
     );
 
@@ -39,35 +48,65 @@ export class Repo {
     return Game.manyFromJSON(games);
   }
   static async fetchGame(params: FetchGameParams, signal: AbortSignal) {
-    let endpointUrl = `http://127.0.0.1:4446/coinflip/games/${params.id}`;
+    let endpointPath = `/games/${params.id}`;
     if (params.playerAddress) {
-      endpointUrl = endpointUrl + `?player_address=${params.playerAddress}`;
+      endpointPath = endpointPath + `?player_address=${params.playerAddress}`;
     }
 
-    const response = await fetch(endpointUrl, {
+    const response = await fetch(Repo.appendPathWithBaseUrl(endpointPath), {
       signal,
     });
 
     return this.maybeReturnRepoError(response, Game.fromJSON);
   }
+  static async updateMyGamePlay(
+    { game_id, public_address, game_play_proof }: UpdateMyGamePlayParams,
+    signal: AbortSignal
+  ) {
+    const body = JSON.stringify({
+      public_address,
+      game_play_proof,
+    });
+
+    const response = await fetch(
+      Repo.appendPathWithBaseUrl(`/game_plays/${game_id}`),
+      {
+        method: 'PATCH',
+        body,
+        signal,
+      }
+    );
+
+    if (!response.ok)
+      return new Result(
+        null,
+        new RepoError(RepoErrorType.Generic, await response.text())
+      );
+
+    return new Result(true, null);
+  }
   static async fetchOngoingGameActivities(
     publicAddress: string,
     signal: AbortSignal
   ): Promise<GameActivity[]> {
-    const endpointUrl = `http://127.0.0.1:4446/coinflip/game_activities/ongoing/${publicAddress}`;
-    const response = await fetch(endpointUrl, {
-      signal,
-    });
+    const response = await fetch(
+      Repo.appendPathWithBaseUrl(`/game_activities/ongoing/${publicAddress}`),
+      {
+        signal,
+      }
+    );
 
     const game_activities = await response.json();
 
     return GameActivity.manyFromJSON(game_activities);
   }
   static async fetchGameActivities(gameId: number, signal: AbortSignal) {
-    const endpointUrl = `http://127.0.0.1:4446/coinflip/games/${gameId}/activities`;
-    const response = await fetch(endpointUrl, {
-      signal,
-    });
+    const response = await fetch(
+      Repo.appendPathWithBaseUrl(`/games/${gameId}/activities`),
+      {
+        signal,
+      }
+    );
 
     return this.maybeReturnRepoError(response, GameActivity.manyFromJSON);
   }
@@ -89,4 +128,6 @@ export class Repo {
 
     throw new Error(await response.text());
   };
+
+  private static appendPathWithBaseUrl = (path: string) => Repo.baseUrl + path;
 }
