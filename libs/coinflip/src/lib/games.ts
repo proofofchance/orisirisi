@@ -47,7 +47,8 @@ export class Game {
     return Object.assign(new Game(), json);
   }
   static manyFromJSON(jsonList: Game[]): Game[] {
-    return jsonList.map(this.fromJSON);
+    // Use the class name directly to avoid scope creep
+    return jsonList.map(Game.fromJSON);
   }
 }
 
@@ -91,6 +92,7 @@ export class GameActivity {
     return Object.assign(new GameActivity(), json);
   }
   static manyFromJSON(jsonList: GameActivity[]): GameActivity[] {
-    return jsonList.map(this.fromJSON);
+    // Use the class name directly to avoid scope creep
+    return jsonList.map(GameActivity.fromJSON);
   }
 }

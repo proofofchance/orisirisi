@@ -20,6 +20,7 @@ import {
   useCoinflipGame,
   useCoinflipGameActivities,
   useCoinflipGames,
+  useDispatchCoinflipRepoErrorToastRequest,
   useGameExpiryCountdown,
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
@@ -46,7 +47,7 @@ import toast from 'react-hot-toast';
 type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
 
 export default function GamePage() {
-  const { query } = useRouter();
+  const { query, replace } = useRouter();
 
   const id = parseInteger(query.id as string);
 
@@ -59,6 +60,14 @@ export default function GamePage() {
   const maybeGame = useCoinflipGame(fetchGameParams);
 
   const maybeGameActivities = useCoinflipGameActivities(id);
+
+  const dispatchErrorToastRequest = useDispatchCoinflipRepoErrorToastRequest();
+
+  if (maybeGame.notFound) {
+    dispatchErrorToastRequest(maybeGame.error!, 'game');
+
+    replace('/games');
+  }
 
   if (
     !(

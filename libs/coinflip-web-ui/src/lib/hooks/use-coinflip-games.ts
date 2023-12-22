@@ -2,6 +2,8 @@ import {
   CoinflipGame,
   CoinflipGameStatus,
   CoinflipRepo,
+  CoinflipRepoError,
+  CoinflipRepoErrorType,
   FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
@@ -66,13 +68,18 @@ export function useCoinflipGames({
 export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [game, setGame] = useState<CoinflipGame | null>(null);
+  const [error, setError] = useState<CoinflipRepoError | null>(null);
 
   useEffect(() => {
     if (params) {
       const fetchController = new AbortController();
       setIsLoading(true);
       CoinflipRepo.fetchGame(params, fetchController.signal)
-        .then((game) => setGame(game))
+        .then((gameResult) => {
+          if (gameResult.hasError()) return setError(gameResult.error!);
+
+          setGame(gameResult.ok!);
+        })
         .then(() => setIsLoading(false))
         .catch((error: unknown) => {
           if (!fetchController.signal.aborted) throw error;
@@ -84,5 +91,11 @@ export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
     }
   }, [params]);
 
-  return { game, isLoading, hasLoaded: game !== null };
+  return {
+    game,
+    isLoading,
+    hasLoaded: game !== null && !error,
+    error,
+    notFound: error?.type === CoinflipRepoErrorType.NotFound,
+  };
 }

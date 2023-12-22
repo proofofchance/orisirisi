@@ -14,12 +14,14 @@ import {
   RubikCubeIcon,
   useAuthErrorToastRequest,
   useCoinflipGames,
+  useCoinflipRepoErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
 
 export function GamesPage() {
   const { query } = useRouter();
 
   useAuthErrorToastRequest();
+  useCoinflipRepoErrorToastRequest();
 
   const forFilter = (query.for ?? 'all') as GamesPageForFilter;
 
