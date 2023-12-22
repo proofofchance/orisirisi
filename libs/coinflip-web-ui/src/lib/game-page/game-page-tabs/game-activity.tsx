@@ -1,5 +1,5 @@
 import { CoinflipGameActivity, coinSideToString } from '@orisirisi/coinflip';
-import { shortenPublicAddress } from './data-utils';
+import { shortenPublicAddress } from '../../data-utils';
 
 export function GameActivity({
   currentAccountAddress,

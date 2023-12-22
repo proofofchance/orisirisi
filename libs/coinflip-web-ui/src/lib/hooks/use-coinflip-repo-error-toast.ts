@@ -12,8 +12,8 @@ export function useDispatchCoinflipRepoErrorToastRequest() {
     coinflipRepoErrorToastRequestAtom
   );
 
-  return (repoError: CoinflipRepoError, resourceName: string) =>
-    setRepoErrorToastRequest([repoError, resourceName, new Date()]);
+  return (repoError: CoinflipRepoError, message: string) =>
+    setRepoErrorToastRequest([repoError, message, new Date()]);
 }
 
 export function useCoinflipRepoErrorToastRequest() {
@@ -23,10 +23,10 @@ export function useCoinflipRepoErrorToastRequest() {
 
   useEffect(() => {
     if (!repoErrorToastRequest) return;
-    const [repoError, resourceName] = repoErrorToastRequest;
+    const [repoError, message] = repoErrorToastRequest;
 
     if (repoError.type === CoinflipRepoErrorType.NotFound) {
-      toast.error(`${resourceName} not found!`, {
+      toast.error(message, {
         position: 'bottom-right',
       });
     }
