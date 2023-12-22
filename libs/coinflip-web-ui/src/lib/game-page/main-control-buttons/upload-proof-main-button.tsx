@@ -1,17 +1,10 @@
 import { ChangeEvent, useRef } from 'react';
-import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
-import { CoinflipContract } from '@orisirisi/coinflip-contracts';
-import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
 import { MainButton } from './main-button';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import {
-  Web3Account,
-  Web3ProviderError,
-  Web3ProviderErrorCode,
-} from '@orisirisi/orisirisi-web3';
-import { COINFLIP_INDEX_GRACE_PERIOD, CoinflipGame } from '@orisirisi/coinflip';
+import { Web3Account } from '@orisirisi/orisirisi-web3';
+import { CoinflipGame, CoinflipRepo } from '@orisirisi/coinflip';
 
 export function UploadProofMainButton({
   game,
@@ -20,8 +13,6 @@ export function UploadProofMainButton({
   game: CoinflipGame;
   currentWeb3Account: Web3Account;
 }) {
-  const { push } = useRouter();
-  const currentChain = useCurrentChain();
   const uploadProofButtonRef = useRef<HTMLInputElement>(null);
   const uploadProofOfChance = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -32,42 +23,27 @@ export function UploadProofMainButton({
         await readFileAsync(proofOfChancefile)
       );
 
-      const { ok: signer, error } = await currentWeb3Account!.getSigner();
+      const loadingToastId = toast.loading('Uploading your Game Play Proof', {
+        position: 'bottom-right',
+      });
 
-      // TODO: Do something with error here
-      const coinflipContract = CoinflipContract.fromSignerAndChain(
-        signer!,
-        currentChain!.id
-      );
+      const response = await CoinflipRepo.updateMyGamePlay({
+        game_id: game!.id,
+        public_address: currentWeb3Account.address,
+        game_play_proof: proofOfChance.getProof(),
+      });
 
-      try {
-        await coinflipContract.uploadGamePlayProof(
-          game!.id,
-          game.my_game_play_id!,
-          proofOfChance.getProof()
-        );
+      toast.dismiss(loadingToastId);
 
-        toast.loading('Uploading your Game Play Proof', {
+      if (response.ok) {
+        return toast.success('Uploaded game play proof successfully', {
           position: 'bottom-right',
-          duration: COINFLIP_INDEX_GRACE_PERIOD,
         });
-
-        setTimeout(() => {
-          toast.success('Game play proof successfully uploaded!', {
-            position: 'bottom-right',
-          });
-          push('/games?for=my_games');
-        }, COINFLIP_INDEX_GRACE_PERIOD);
-      } catch (e) {
-        console.log({ e });
-        switch (Web3ProviderError.from(e).code) {
-          case Web3ProviderErrorCode.UserRejected:
-            toast.error("Oops! Looks like you've rejected the transaction.", {
-              position: 'bottom-right',
-            });
-            break;
-        }
       }
+
+      return toast.error('An error occurred while uploading', {
+        position: 'bottom-right',
+      });
     }
   };
 

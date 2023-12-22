@@ -61,7 +61,7 @@ export class Repo {
   }
   static async updateMyGamePlay(
     { game_id, public_address, game_play_proof }: UpdateMyGamePlayParams,
-    signal: AbortSignal
+    signal?: AbortSignal
   ) {
     const body = JSON.stringify({
       public_address,
@@ -69,9 +69,10 @@ export class Repo {
     });
 
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/game_plays/${game_id}`),
+      Repo.appendPathWithBaseUrl(`/game_plays/${game_id}/my_game_play`),
       {
-        method: 'PATCH',
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body,
         signal,
       }
