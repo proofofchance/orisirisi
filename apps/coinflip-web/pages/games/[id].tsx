@@ -30,7 +30,7 @@ export default function GamePage() {
 
   const dispatchErrorToastRequest = useDispatchCoinflipRepoErrorToastRequest();
 
-  if (maybeGame.notFound) {
+  if (maybeGame.error?.isNotFoundError()) {
     dispatchErrorToastRequest(maybeGame.error!, 'Game not found!');
 
     replace('/games');

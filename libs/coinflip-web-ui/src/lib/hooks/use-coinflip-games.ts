@@ -96,6 +96,5 @@ export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
     isLoading,
     hasLoaded: game !== null && !error,
     error,
-    notFound: error?.type === CoinflipRepoErrorType.NotFound,
   };
 }

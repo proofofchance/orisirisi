@@ -1,4 +1,4 @@
-import { CoinflipRepoError, CoinflipRepoErrorType } from '@orisirisi/coinflip';
+import { CoinflipRepoError } from '@orisirisi/coinflip';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -25,7 +25,7 @@ export function useCoinflipRepoErrorToastRequest() {
     if (!repoErrorToastRequest) return;
     const [repoError, message] = repoErrorToastRequest;
 
-    if (repoError.type === CoinflipRepoErrorType.NotFound) {
+    if (repoError.isNotFoundError()) {
       toast.error(message, {
         position: 'bottom-right',
       });

@@ -83,6 +83,5 @@ export function useCoinflipGameActivities(gameId: number | null) {
     isLoading,
     error,
     hasLoaded: gameActivities !== null && !error,
-    notFound: error?.type === CoinflipRepoErrorType.NotFound,
   };
 }

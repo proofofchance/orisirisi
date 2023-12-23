@@ -41,9 +41,10 @@ export function UploadProofMainButton({
         });
       }
 
-      return toast.error('An error occurred while uploading', {
-        position: 'bottom-right',
-      });
+      if (response.error!.isUnprocessableEntityError())
+        return toast.error('Invalid proof of chance!', {
+          position: 'bottom-right',
+        });
     }
   };
 
