@@ -22,14 +22,20 @@ export interface UpdateMyGamePlayParams {
 
 export enum RepoErrorType {
   NotFound = 'not found',
+  UnprocessableEntity = 'unprocessable entity',
   Generic = 'generic',
 }
 export class RepoError extends Error {
   constructor(public readonly type: RepoErrorType, message?: string) {
     super(message || type);
   }
+  isNotFoundError = () => this.type === RepoErrorType.NotFound;
+  isUnprocessableEntityError = () =>
+    this.type === RepoErrorType.UnprocessableEntity;
+  isGenericError = () => this.type === RepoErrorType.Generic;
 }
 
+// TODO: Rename to HTTPRepo or HTTPService or CoinflipService
 export class Repo {
   private static baseUrl = 'http://127.0.0.1:4446/coinflip';
 
@@ -77,6 +83,9 @@ export class Repo {
         signal,
       }
     );
+
+    if (response.status === 422)
+      return new Result(null, new RepoError(RepoErrorType.UnprocessableEntity));
 
     if (!response.ok)
       return new Result(
