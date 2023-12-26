@@ -5,6 +5,7 @@ import { MainButton } from './main-button';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { CoinflipGame, CoinflipRepo } from '@orisirisi/coinflip';
+import { useRouter } from 'next/router';
 
 export function UploadProofMainButton({
   game,
@@ -13,6 +14,7 @@ export function UploadProofMainButton({
   game: CoinflipGame;
   currentWeb3Account: Web3Account;
 }) {
+  const { reload } = useRouter();
   const uploadProofButtonRef = useRef<HTMLInputElement>(null);
   const uploadProofOfChance = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -36,9 +38,14 @@ export function UploadProofMainButton({
       toast.dismiss(loadingToastId);
 
       if (response.ok) {
-        return toast.success('Uploaded game play proof successfully', {
+        toast.success('Uploaded game play proof successfully', {
           position: 'bottom-right',
+          duration: 1000,
         });
+
+        setTimeout(reload, 1000);
+
+        return;
       }
 
       if (response.error!.isUnprocessableEntityError())
