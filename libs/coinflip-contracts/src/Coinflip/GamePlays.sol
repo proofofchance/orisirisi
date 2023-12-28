@@ -5,55 +5,53 @@ import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
 
 contract GamePlays {
-    mapping(Game.ID gameID => mapping(address player => Game.PlayID playID)) playRecord;
+    mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
 
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => bytes32 playHash))
+    mapping(uint gameID => mapping(uint16 playID => bytes32 playHash))
         public playHashes;
-    mapping(Game.ID gameID => mapping(Game.PlayID playID => string playProof))
+    mapping(uint gameID => mapping(uint16 playID => string playProof))
         public playProofs;
 
-    mapping(Game.ID gameID => mapping(Coin.Side coinSide => Game.Player[] player)) players;
-    mapping(Game.ID gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
+    mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
+    mapping(uint gameID => address[] player) allPlayers;
+    mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
 
-    mapping(Game.ID gameID => Game.PlayID playCount) public playCounts;
-    mapping(Game.ID gameID => Game.PlayID maxPlayCount) maxPlayCounts;
-    mapping(Game.ID gameID => Game.PlayID playProofCount) playProofCounts;
+    mapping(uint gameID => uint16 playCount) public playCounts;
+    mapping(uint gameID => uint16 maxPlayCount) maxPlayCounts;
+    mapping(uint gameID => uint16 playProofCount) playProofCounts;
 
     error InvalidPlayProof();
-    error MaxedOutPlaysError(Game.ID gameID);
-    error PendingGamePlaysError(Game.ID gameID, uint16 pendingGamePlaysCount);
-    error AllMatchingPlaysError(Game.ID gameID, Coin.Side availableCoinSide);
-    error AlreadyPlayedError(Game.ID gameID, Game.PlayID playID);
+    error MaxedOutPlaysError(uint gameID);
+    error PendingGamePlaysError(uint gameID, uint16 pendingGamePlaysCount);
+    error AllMatchingPlaysError(uint gameID, Coin.Side availableCoinSide);
+    error AlreadyPlayedError(uint gameID, uint16 playID);
 
     event GamePlayCreated(
-        Game.PlayID gamePlayID,
-        Game.ID gameID,
+        uint16 gamePlayID,
+        uint gameID,
         Coin.Side coinSide,
         address player,
         bytes32 playHash
     );
 
     event GamePlayProofCreated(
-        Game.PlayID gamePlayID,
-        Game.ID gameID,
+        uint16 gamePlayID,
+        uint gameID,
         address player,
         string playProof
     );
 
-    modifier mustAvoidGameWithMaxedOutPlays(Game.ID gameID) {
-        if (
-            Game.PlayID.unwrap(playCounts[gameID]) ==
-            Game.PlayID.unwrap(maxPlayCounts[gameID])
-        ) {
+    modifier mustAvoidGameWithMaxedOutPlays(uint gameID) {
+        if (playCounts[gameID] == maxPlayCounts[gameID]) {
             revert MaxedOutPlaysError(gameID);
         }
 
         _;
     }
 
-    modifier mustBeGameWithMaxedOutPlays(Game.ID gameID) {
-        uint16 playCount = Game.PlayID.unwrap(playCounts[gameID]);
-        uint16 maxPlayCount = Game.PlayID.unwrap(maxPlayCounts[gameID]);
+    modifier mustBeGameWithMaxedOutPlays(uint gameID) {
+        uint16 playCount = playCounts[gameID];
+        uint16 maxPlayCount = maxPlayCounts[gameID];
 
         if (playCount < maxPlayCount) {
             revert PendingGamePlaysError(gameID, maxPlayCount - playCount);
@@ -63,8 +61,8 @@ contract GamePlays {
     }
 
     modifier mustBeValidPlayProof(
-        Game.ID gameID,
-        Game.PlayID gamePlayID,
+        uint gameID,
+        uint16 gamePlayID,
         string memory playProof
     ) {
         if (
@@ -77,10 +75,8 @@ contract GamePlays {
         _;
     }
 
-    modifier mustAvoidAllGamePlaysMatching(Game.ID gameID, Coin.Side coinSide) {
-        uint16 playsLeft = Game.PlayID.unwrap(maxPlayCounts[gameID]) -
-            Game.PlayID.unwrap(playCounts[gameID]);
-
+    modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
+        uint16 playsLeft = maxPlayCounts[gameID] - playCounts[gameID];
         uint16 headPlayCount = coinSideCounts[gameID][Coin.Side.Head];
         uint16 tailPlayCount = coinSideCounts[gameID][Coin.Side.Tail];
 
@@ -98,10 +94,10 @@ contract GamePlays {
         _;
     }
 
-    modifier mustAvoidPlayingAgain(Game.ID gameID) {
-        Game.PlayID myPlayID = playRecord[gameID][msg.sender];
+    modifier mustAvoidPlayingAgain(uint gameID) {
+        uint16 myPlayID = playRecord[gameID][msg.sender];
 
-        if (Game.PlayID.unwrap(myPlayID) > 0) {
+        if (myPlayID > 0) {
             revert AlreadyPlayedError(gameID, myPlayID);
         }
 
@@ -109,17 +105,15 @@ contract GamePlays {
     }
 
     function createGamePlay(
-        Game.ID gameID,
+        uint gameID,
         Coin.Side coinSide,
         bytes32 playHash
     ) internal {
-        Game.PlayID gamePlayID = Game.PlayID.wrap(
-            Game.PlayID.unwrap(playCounts[gameID]) + 1
-        );
+        uint16 gamePlayID = playCounts[gameID] + 1;
         playRecord[gameID][msg.sender] = gamePlayID;
         playHashes[gameID][gamePlayID] = playHash;
-        Game.Player player = Game.Player.wrap(msg.sender);
-        players[gameID][coinSide].push(player);
+        players[gameID][coinSide].push(msg.sender);
+        allPlayers[gameID].push(msg.sender);
         coinSideCounts[gameID][coinSide]++;
         incrementPlayCount(gameID);
 
@@ -133,20 +127,14 @@ contract GamePlays {
     }
 
     function createGamePlayProof(
-        Game.ID gameID,
-        Game.PlayID gamePlayID,
+        uint gameID,
+        uint16 gamePlayID,
         string memory playProof
     ) internal mustBeValidPlayProof(gameID, gamePlayID, playProof) {
         playProofs[gameID][gamePlayID] = playProof;
         incrementPlayProofCount(gameID);
 
         emit GamePlayProofCreated(gamePlayID, gameID, msg.sender, playProof);
-    }
-
-    function allProofsAreUploaded(Game.ID gameID) internal view returns (bool) {
-        return
-            Game.PlayID.unwrap(playProofCounts[gameID]) ==
-            Game.PlayID.unwrap(playCounts[gameID]);
     }
 
     function getAvailableCoinSide(
@@ -161,23 +149,19 @@ contract GamePlays {
         return Coin.Side.Tail;
     }
 
-    function incrementPlayCount(Game.ID gameID) private {
-        playCounts[gameID] = Game.PlayID.wrap(
-            Game.PlayID.unwrap(playCounts[gameID]) + 1
-        );
+    function incrementPlayCount(uint gameID) private {
+        playCounts[gameID]++;
     }
 
-    function incrementPlayProofCount(Game.ID gameID) private {
-        playProofCounts[gameID] = Game.PlayID.wrap(
-            Game.PlayID.unwrap(playProofCounts[gameID]) + 1
-        );
+    function incrementPlayProofCount(uint gameID) private {
+        playProofCounts[gameID]++;
     }
 
     function setMaxGamePlayCount(
-        Game.ID gameID,
+        uint gameID,
         uint16 maxGameMovesCount
     ) internal {
-        maxPlayCounts[gameID] = Game.PlayID.wrap(maxGameMovesCount);
+        maxPlayCounts[gameID] = maxGameMovesCount;
     }
 }
 

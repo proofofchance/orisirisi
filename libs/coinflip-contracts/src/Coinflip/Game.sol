@@ -4,22 +4,9 @@ pragma solidity ^0.8.23;
 import {Coin} from './Coin.sol';
 
 library Game {
-    type ID is uint;
-
-    type PlayID is uint16;
-    type Player is address;
-
-    struct Play {
-        Player player;
-        Coin.Side coinSide;
-        bytes32 proof;
-        bytes32 playHash;
-    }
-
     enum Status {
         Ongoing,
         Expired,
-        WinnersUnresolved,
         Concluded
     }
 

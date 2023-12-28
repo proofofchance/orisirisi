@@ -20,7 +20,7 @@ contract Coinflip is
     UsingGameStatuses,
     MaybeOperational
 {
-    mapping(Game.ID => Coin.Side) outcomes;
+    mapping(uint => Coin.Side) outcomes;
     uint public gamesCount;
 
     Wallets public immutable wallets;
@@ -30,20 +30,34 @@ contract Coinflip is
     error MinimumPlayCountError();
 
     event GameCreated(
-        Game.ID gameID,
+        uint gameID,
         uint16 maxPlayCount,
         uint expiryTimestamp,
         address creator,
         uint wager
     );
 
-    constructor(address payable _wallets, address _serviceProvider) {
+    event NewGameWinner(uint gameID, address winner);
+
+    uint public minWager;
+    uint16 public maxPossibleGamePlayCount;
+    error MaxPossibleGamePlayCountError(uint16 maxPossibleGamePlayCount);
+    error IncompleteProofOfChancesError(uint expectedProofOfChanceSize);
+
+    constructor(
+        address payable _wallets,
+        address _serviceProvider,
+        uint16 _maxPossibleGamePlayCount,
+        uint _minWager
+    ) {
         wallets = Wallets(_wallets);
         serviceProvider = ServiceProvider(_serviceProvider);
+        maxPossibleGamePlayCount = _maxPossibleGamePlayCount;
+        minWager = _minWager;
     }
 
     receive() external payable {
-        payGameWager();
+        Payments.pay(address(wallets), msg.value);
     }
 
     /// @dev Creates a new game
@@ -61,10 +75,17 @@ contract Coinflip is
         if (maxGamePlayCount < Coin.TOTAL_SIDES_COUNT) {
             revert MinimumPlayCountError();
         }
-        maybePayGameWager();
-        lockGameWager(wager);
-        Game.ID newGameID = Game.ID.wrap(gamesCount + 1);
+
+        console.log('maxGamePlayCount %s', maxGamePlayCount);
+
+        if (maxGamePlayCount > maxPossibleGamePlayCount) {
+            revert MaxPossibleGamePlayCountError(maxPossibleGamePlayCount);
+        }
+
+        uint newGameID = gamesCount + 1;
+        maybeTopUpWallet();
         createGameWager(newGameID, wager);
+        payGameWager(newGameID, wager);
         setMaxGamePlayCount(newGameID, maxGamePlayCount);
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
@@ -82,7 +103,7 @@ contract Coinflip is
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
     function playGame(
-        Game.ID gameID,
+        uint gameID,
         Coin.Side coinSide,
         bytes32 playHash
     )
@@ -94,116 +115,110 @@ contract Coinflip is
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
         mustAvoidPlayingAgain(gameID)
     {
-        maybePayGameWager();
-        lockGameWager(getGameWager(gameID));
+        maybeTopUpWallet();
+        uint wager = getGameWager(gameID);
+        payGameWager(gameID, wager);
         createGamePlay(gameID, coinSide, playHash);
     }
 
-    /// @dev Uploads the proof of chance to prove a game move
-    /// @param proofOfChance should contain 32 words. First 24 should be
-    /// from the user system's entropy + Last 8 digits of current
-    /// timestamp.
-    function uploadGamePlayProof(
-        Game.ID gameID,
-        Game.PlayID gamePlayID,
-        string memory proofOfChance
+    function uploadGamePlayProofsAndCreditGameWinners(
+        uint gameID,
+        uint16[] memory gamePlayIDs,
+        string[] memory proofOfChances
     )
         external
-        mustBeOperational
+        onlyOwner
         mustBeOngoingGame(gameID)
         mustBeGameWithMaxedOutPlays(gameID)
     {
-        createGamePlayProof(gameID, gamePlayID, proofOfChance);
-        updateGameOutcome(gameID, proofOfChance);
-
-        if (allProofsAreUploaded(gameID)) {
-            setGameStatusAsWinnersUnresolved(gameID);
+        if (proofOfChances.length != maxPlayCounts[gameID]) {
+            revert IncompleteProofOfChancesError(gameID);
         }
-    }
+        require(gamePlayIDs.length == proofOfChances.length);
 
-    function creditGamePlayers(
-        Game.ID gameID
-    ) external mustBeOperational mustBeWinnersUnresolvedOrExpiredGame(gameID) {
-        Game.Status gameStatus = getGameStatus(gameID);
-
-        if (gameStatus == Game.Status.WinnersUnresolved) {
-            creditGameWinners(gameID);
-        } else if (gameStatus == Game.Status.Expired) {
-            creditExpiredGamePlayers(gameID);
+        for (uint16 i = 0; i < gamePlayIDs.length; i++) {
+            string memory proofOfChance = proofOfChances[i];
+            createGamePlayProof(gameID, gamePlayIDs[i], proofOfChance);
+            updateGameOutcome(gameID, proofOfChances[i]);
         }
-    }
-
-    function creditGameWinners(
-        Game.ID gameID
-    ) public mustBeWinnersUnresolvedGame(gameID) {
-        Game.Player[] memory winners = players[gameID][outcomes[gameID]];
-        uint totalWagerAmount = getGameWager(gameID) * winners.length;
-
-        (uint amountForEachWinner, uint serviceChargeAmount) = serviceProvider
-            .getAmountForEachAndServiceCharge(totalWagerAmount, winners.length);
-
-        payServiceCharge(serviceChargeAmount);
-        creditPlayers(winners, amountForEachWinner);
+        address[] memory winners = players[gameID][outcomes[gameID]];
+        creditGameWinners(gameID, winners);
+        announceGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
     }
 
     function creditExpiredGamePlayers(
-        Game.ID gameID
-    ) public mustBeExpiredGame(gameID) {
-        Game.Player[] memory headPlayers = players[gameID][Coin.Side.Head];
-        Game.Player[] memory tailPlayers = players[gameID][Coin.Side.Tail];
+        uint gameID
+    ) external onlyOwner mustBeExpiredGame(gameID) {
+        address[] memory allPlayers = allPlayers[gameID];
+        uint16 allPlayersSize = uint16(allPlayers.length);
 
-        uint16 playCount = Game.PlayID.unwrap(playCounts[gameID]);
-        assert(headPlayers.length + tailPlayers.length == playCount);
-        uint totalWagerAmount = getGameWager(gameID) * playCount;
+        uint totalWager = getGameWager(gameID) * allPlayersSize;
 
-        (uint amountForEachPlayer, uint serviceChargeAmount) = serviceProvider
-            .getAmountForEachAndServiceCharge(totalWagerAmount, playCount);
+        uint amountForEachPlayer = serviceProvider
+            .getSplitAmountAfterServiceChargeDeduction(
+                totalWager,
+                allPlayersSize
+            );
 
-        payServiceCharge(serviceChargeAmount);
-        creditPlayers(headPlayers, amountForEachPlayer);
-        creditPlayers(tailPlayers, amountForEachPlayer);
+        wallets.creditPlayersAndCreditAppTheRest(
+            gameID,
+            allPlayers,
+            amountForEachPlayer
+        );
+
         setGameStatusAsConcluded(gameID);
     }
 
-    function maybePayGameWager() private {
-        if (msg.value > 0) {
-            payGameWager();
-        }
-    }
+    function creditGameWinners(uint gameID, address[] memory winners) private {
+        uint gameWager = getGameWager(gameID);
+        uint totalWager = gameWager * playCounts[gameID];
 
-    function payGameWager() private {
-        Payments.pay(address(wallets), msg.value);
-        wallets.transfer(msg.sender, msg.value);
-    }
+        uint amountForEachPlayer = serviceProvider
+            .getSplitAmountAfterServiceChargeDeduction(
+                totalWager,
+                winners.length
+            );
 
-    function lockGameWager(uint wager) private {
-        if (wager > wallets.getBalance(msg.sender)) {
-            revert InsufficientWalletBalance();
-        }
+        console.log('amountForEachWinner %s', amountForEachPlayer);
 
-        bool locked = wallets.lock(msg.sender, wager);
-
-        require(locked);
-    }
-
-    function updateGameOutcome(
-        Game.ID gameID,
-        string memory proofOfChance
-    ) private {
-        outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
-    }
-
-    function payServiceCharge(uint serviceChargeAmount) private {
-        wallets.transfer(
-            serviceProvider.getServiceProviderWallet(),
-            serviceChargeAmount
+        wallets.creditPlayersAndCreditAppTheRest(
+            gameID,
+            winners,
+            amountForEachPlayer
         );
     }
 
-    function creditPlayers(Game.Player[] memory players, uint amount) private {
-        for (uint16 i = 0; i <= players.length; i++) {
-            wallets.transfer(Game.Player.unwrap(players[i]), amount);
+    function announceGameWinners(
+        uint gameID,
+        address[] memory winners
+    ) private {
+        for (uint16 i = 0; i < winners.length; i++) {
+            emit NewGameWinner(gameID, winners[i]);
         }
+    }
+
+    function setMaxPossibleGamePlayCount(
+        uint16 maxPossibleGamePlayCount_
+    ) external onlyOwner {
+        maxPossibleGamePlayCount = maxPossibleGamePlayCount_;
+    }
+
+    function maybeTopUpWallet() private {
+        if (msg.value > 0) {
+            Payments.pay(address(wallets), msg.value);
+            wallets.creditPlayer(msg.sender, msg.value);
+        }
+    }
+
+    function payGameWager(uint gameID, uint wager) private {
+        wallets.transferToGameWallet(gameID, msg.sender, wager);
+    }
+
+    function updateGameOutcome(
+        uint gameID,
+        string memory proofOfChance
+    ) private {
+        outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
     }
 }

@@ -66,9 +66,10 @@ async function sha256(message: string) {
   const msgBuffer = new TextEncoder().encode(message);
 
   // hash the message
-  const hashBuffer = window
-    ? await window.crypto.subtle.digest('SHA-256', msgBuffer)
-    : await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashBuffer =
+    typeof window !== 'undefined'
+      ? await window.crypto.subtle.digest('SHA-256', msgBuffer)
+      : await crypto.subtle.digest('SHA-256', msgBuffer);
 
   // convert ArrayBuffer to Array
   const hashArray = Array.from(new Uint8Array(hashBuffer));

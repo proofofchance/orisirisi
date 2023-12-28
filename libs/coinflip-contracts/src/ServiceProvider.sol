@@ -32,25 +32,19 @@ contract ServiceProvider is Ownable {
         return owner();
     }
 
-    // TODO: Use Openzeppelin
-    // Solidity rounds towards zero. So implicit 'floor' happens here
-    function getAmountForEachAndServiceCharge(
+    function getServiceCharge(uint amount) external view returns (uint) {
+        return (amount * serviceChargePercent) / 100;
+    }
+
+    function getSplitAmountAfterServiceChargeDeduction(
         uint amount,
         uint places
-    ) external view returns (uint amountForEach, uint serviceChargeAmount) {
-        uint _serviceChargeAmountSoFar = (amount * serviceChargePercent) / 100;
+    ) external view returns (uint) {
+        uint splitAmount = amount / places;
+        splitAmount =
+            splitAmount -
+            ((splitAmount * serviceChargePercent) / 100);
 
-        uint amountAfterDeductingServiceCharge = amount -
-            _serviceChargeAmountSoFar;
-
-        uint _amountForEach = amountAfterDeductingServiceCharge / places;
-
-        uint maybeLeftOverAmount = amountAfterDeductingServiceCharge -
-            (amountForEach * places);
-
-        uint _serviceChargeAmount = _serviceChargeAmountSoFar +
-            maybeLeftOverAmount;
-
-        return (_amountForEach, _serviceChargeAmount);
+        return splitAmount;
     }
 }

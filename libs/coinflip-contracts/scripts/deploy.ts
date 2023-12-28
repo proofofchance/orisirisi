@@ -1,4 +1,5 @@
 import { ethers, deployments } from 'hardhat';
+import { parseEther } from 'ethers';
 
 async function main() {
   const { walletsAddress, serviceProviderAddress, coinflipAddress } =
@@ -39,7 +40,7 @@ export async function deployCoinflipContracts() {
 
   const { address: coinflipAddress } = await deployments.deploy('Coinflip', {
     ...deployOptions,
-    args: [walletsAddress, serviceProviderAddress],
+    args: [walletsAddress, serviceProviderAddress, 10, parseEther('0.2')],
   });
 
   return {
