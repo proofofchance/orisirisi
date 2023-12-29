@@ -1,9 +1,12 @@
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
 import { CoinSide } from './coin';
 
 export type GameStatus = 'ongoing' | 'expired' | 'completed';
 
 export class Game {
+  static minPossiblePlayers = 2;
+  static maxPossiblePlayers = 20;
+
   constructor(
     public id: number,
     public chain_id: number,
@@ -49,6 +52,18 @@ export class Game {
   static manyFromJSON(jsonList: Game[]): Game[] {
     // Use the class name directly to avoid scope creep
     return jsonList.map(Game.fromJSON);
+  }
+  static getMinWagerEth(chainId: ChainID = ChainID.Ethereum): number {
+    switch (chainId) {
+      case ChainID.Local:
+      case ChainID.LocalAlt:
+      case ChainID.Ethereum:
+        return 0.02;
+      case ChainID.Polygon:
+        return 0.2;
+      default:
+        return 0.2;
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import { useFormContext } from 'react-hook-form';
+import { CoinflipGame } from '@orisirisi/coinflip';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 import { DownArrowButton, UpArrowButton } from './common-buttons';
@@ -37,8 +38,8 @@ export function NumberOfPlayersFormSection() {
 }
 
 export class NumberOfPlayers {
-  private static min = 2;
-  private static max = 20;
+  private static min = CoinflipGame.minPossiblePlayers;
+  private static max = CoinflipGame.maxPossiblePlayers;
   private static delimiter = ' ';
   private static suffix = 'Players';
   private constructor(public value: number) {}

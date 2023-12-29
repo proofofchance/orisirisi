@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { BytesLike, parseEther } from 'ethers';
 import {
   CoinSide,
+  CoinflipGame,
   getRandomCoinSide,
   oppositeCoinSide,
 } from '@orisirisi/coinflip';
@@ -177,8 +178,8 @@ export async function deployCoinflipContracts() {
     [
       walletsAddress,
       serviceProviderContract.getAddress(),
-      10,
-      parseEther('0.2'),
+      CoinflipGame.maxPossiblePlayers,
+      parseEther(CoinflipGame.getMinWagerEth().toString()),
     ],
     deployer
   );
@@ -206,8 +207,13 @@ class CreateGameParams {
   playHash: string;
 
   private constructor(public expiryTimestamp: number) {
-    this.wager = parseEther(`${getRandomInteger(20, 1)}`);
-    this.numberOfPlayers = getRandomInteger(9, 2);
+    this.wager = parseEther(
+      `${getRandomInteger(20, Math.ceil(CoinflipGame.getMinWagerEth()))}`
+    );
+    this.numberOfPlayers = getRandomInteger(
+      CoinflipGame.maxPossiblePlayers,
+      CoinflipGame.minPossiblePlayers
+    );
     this.coinSide = getRandomCoinSide();
     this.playHash =
       '0x4299a2c05eaaf9f217898179738f3feb40669058bff3b6cb1017aecd48d6dd84';

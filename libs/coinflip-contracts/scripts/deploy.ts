@@ -1,6 +1,7 @@
 import { ethers, deployments } from 'hardhat';
 import { parseEther } from 'ethers';
 
+// TODO: Deploy per chain
 async function main() {
   const { walletsAddress, serviceProviderAddress, coinflipAddress } =
     await deployCoinflipContracts();
@@ -40,7 +41,12 @@ export async function deployCoinflipContracts() {
 
   const { address: coinflipAddress } = await deployments.deploy('Coinflip', {
     ...deployOptions,
-    args: [walletsAddress, serviceProviderAddress, 10, parseEther('0.2')],
+    args: [
+      walletsAddress,
+      serviceProviderAddress,
+      CoinflipGame.maxPossiblePlayers,
+      parseEther(CoinflipGame.getMinWagerEth().toString()),
+    ],
   });
 
   return {
@@ -64,6 +70,7 @@ async function getDeployer() {
 }
 
 import * as fs from 'fs';
+import { CoinflipGame } from '@orisirisi/coinflip';
 
 interface EnvVariables {
   [key: string]: string;
