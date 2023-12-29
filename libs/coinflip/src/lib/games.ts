@@ -1,7 +1,11 @@
 import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
 import { CoinSide } from './coin';
 
-export type GameStatus = 'ongoing' | 'expired' | 'completed';
+export type GameStatus =
+  | 'ongoing'
+  | 'expired'
+  | 'awaiting_proofs_upload'
+  | 'completed';
 
 export class Game {
   static minPossiblePlayers = 2;
@@ -18,7 +22,6 @@ export class Game {
     public max_play_count: number,
     public expiry_timestamp: number,
     public status: GameStatus,
-    public is_in_play_phase: boolean,
     public unavailable_coin_side: CoinSide | null,
     public is_awaiting_my_play_proof: boolean | null,
     public my_game_play_id: number | null
@@ -37,6 +40,9 @@ export class Game {
 
   isOngoing(): boolean {
     return this.status === 'ongoing';
+  }
+  isAwaitingProofsUpload(): boolean {
+    return this.status === 'awaiting_proofs_upload';
   }
   isExpired(): boolean {
     return this.status === 'expired';

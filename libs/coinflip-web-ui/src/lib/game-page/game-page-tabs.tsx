@@ -50,7 +50,7 @@ export function GamePageTabs({
       },
     ];
 
-    if (!game.is_in_play_phase) {
+    if (!game.isOngoing()) {
       tabs.push({
         title: 'Proofs Of Chance',
         id: 'proofs-of-chance',
