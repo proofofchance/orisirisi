@@ -7,6 +7,7 @@ library Game {
     enum Status {
         Ongoing,
         Expired,
+        AwaitingProofsUpload,
         Concluded
     }
 

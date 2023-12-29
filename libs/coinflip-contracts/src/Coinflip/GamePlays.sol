@@ -21,8 +21,6 @@ contract GamePlays {
     mapping(uint gameID => uint16 playProofCount) playProofCounts;
 
     error InvalidPlayProof();
-    error MaxedOutPlaysError(uint gameID);
-    error PendingGamePlaysError(uint gameID, uint16 pendingGamePlaysCount);
     error AllMatchingPlaysError(uint gameID, Coin.Side availableCoinSide);
     error AlreadyPlayedError(uint gameID, uint16 playID);
 
@@ -40,25 +38,6 @@ contract GamePlays {
         address player,
         string playProof
     );
-
-    modifier mustAvoidGameWithMaxedOutPlays(uint gameID) {
-        if (playCounts[gameID] == maxPlayCounts[gameID]) {
-            revert MaxedOutPlaysError(gameID);
-        }
-
-        _;
-    }
-
-    modifier mustBeGameWithMaxedOutPlays(uint gameID) {
-        uint16 playCount = playCounts[gameID];
-        uint16 maxPlayCount = maxPlayCounts[gameID];
-
-        if (playCount < maxPlayCount) {
-            revert PendingGamePlaysError(gameID, maxPlayCount - playCount);
-        }
-
-        _;
-    }
 
     modifier mustBeValidPlayProof(
         uint gameID,

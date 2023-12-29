@@ -110,8 +110,7 @@ contract Coinflip is
         external
         payable
         mustBeOperational
-        mustBeOngoingGame(gameID)
-        mustAvoidGameWithMaxedOutPlays(gameID)
+        mustMatchGameStatus(gameID, Game.Status.Ongoing)
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
         mustAvoidPlayingAgain(gameID)
     {
@@ -119,6 +118,16 @@ contract Coinflip is
         uint wager = getGameWager(gameID);
         payGameWager(gameID, wager);
         createGamePlay(gameID, coinSide, playHash);
+        maybeSetGameStatusAsAwaitingProofsUpload(gameID);
+    }
+
+    function maybeSetGameStatusAsAwaitingProofsUpload(uint gameID) private {
+        uint16 playCount = playCounts[gameID];
+        uint16 maxPlayCount = maxPlayCounts[gameID];
+
+        if (playCount == maxPlayCount) {
+            setGameStatusAsAwaitingProofsUpload(gameID);
+        }
     }
 
     function uploadGamePlayProofsAndCreditGameWinners(
@@ -128,8 +137,7 @@ contract Coinflip is
     )
         external
         onlyOwner
-        mustBeOngoingGame(gameID)
-        mustBeGameWithMaxedOutPlays(gameID)
+        mustMatchGameStatus(gameID, Game.Status.AwaitingProofsUpload)
     {
         if (proofOfChances.length != maxPlayCounts[gameID]) {
             revert IncompleteProofOfChancesError(gameID);
@@ -149,7 +157,7 @@ contract Coinflip is
 
     function creditExpiredGamePlayers(
         uint gameID
-    ) external onlyOwner mustBeExpiredGame(gameID) {
+    ) external onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
         address[] memory allPlayers = allPlayers[gameID];
         uint16 allPlayersSize = uint16(allPlayers.length);
 

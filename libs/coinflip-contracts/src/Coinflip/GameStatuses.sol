@@ -8,24 +8,17 @@ contract GameStatuses {
     mapping(uint => uint) expiryTimestamps;
 
     error InvalidGameStatus(uint, Game.Status expected, Game.Status actual);
-    error GameMustbeConcludedError(uint);
     error InvalidExpiryTimestamp();
 
-    modifier mustBeOngoingGame(uint gameID) {
-        Game.Status gameStatus = getGameStatus(gameID);
+    modifier mustMatchGameStatus(uint gameID, Game.Status expectedGameStatus) {
+        Game.Status actualGameStatus = getGameStatus(gameID);
 
-        if (gameStatus != Game.Status.Ongoing) {
-            revert InvalidGameStatus(gameID, Game.Status.Ongoing, gameStatus);
-        }
-
-        _;
-    }
-
-    modifier mustBeExpiredGame(uint gameID) {
-        Game.Status gameStatus = getGameStatus(gameID);
-
-        if (gameStatus != Game.Status.Expired) {
-            revert InvalidGameStatus(gameID, Game.Status.Expired, gameStatus);
+        if (actualGameStatus != expectedGameStatus) {
+            revert InvalidGameStatus(
+                gameID,
+                expectedGameStatus,
+                actualGameStatus
+            );
         }
 
         _;
@@ -38,10 +31,11 @@ contract GameStatuses {
         if (expiryTimestamp <= block.timestamp) {
             revert InvalidExpiryTimestamp();
         }
-
-        assert(statuses[gameID] == Game.Status.Ongoing);
-
         expiryTimestamps[gameID] = expiryTimestamp;
+    }
+
+    function setGameStatusAsAwaitingProofsUpload(uint gameID) internal {
+        statuses[gameID] = Game.Status.AwaitingProofsUpload;
     }
 
     function setGameStatusAsConcluded(uint gameID) internal {
