@@ -130,7 +130,7 @@ contract Coinflip is
         }
     }
 
-    function uploadGamePlayProofsAndCreditGameWinners(
+    function uploadProofsAndCreditWinners(
         uint gameID,
         uint16[] memory gamePlayIDs,
         string[] memory proofOfChances
