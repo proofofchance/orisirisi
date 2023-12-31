@@ -78,6 +78,7 @@ interface EnvVariables {
 
 const ARK_ENV_FILE_PATH = '../../../ark/.env';
 
+// TODO: Remove in favour of Ark owning how to fetch these addresses dynamically
 function maybeUpdateContractAddressesInArk({
   walletsAddress,
   serviceProviderAddress,
