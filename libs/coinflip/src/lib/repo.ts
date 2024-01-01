@@ -11,11 +11,13 @@ export interface FetchGamesParams {
 
 export interface FetchGameParams {
   id: number;
-  playerAddress?: string;
+  chain_id: number;
+  player_address?: string;
 }
 
 export interface UpdateMyGamePlayParams {
   game_id: number;
+  chain_id: number;
   public_address: string;
   game_play_proof: string;
 }
@@ -54,9 +56,9 @@ export class Repo {
     return Game.manyFromJSON(games);
   }
   static async fetchGame(params: FetchGameParams, signal: AbortSignal) {
-    let endpointPath = `/games/${params.id}`;
-    if (params.playerAddress) {
-      endpointPath = endpointPath + `?player_address=${params.playerAddress}`;
+    let endpointPath = `/games/${params.id}/${params.chain_id}`;
+    if (params.player_address) {
+      endpointPath = endpointPath + `?player_address=${params.player_address}`;
     }
 
     const response = await fetch(Repo.appendPathWithBaseUrl(endpointPath), {
@@ -66,7 +68,12 @@ export class Repo {
     return this.maybeReturnRepoError(response, Game.fromJSON);
   }
   static async updateMyGamePlay(
-    { game_id, public_address, game_play_proof }: UpdateMyGamePlayParams,
+    {
+      game_id,
+      chain_id,
+      public_address,
+      game_play_proof,
+    }: UpdateMyGamePlayParams,
     signal?: AbortSignal
   ) {
     const body = JSON.stringify({
@@ -75,7 +82,9 @@ export class Repo {
     });
 
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/game_plays/${game_id}/my_game_play`),
+      Repo.appendPathWithBaseUrl(
+        `/game_plays/${game_id}/${chain_id}/my_game_play`
+      ),
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -110,9 +119,13 @@ export class Repo {
 
     return GameActivity.manyFromJSON(game_activities);
   }
-  static async fetchGameActivities(gameId: number, signal: AbortSignal) {
+  static async fetchGameActivities(
+    gameId: number,
+    chainId: number,
+    signal: AbortSignal
+  ) {
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/games/${gameId}/activities`),
+      Repo.appendPathWithBaseUrl(`/games/${gameId}/${chainId}/activities`),
       {
         signal,
       }

@@ -3,7 +3,6 @@ import {
   CoinflipGameStatus,
   CoinflipRepo,
   CoinflipRepoError,
-  CoinflipRepoErrorType,
   FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';

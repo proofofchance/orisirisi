@@ -35,7 +35,9 @@ export function MainControlButtons({
     if (game.isOngoing() && game.iHaveNotPlayed()) {
       return (
         <MainButton
-          onClick={() => push(`/games/${game.id}/play`)}
+          onClick={() =>
+            push(`/games/${game.id}/play?chain_id=${game.chain_id}`)
+          }
           icon={<PlayIcon className="h-8" />}
           label="Play"
         />
@@ -44,7 +46,9 @@ export function MainControlButtons({
 
     return (
       <MainButton
-        onClick={() => push(`/games/${game.id}/prove`)}
+        onClick={() =>
+          push(`/games/${game.id}/prove?chain_id=${game.chain_id}`)
+        }
         icon={<ShieldCheckIcon className="h-8" />}
         label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}
       />

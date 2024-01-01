@@ -49,7 +49,10 @@ export function useCoinflipOngoingGameActivities(
   return { gameActivities, isLoading, hasLoaded: gameActivities !== null };
 }
 
-export function useCoinflipGameActivities(gameId: number | null) {
+export function useCoinflipGameActivities(
+  gameId: number | null,
+  chainId: number | null
+) {
   const [isLoading, setIsLoading] = useState(false);
   const [gameActivities, setGameActivities] = useState<
     CoinflipGameActivity[] | null
@@ -57,10 +60,10 @@ export function useCoinflipGameActivities(gameId: number | null) {
   const [error, setError] = useState<CoinflipRepoError | null>(null);
 
   useEffect(() => {
-    if (gameId) {
+    if (gameId && chainId) {
       const fetchController = new AbortController();
       setIsLoading(true);
-      CoinflipRepo.fetchGameActivities(gameId, fetchController.signal)
+      CoinflipRepo.fetchGameActivities(gameId, chainId, fetchController.signal)
         .then((gameActivitiesResult) => {
           if (gameActivitiesResult.hasError()) {
             return setError(gameActivitiesResult.error!);
@@ -76,7 +79,7 @@ export function useCoinflipGameActivities(gameId: number | null) {
         fetchController.abort('STALE_COINFLIP_ONGOING_GAME_ACTIVITIES_REQUEST');
       };
     }
-  }, [gameId]);
+  }, [gameId, chainId]);
 
   return {
     gameActivities,

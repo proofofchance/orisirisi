@@ -115,7 +115,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         toast.success('Game play successfully created!', {
           position: 'bottom-right',
         });
-        push(`/games/${game!.id}`);
+        push(`/games/${game!.id}?chain_id=${game!.chain_id}`);
       }, COINFLIP_INDEX_GRACE_PERIOD);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {

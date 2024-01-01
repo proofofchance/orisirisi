@@ -8,30 +8,39 @@ import {
   MainControlButtons,
   useCoinflipGame,
   useCoinflipGameActivities,
-  useDispatchCoinflipRepoErrorToastRequest,
+  useDispatchErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+import { useIsClient } from '@orisirisi/orisirisi-web-ui';
 
 export default function GamePage() {
+  const isClient = useIsClient();
   const { query, replace } = useRouter();
+  const { currentWeb3Account } = useCurrentWeb3Account();
+  const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
   const id = parseInteger(query.id as string);
+  const chainId = parseInteger(query.chain_id as string);
 
-  const { currentWeb3Account } = useCurrentWeb3Account();
+  if (isClient && id && !chainId) {
+    dispatchErrorToastRequest('ChainID needs to specified!');
+
+    replace('/games');
+  }
 
   const fetchGameParams = useMemo(
-    () => (id ? { id, playerAddress: currentWeb3Account?.address } : null),
-    [id, currentWeb3Account]
+    () =>
+      id && chainId
+        ? { id, chain_id: chainId, player_address: currentWeb3Account?.address }
+        : null,
+    [id, chainId, currentWeb3Account]
   );
   const maybeGame = useCoinflipGame(fetchGameParams);
-
-  const maybeGameActivities = useCoinflipGameActivities(id);
-
-  const dispatchErrorToastRequest = useDispatchCoinflipRepoErrorToastRequest();
+  const maybeGameActivities = useCoinflipGameActivities(id, chainId);
 
   if (maybeGame.error?.isNotFoundError()) {
-    dispatchErrorToastRequest(maybeGame.error!, 'Game not found!');
+    dispatchErrorToastRequest('Game not found!');
 
     replace('/games');
   }

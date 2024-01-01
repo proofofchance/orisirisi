@@ -31,6 +31,7 @@ export function UploadProofMainButton({
 
       const response = await CoinflipRepo.updateMyGamePlay({
         game_id: game!.id,
+        chain_id: game.chain_id,
         public_address: currentWeb3Account.address,
         game_play_proof: proofOfChance.getProof(),
       });

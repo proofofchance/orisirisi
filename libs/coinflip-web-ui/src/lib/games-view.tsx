@@ -16,7 +16,8 @@ export function GamesView({
 } & PropsWithClassName) {
   const { push } = useRouter();
 
-  const goToGamePage = (id: number) => push(`/games/${id}`);
+  const goToGamePage = (id: number, chain_id: number) =>
+    push(`/games/${id}?chain_id=${chain_id}`);
 
   if (!isLoading && games.length === 0) return <GamesEmptyView />;
 
@@ -43,13 +44,13 @@ function GameCard({
   goToGamePage,
 }: {
   game: CoinflipGame;
-  goToGamePage: (id: number) => void;
+  goToGamePage: (id: number, chain_id: number) => void;
 }) {
   const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
 
   return (
     <Link
-      href={`/games/${game.id}`}
+      href={`/games/${game.id}?chain_id=${game.chain_id}`}
       className="rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all"
     >
       <div className="flex justify-between">
@@ -88,7 +89,7 @@ function GameCard({
             </button>
           )}
           <button
-            onClick={() => goToGamePage(game.id)}
+            onClick={() => goToGamePage(game.id, game.chain_id)}
             className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
           >
             View
