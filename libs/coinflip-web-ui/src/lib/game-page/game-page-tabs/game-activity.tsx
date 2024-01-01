@@ -5,7 +5,7 @@ export function GameActivity({
   currentAccountAddress,
   gameActivity,
 }: {
-  currentAccountAddress: string;
+  currentAccountAddress: string | null;
   gameActivity: CoinflipGameActivity;
 }) {
   const triggerPublicAddress = shortenPublicAddress(

@@ -45,14 +45,7 @@ export default function GamePage() {
     replace('/games');
   }
 
-  if (
-    !(
-      currentWeb3Account &&
-      maybeGame.hasLoaded &&
-      maybeGameActivities.hasLoaded
-    )
-  )
-    return null;
+  if (!(maybeGame.hasLoaded && maybeGameActivities.hasLoaded)) return null;
 
   const game = maybeGame.game!;
   const gameActivities = maybeGameActivities.gameActivities!;

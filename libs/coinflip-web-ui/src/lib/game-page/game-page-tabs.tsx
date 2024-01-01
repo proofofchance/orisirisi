@@ -11,7 +11,7 @@ export function GamePageTabs({
   game,
   gameActivities,
 }: {
-  currentWeb3Account: Web3Account;
+  currentWeb3Account: Web3Account | null;
   game: CoinflipGame;
   gameActivities: CoinflipGameActivity[];
 }) {
@@ -41,7 +41,9 @@ export function GamePageTabs({
             {gameActivities.map((gameActivity, i) => (
               <GameActivity
                 key={i}
-                currentAccountAddress={currentWeb3Account.getAddress()}
+                currentAccountAddress={
+                  currentWeb3Account ? currentWeb3Account.getAddress() : null
+                }
                 gameActivity={gameActivity}
               />
             ))}

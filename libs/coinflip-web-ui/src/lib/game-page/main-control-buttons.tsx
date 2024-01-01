@@ -18,13 +18,13 @@ export function MainControlButtons({
   game,
   className,
 }: {
-  currentWeb3Account: Web3Account;
+  currentWeb3Account: Web3Account | null;
   game: CoinflipGame;
 } & PropsWithClassName) {
   const { push } = useRouter();
 
   const renderMainButton = () => {
-    if (game.is_awaiting_my_play_proof) {
+    if (currentWeb3Account && game.is_awaiting_my_play_proof) {
       return (
         <UploadProofMainButton
           game={game}
@@ -32,7 +32,7 @@ export function MainControlButtons({
         />
       );
     }
-    if (game.isOngoing() && game.iHaveNotPlayed()) {
+    if (currentWeb3Account && game.isOngoing() && game.iHaveNotPlayed()) {
       return (
         <MainButton
           onClick={() =>
