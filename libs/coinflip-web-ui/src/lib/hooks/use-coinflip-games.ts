@@ -49,6 +49,8 @@ export function useCoinflipGames({
 
     const fetchController = new AbortController();
     setIsLoading(true);
+    if (forFilter === 'my_games' && !currentWeb3Account)
+      return setIsLoading(false);
     CoinflipRepo.fetchGames(buildParams(), fetchController.signal)
       .then((games) => setGames(games))
       .then(() => setIsLoading(false))
