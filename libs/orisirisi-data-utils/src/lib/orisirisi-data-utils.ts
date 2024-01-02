@@ -43,6 +43,8 @@ export const countWords = (value?: string) =>
   value ? extractWordsAsArray(value).length : 0;
 export const countCharacters = (value?: string) => (value ? value.length : 0);
 
+export const getLastFromArray = <T>(array: T[]) => array[array.length - 1];
+
 export const countAllOccurrences = (
   inputString: string,
   charToCount: string

@@ -11,15 +11,15 @@ export function GameActivity({
   const triggerPublicAddress = shortenPublicAddress(
     gameActivity.trigger_public_address
   );
+  const triggerIsMe =
+    currentAccountAddress === gameActivity.trigger_public_address;
 
   const getReport = () => {
     switch (gameActivity.kind) {
       case 'game_created':
-        return `This game was created by ${triggerPublicAddress}`;
+        return getGameCreatedReport();
       case 'game_play_created':
-        return `Player with address: ${triggerPublicAddress} predicts ${coinSideToString(
-          gameActivity.getPlayCreatedData().coin_side
-        )}`;
+        return getGamePlayCreatedReport();
       case 'game_play_proof_created':
         return getPlayProofReport();
       case 'game_expired':
@@ -29,11 +29,28 @@ export function GameActivity({
     }
   };
 
+  const getGameCreatedReport = () => {
+    if (triggerIsMe) {
+      return 'You created this game';
+    }
+    return `This game was created by ${triggerPublicAddress}`;
+  };
+
+  const getGamePlayCreatedReport = () => {
+    const coinSide = coinSideToString(
+      gameActivity.getPlayCreatedData().coin_side
+    );
+
+    if (triggerIsMe) {
+      return `You predict ${coinSide}`;
+    }
+    return `Player with address: ${triggerPublicAddress} predicts ${coinSide}`;
+  };
+
   const getPlayProofReport = () => {
-    if (currentAccountAddress === gameActivity.trigger_public_address) {
+    if (triggerIsMe) {
       return 'You uploaded your game play proof';
     }
-
     return `${triggerPublicAddress} uploaded their game play proof`;
   };
 
