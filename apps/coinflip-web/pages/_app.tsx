@@ -1,6 +1,7 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import './styles.css';
+import 'react-tooltip/dist/react-tooltip.css';
 import {
   Background,
   ConnectWalletOptionsModal,
