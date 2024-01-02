@@ -37,7 +37,7 @@ const currentChainAtom = atom((get) =>
 );
 export const useCurrentChain = () => useAtomValue(currentChainAtom);
 
-export const handleWeb3ProviderDisconnected = () => {
+export const logout = () => {
   Cache.clear();
   Browser.reloadWindow();
 };

@@ -3,9 +3,9 @@ import {
   Web3Account,
   Web3ProviderType,
 } from '@orisirisi/orisirisi-web3';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { CachedWeb3ProviderType, useCache } from './use-cache';
-import { handleWeb3ProviderDisconnected } from './use-current-web3-provider';
+import { logout } from './use-current-web3-provider';
 
 const currentWeb3AccountAtom = atom<Web3Account | null>(null);
 
@@ -26,12 +26,10 @@ export function useCurrentWeb3Account() {
       case null:
         break;
       case Web3ProviderType.MetaMask:
-        return MetaMask.handleConnectionEvents(
-          handleWeb3ProviderDisconnected,
-          (addresses) =>
-            setCurrentWeb3Account(
-              Web3Account.fromAddresses(addresses, MetaMask.type)
-            )
+        return MetaMask.handleConnectionEvents(logout, (addresses) =>
+          setCurrentWeb3Account(
+            Web3Account.fromAddresses(addresses, MetaMask.type)
+          )
         );
       default:
         throw new Error('Unsupported Web3Provider');
@@ -50,6 +48,15 @@ export function useCurrentWeb3Account() {
   }
 
   return { currentWeb3Account, setCurrentWeb3Account };
+}
+
+export function useLogoutCurrentWeb3Account() {
+  const { clearCache } = useCache();
+  const setCurrentWeb3AccountValue = useSetAtom(currentWeb3AccountAtom);
+  return () => {
+    clearCache();
+    setCurrentWeb3AccountValue(null);
+  };
 }
 
 const isWeb3AccountConnectedAtom = atom((get) => !!get(currentWeb3AccountAtom));
