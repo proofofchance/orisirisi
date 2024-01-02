@@ -6,7 +6,8 @@ import {
 import Button from './current-account-button/button';
 import { shortenPublicAddress } from '../data-utils';
 import { logout } from '@orisirisi/orisirisi-web3-ui';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useOnClickOutside } from '@orisirisi/orisirisi-web-ui';
 
 interface CurrentAccountProps {
   publicAddress: string;
@@ -14,6 +15,9 @@ interface CurrentAccountProps {
 
 export function CurrentAccountButton({ publicAddress }: CurrentAccountProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const ref = useRef(null);
+
+  useOnClickOutside(ref, () => showMenu && setShowMenu(false));
 
   const menu = () => (
     <div className="bg-white rounded-md text-black flex flex-col justify-center items-center p-1 absolute w-48 top-20">
@@ -27,7 +31,7 @@ export function CurrentAccountButton({ publicAddress }: CurrentAccountProps) {
   );
 
   return (
-    <div className="flex flex-col">
+    <div ref={ref} className="flex flex-col">
       <Button
         className="rounded-[40px] px-7 py-4 cursor-pointer"
         onClick={() => setShowMenu((prevShowMenu) => !prevShowMenu)}
