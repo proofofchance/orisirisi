@@ -39,7 +39,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { COINFLIP_INDEX_GRACE_PERIOD } from '@orisirisi/coinflip';
-import { ProofOfChance } from './proof-of-chance';
+import { ProofOfChance } from '@orisirisi/proof-of-chance';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
