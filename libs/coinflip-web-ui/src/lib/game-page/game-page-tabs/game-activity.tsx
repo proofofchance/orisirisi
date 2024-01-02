@@ -44,14 +44,14 @@ export function GameActivity({
     if (triggerIsMe) {
       return `You predict ${coinSide}`;
     }
-    return `Player with address: ${triggerPublicAddress} predicts ${coinSide}`;
+    return `Player:${triggerPublicAddress} predicts ${coinSide}`;
   };
 
   const getPlayProofReport = () => {
     if (triggerIsMe) {
       return 'You uploaded your game play proof';
     }
-    return `${triggerPublicAddress} uploaded their game play proof`;
+    return `Player:${triggerPublicAddress} uploaded their game play proof`;
   };
 
   return <p>{getReport()}</p>;

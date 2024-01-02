@@ -46,11 +46,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
   );
 }
 
-export function UnreadGameActivityCount({
-  publicAddress,
-}: {
-  publicAddress: string;
-}) {
+function UnreadGameActivityCount({ publicAddress }: { publicAddress: string }) {
   const { gameActivities: ongoingGameActivities, hasLoaded } =
     useCoinflipOngoingGameActivities(publicAddress);
 
