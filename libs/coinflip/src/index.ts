@@ -16,12 +16,12 @@ export {
 } from './lib/games';
 
 export {
-  Repo as CoinflipRepo,
-  RepoError as CoinflipRepoError,
-  RepoErrorType as CoinflipRepoErrorType,
+  HTTPService as CoinflipHTTPService,
+  HTTPServiceError as CoinflipHTTPServiceError,
+  HTTPServiceErrorType as CoinflipHTTPServiceErrorType,
   FetchGamesParams as FetchCoinflipGamesParams,
   FetchGameParams as FetchCoinflipGameParams,
   UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
-} from './lib/repo';
+} from './lib/http-service';
 
 export const COINFLIP_INDEX_GRACE_PERIOD = 8000;

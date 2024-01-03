@@ -1,8 +1,8 @@
 import {
   CoinflipGameActivity,
-  CoinflipRepo,
-  CoinflipRepoError,
-  CoinflipRepoErrorType,
+  CoinflipHTTPService,
+  CoinflipHTTPServiceError,
+  CoinflipHTTPServiceErrorType,
 } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 
@@ -21,7 +21,7 @@ export function useCoinflipOngoingGameActivities(
 
       const fetchAndSetOngoingGameActivities = () => {
         setIsLoading(true);
-        CoinflipRepo.fetchOngoingGameActivities(
+        CoinflipHTTPService.fetchOngoingGameActivities(
           playerAddress,
           fetchController.signal
         )
@@ -57,13 +57,17 @@ export function useCoinflipGameActivities(
   const [gameActivities, setGameActivities] = useState<
     CoinflipGameActivity[] | null
   >(null);
-  const [error, setError] = useState<CoinflipRepoError | null>(null);
+  const [error, setError] = useState<CoinflipHTTPServiceError | null>(null);
 
   useEffect(() => {
     if (gameId && chainId) {
       const fetchController = new AbortController();
       setIsLoading(true);
-      CoinflipRepo.fetchGameActivities(gameId, chainId, fetchController.signal)
+      CoinflipHTTPService.fetchGameActivities(
+        gameId,
+        chainId,
+        fetchController.signal
+      )
         .then((gameActivitiesResult) => {
           if (gameActivitiesResult.hasError()) {
             return setError(gameActivitiesResult.error!);

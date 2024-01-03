@@ -4,7 +4,7 @@ import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { MainButton } from './main-button';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
-import { CoinflipGame, CoinflipRepo } from '@orisirisi/coinflip';
+import { CoinflipGame, CoinflipHTTPService } from '@orisirisi/coinflip';
 import { useRouter } from 'next/router';
 
 export function UploadProofMainButton({
@@ -29,7 +29,7 @@ export function UploadProofMainButton({
         position: 'bottom-right',
       });
 
-      const response = await CoinflipRepo.updateMyGamePlay({
+      const response = await CoinflipHTTPService.updateMyGamePlay({
         game_id: game!.id,
         chain_id: game.chain_id,
         public_address: currentWeb3Account.address,

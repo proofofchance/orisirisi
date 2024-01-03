@@ -1,8 +1,8 @@
 import {
   CoinflipGame,
   CoinflipGameStatus,
-  CoinflipRepo,
-  CoinflipRepoError,
+  CoinflipHTTPService,
+  CoinflipHTTPServiceError,
   FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
@@ -51,7 +51,7 @@ export function useCoinflipGames({
     setIsLoading(true);
     if (forFilter === 'my_games' && !currentWeb3Account)
       return setIsLoading(false);
-    CoinflipRepo.fetchGames(buildParams(), fetchController.signal)
+    CoinflipHTTPService.fetchGames(buildParams(), fetchController.signal)
       .then((games) => setGames(games))
       .then(() => setIsLoading(false))
       .catch((error: unknown) => {
@@ -69,13 +69,13 @@ export function useCoinflipGames({
 export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [game, setGame] = useState<CoinflipGame | null>(null);
-  const [error, setError] = useState<CoinflipRepoError | null>(null);
+  const [error, setError] = useState<CoinflipHTTPServiceError | null>(null);
 
   useEffect(() => {
     if (params) {
       const fetchController = new AbortController();
       setIsLoading(true);
-      CoinflipRepo.fetchGame(params, fetchController.signal)
+      CoinflipHTTPService.fetchGame(params, fetchController.signal)
         .then((gameResult) => {
           if (gameResult.hasError()) return setError(gameResult.error!);
 

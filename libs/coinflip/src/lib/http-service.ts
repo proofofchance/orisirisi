@@ -22,23 +22,22 @@ export interface UpdateMyGamePlayParams {
   game_play_proof: string;
 }
 
-export enum RepoErrorType {
+export enum HTTPServiceErrorType {
   NotFound = 'not found',
   UnprocessableEntity = 'unprocessable entity',
   Generic = 'generic',
 }
-export class RepoError extends Error {
-  constructor(public readonly type: RepoErrorType, message?: string) {
+export class HTTPServiceError extends Error {
+  constructor(public readonly type: HTTPServiceErrorType, message?: string) {
     super(message || type);
   }
-  isNotFoundError = () => this.type === RepoErrorType.NotFound;
+  isNotFoundError = () => this.type === HTTPServiceErrorType.NotFound;
   isUnprocessableEntityError = () =>
-    this.type === RepoErrorType.UnprocessableEntity;
-  isGenericError = () => this.type === RepoErrorType.Generic;
+    this.type === HTTPServiceErrorType.UnprocessableEntity;
+  isGenericError = () => this.type === HTTPServiceErrorType.Generic;
 }
 
-// TODO: Rename to HTTPRepo or HTTPService or CoinflipService
-export class Repo {
+export class HTTPService {
   private static baseUrl = 'http://127.0.0.1:4446/coinflip';
 
   static async fetchGames(
@@ -46,9 +45,12 @@ export class Repo {
     signal: AbortSignal
   ): Promise<Game[]> {
     const queryString = buildQueryString(params as Record<string, string>);
-    const response = await fetch(Repo.appendBaseUrl(`/games${queryString}`), {
-      signal: signal,
-    });
+    const response = await fetch(
+      HTTPService.appendBaseUrl(`/games${queryString}`),
+      {
+        signal: signal,
+      }
+    );
 
     const games = await response.json();
 
@@ -60,11 +62,11 @@ export class Repo {
       endpointPath = endpointPath + `?player_address=${params.player_address}`;
     }
 
-    const response = await fetch(Repo.appendBaseUrl(endpointPath), {
+    const response = await fetch(HTTPService.appendBaseUrl(endpointPath), {
       signal,
     });
 
-    return this.maybeReturnRepoError(response, Game.fromJSON);
+    return this.maybeReturnHTTPServiceError(response, Game.fromJSON);
   }
   static async updateMyGamePlay(
     {
@@ -81,7 +83,9 @@ export class Repo {
     });
 
     const response = await fetch(
-      Repo.appendBaseUrl(`/game_plays/${game_id}/${chain_id}/my_game_play`),
+      HTTPService.appendBaseUrl(
+        `/game_plays/${game_id}/${chain_id}/my_game_play`
+      ),
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -91,12 +95,18 @@ export class Repo {
     );
 
     if (response.status === 422)
-      return new Result(null, new RepoError(RepoErrorType.UnprocessableEntity));
+      return new Result(
+        null,
+        new HTTPServiceError(HTTPServiceErrorType.UnprocessableEntity)
+      );
 
     if (!response.ok)
       return new Result(
         null,
-        new RepoError(RepoErrorType.Generic, await response.text())
+        new HTTPServiceError(
+          HTTPServiceErrorType.Generic,
+          await response.text()
+        )
       );
 
     return new Result(true, null);
@@ -106,7 +116,7 @@ export class Repo {
     signal: AbortSignal
   ): Promise<GameActivity[]> {
     const response = await fetch(
-      Repo.appendBaseUrl(`/game_activities/ongoing/${publicAddress}`),
+      HTTPService.appendBaseUrl(`/game_activities/ongoing/${publicAddress}`),
       {
         signal,
       }
@@ -122,16 +132,19 @@ export class Repo {
     signal: AbortSignal
   ) {
     const response = await fetch(
-      Repo.appendBaseUrl(`/games/${gameId}/${chainId}/activities`),
+      HTTPService.appendBaseUrl(`/games/${gameId}/${chainId}/activities`),
       {
         signal,
       }
     );
 
-    return this.maybeReturnRepoError(response, GameActivity.manyFromJSON);
+    return this.maybeReturnHTTPServiceError(
+      response,
+      GameActivity.manyFromJSON
+    );
   }
 
-  private static maybeReturnRepoError = async <Resource>(
+  private static maybeReturnHTTPServiceError = async <Resource>(
     response: Response,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parseJSON: (resource: any) => Resource
@@ -143,11 +156,14 @@ export class Repo {
     }
 
     if (response.status === 404) {
-      return new Result(null, new RepoError(RepoErrorType.NotFound));
+      return new Result(
+        null,
+        new HTTPServiceError(HTTPServiceErrorType.NotFound)
+      );
     }
 
     throw new Error(await response.text());
   };
 
-  private static appendBaseUrl = (path: string) => Repo.baseUrl + path;
+  private static appendBaseUrl = (path: string) => HTTPService.baseUrl + path;
 }
