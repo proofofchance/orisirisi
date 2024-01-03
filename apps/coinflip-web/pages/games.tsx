@@ -29,7 +29,7 @@ export function GamesPage() {
   useEffect(() => {
     if (forFilter === 'my_games' && !currentWeb3Account) {
       setTimeout(() => {
-        toast.error('You need to connect your acccount first.', {
+        toast.error('You need to connect your wallet first.', {
           position: 'bottom-right',
         });
       }, 500);

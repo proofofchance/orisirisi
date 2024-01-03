@@ -5,7 +5,7 @@ import {
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
 
 export function CreateGame() {
-  useAuthentication();
+  useAuthentication('/games');
   const isClient = useIsClient();
 
   return <>{isClient && <CreateGameSection />}</>;

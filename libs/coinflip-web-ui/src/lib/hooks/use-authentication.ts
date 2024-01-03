@@ -6,7 +6,7 @@ import { atom, useAtom, useSetAtom } from 'jotai';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 
-export function useAuthentication() {
+export function useAuthentication(redirectPath: string | null) {
   const isClient = useIsClient();
   const isAccountConnected = useIsWeb3AccountConnected();
   const dispatchAuthErrorToastRequest = useDispatchAuthErrorToastRequest();
@@ -15,10 +15,10 @@ export function useAuthentication() {
 
   if (!isClient) return;
 
-  if (!isAccountConnected) {
+  if (!isAccountConnected && redirectPath) {
     dispatchAuthErrorToastRequest();
 
-    replace('/games');
+    replace(redirectPath);
   }
 }
 

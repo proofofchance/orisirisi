@@ -1,11 +1,15 @@
 import {
   PlayGameSection,
+  useAuthentication,
   useCoinflipGame,
   useDispatchErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
-import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+import {
+  useCurrentWeb3Account,
+  useCurrentWeb3Provider,
+} from '@orisirisi/orisirisi-web3-ui';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -24,6 +28,7 @@ export function PlayGame() {
     replace('/games');
   }
 
+  const currentWeb3Provider = useCurrentWeb3Provider();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
   const fetchGameParams = useMemo(
@@ -35,11 +40,24 @@ export function PlayGame() {
   );
   const { game } = useCoinflipGame(fetchGameParams);
 
+  const gamePath = game && `/games/${game.id}?chain_id=${game.chain_id}`;
+
+  game &&
+    currentWeb3Provider &&
+    currentWeb3Account?.getBalance(currentWeb3Provider).then((myBalance) => {
+      if (myBalance && myBalance < game.wager) {
+        dispatchErrorToastRequest('ChainID needs to specified!');
+        replace(gamePath!);
+      }
+    });
+
+  useAuthentication(gamePath);
+
   if (game?.iHavePlayed()) {
     toast.error("Oops! Looks like you've already played this game.", {
       position: 'bottom-right',
     });
-    replace(`/games/${game.id}?chain_id=${game.chain_id}`);
+    replace(gamePath!);
   }
 
   return <>{isClient && <PlayGameSection game={game} />}</>;

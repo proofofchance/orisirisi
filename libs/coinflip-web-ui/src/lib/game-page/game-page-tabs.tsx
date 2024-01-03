@@ -57,8 +57,11 @@ export function GamePageTabs({
         title: 'Proofs Of Chance',
         id: 'proofs-of-chance',
         body: (
-          <div id="proofs-of-chance">
-            <div>List proofs Of Chance Here</div>
+          <div id="proofs-of-chance" className="flex justify-center">
+            <p className="w-2/3 text-center">
+              All the play proofs will be listed here after all uploads is
+              complete.
+            </p>
           </div>
         ),
       });

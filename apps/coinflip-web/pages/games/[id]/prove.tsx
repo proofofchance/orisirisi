@@ -1,4 +1,5 @@
 import {
+  useAuthentication,
   useCoinflipGame,
   useDispatchErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
@@ -7,7 +8,7 @@ import { useIsClient } from '@orisirisi/orisirisi-web-ui';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
-export function PlayGame() {
+export function ProveGame() {
   const isClient = useIsClient();
   const { query, replace } = useRouter();
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
@@ -26,6 +27,8 @@ export function PlayGame() {
     [id, chainId]
   );
   const { game } = useCoinflipGame(fetchGameParams);
+  const gamePath = game && `/games/${game.id}?chain_id=${game.chain_id}`;
+  useAuthentication(gamePath);
 
   console.log({ game });
 
@@ -34,4 +37,4 @@ export function PlayGame() {
   );
 }
 
-export default PlayGame;
+export default ProveGame;

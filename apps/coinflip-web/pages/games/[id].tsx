@@ -6,6 +6,7 @@ import {
   ExploreOtherGamesView,
   GamePageTabs,
   MainControlButtons,
+  useAuthErrorToastRequest,
   useCoinflipGame,
   useCoinflipGameActivities,
   useDispatchErrorToastRequest,
@@ -18,6 +19,8 @@ export default function GamePage() {
   const isClient = useIsClient();
   const { query, replace } = useRouter();
   const { currentWeb3Account } = useCurrentWeb3Account();
+
+  useAuthErrorToastRequest();
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
   const id = parseInteger(query.id as string);
