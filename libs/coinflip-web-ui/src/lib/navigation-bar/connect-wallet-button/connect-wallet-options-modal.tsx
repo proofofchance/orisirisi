@@ -1,30 +1,13 @@
 import { ButtonHTMLAttributes, ReactNode, useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
+import { Tooltip } from 'react-tooltip';
 import { Modal } from './modal';
 import { cn } from '@orisirisi/orisirisi-web-ui';
-import { CoinbaseWalletIcon, MetamaskIcon, WalletConnectIcon } from './icons';
 import {
   useConnectWithMetaMask,
   useCurrentWeb3Account,
 } from '@orisirisi/orisirisi-web3-ui';
-
-function ButtonLongCard({
-  children,
-  className,
-  ...remainingProps
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      className={cn(
-        'px-3 py-4 rounded-lg shadow-sm hover:bg-slate-200 focus:outline-none focus:ring focus:ring-slate-50',
-        className
-      )}
-      {...remainingProps}
-    >
-      {children}
-    </button>
-  );
-}
+import { CoinbaseWalletIcon, MetamaskIcon, WalletConnectIcon } from './icons';
 
 const showConnectWalletOptionsModal = atom<boolean | null>(null);
 
@@ -84,13 +67,40 @@ export function ConnectWalletOptionsModal() {
         <ButtonLongCard onClick={connectWithMetaMask}>
           {renderButtonContent('Metamask', <MetamaskIcon />)}
         </ButtonLongCard>
-        <ButtonLongCard>
+        <Tooltip id="connect-wallet-option-tooltip" place="bottom" />
+        <ButtonLongCard disabled disabledReason="Coming soon">
           {renderButtonContent('WalletConnect', <WalletConnectIcon />)}
         </ButtonLongCard>
-        <ButtonLongCard>
+        <ButtonLongCard disabled disabledReason="Coming soon">
           {renderButtonContent('Coinbase Wallet', <CoinbaseWalletIcon />)}
         </ButtonLongCard>
       </div>
     </Modal>
+  );
+}
+
+function ButtonLongCard({
+  disabled = false,
+  disabledReason,
+  children,
+  className,
+  ...remainingProps
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  disabled?: boolean;
+  disabledReason?: string;
+}) {
+  return (
+    <button
+      className={cn(
+        'px-3 py-4 rounded-lg shadow-sm hover:bg-slate-200 focus:outline-none focus:ring focus:ring-slate-50',
+        disabled && 'cursor-not-allowed opacity-40',
+        className
+      )}
+      {...remainingProps}
+      data-tooltip-id="connect-wallet-option-tooltip"
+      data-tooltip-content={disabledReason}
+    >
+      {children}
+    </button>
   );
 }
