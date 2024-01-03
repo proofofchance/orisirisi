@@ -15,7 +15,6 @@ export function PlayGame() {
   const id = parseInteger(query.id as string);
   const chainId = parseInteger(query.chain_id as string);
 
-  console.log({ id, chainId });
   if (isClient && id && !chainId) {
     dispatchErrorToastRequest('ChainID needs to specified!');
 

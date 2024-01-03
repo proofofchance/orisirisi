@@ -47,7 +47,7 @@ export class Repo {
   ): Promise<Game[]> {
     const queryString = buildQueryString(params as Record<string, string>);
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/games${queryString}`),
+      Repo.appendWithBaseUrl(`/games${queryString}`),
       { signal: signal }
     );
 
@@ -61,7 +61,7 @@ export class Repo {
       endpointPath = endpointPath + `?player_address=${params.player_address}`;
     }
 
-    const response = await fetch(Repo.appendPathWithBaseUrl(endpointPath), {
+    const response = await fetch(Repo.appendWithBaseUrl(endpointPath), {
       signal,
     });
 
@@ -82,9 +82,7 @@ export class Repo {
     });
 
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(
-        `/game_plays/${game_id}/${chain_id}/my_game_play`
-      ),
+      Repo.appendWithBaseUrl(`/game_plays/${game_id}/${chain_id}/my_game_play`),
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -109,7 +107,7 @@ export class Repo {
     signal: AbortSignal
   ): Promise<GameActivity[]> {
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/game_activities/ongoing/${publicAddress}`),
+      Repo.appendWithBaseUrl(`/game_activities/ongoing/${publicAddress}`),
       {
         signal,
       }
@@ -125,7 +123,7 @@ export class Repo {
     signal: AbortSignal
   ) {
     const response = await fetch(
-      Repo.appendPathWithBaseUrl(`/games/${gameId}/${chainId}/activities`),
+      Repo.appendWithBaseUrl(`/games/${gameId}/${chainId}/activities`),
       {
         signal,
       }
@@ -152,5 +150,5 @@ export class Repo {
     throw new Error(await response.text());
   };
 
-  private static appendPathWithBaseUrl = (path: string) => Repo.baseUrl + path;
+  private static appendWithBaseUrl = (path: string) => Repo.baseUrl + path;
 }
