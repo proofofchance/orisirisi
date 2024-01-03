@@ -32,18 +32,21 @@ export function NavigationBar({ className }: PropsWithClassName) {
           <Link href="/games" className="mr-4">
             Browse Games
           </Link>
-          {isNotConnected && <Tooltip id="create-game-tooltip" />}
-          <Link
-            href={isNotConnected ? '#' : '/create-game'}
-            className={cn(
-              'mr-4',
-              isNotConnected && 'cursor-not-allowed opacity-70'
-            )}
-            data-tooltip-id="create-game-tooltip"
-            data-tooltip-content="Must be connected first"
-          >
-            Create Game
-          </Link>
+          {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
+          {isNotConnected ? (
+            <div
+              className="cursor-not-allowed opacity-70"
+              data-tooltip-id="create-game-link-tooltip"
+              data-tooltip-content="Must be connected first"
+            >
+              Create Game
+            </div>
+          ) : (
+            <Link href={isNotConnected ? '#' : '/create-game'} className="mr-4">
+              Create Game
+            </Link>
+          )}
+
           {isClient && currentWeb3Account && (
             <UnreadGameActivityCount
               publicAddress={currentWeb3Account.address!}
