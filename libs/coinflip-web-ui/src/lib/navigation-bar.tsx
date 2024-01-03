@@ -33,7 +33,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
             Browse Games
           </Link>
           {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
-          {isNotConnected ? (
+          {isClient && isNotConnected ? (
             <div
               className="cursor-not-allowed opacity-70"
               data-tooltip-id="create-game-link-tooltip"
@@ -42,7 +42,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
               Create Game
             </div>
           ) : (
-            <Link href={isNotConnected ? '#' : '/create-game'} className="mr-4">
+            <Link href="/create-game" className="mr-4">
               Create Game
             </Link>
           )}
