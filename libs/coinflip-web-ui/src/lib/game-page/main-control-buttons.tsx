@@ -36,7 +36,7 @@ export function MainControlButtons({
       return (
         <MainButton
           disabled={!currentWeb3Account}
-          disabledReason="Connect wallet first"
+          disabledReason="Connect wallet first ↑"
           onClick={() =>
             push(`/games/${game.id}/play?chain_id=${game.chain_id}`)
           }

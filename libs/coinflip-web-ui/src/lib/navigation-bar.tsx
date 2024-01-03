@@ -37,7 +37,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
             <div
               className="cursor-not-allowed opacity-70"
               data-tooltip-id="create-game-link-tooltip"
-              data-tooltip-content="Connect wallet first"
+              data-tooltip-content="Connect wallet first →"
             >
               Create Game
             </div>
