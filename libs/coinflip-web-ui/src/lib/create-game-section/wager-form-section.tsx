@@ -1,13 +1,17 @@
 import { useFormContext } from 'react-hook-form';
 import { CoinflipGame } from '@orisirisi/coinflip';
-import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
+import {
+  useCurrentChain,
+  useCurrentWeb3Account,
+  useCurrentWeb3Provider,
+} from '@orisirisi/orisirisi-web3-ui';
 import { DecimalInput, isValidDecimalInput } from '@orisirisi/orisirisi-web-ui';
 import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-button';
 import { ErrorMessageParagraph } from './error-message-paragraph';
 import { FormSectionShell } from './form-section-shell';
 
-const isUpToMinimumWager = (wager: string) =>
-  parseFloat(wager) >= CoinflipGame.getMinWagerEth();
+const isUpToMinimumWager = (wager: number) =>
+  wager >= CoinflipGame.getMinWagerEth();
 
 export interface WagerForm {
   wager: string;
@@ -22,21 +26,35 @@ export function WagerFormSection({ onSubmit }: Props) {
     register,
     formState,
     trigger: triggerValidation,
+    clearErrors,
   } = useFormContext<WagerForm>();
+
   const chain = useCurrentChain();
+  const currentWeb3Provider = useCurrentWeb3Provider();
+  const { currentWeb3Account } = useCurrentWeb3Account();
 
   const errorMessage = formState.errors['wager']?.message as string;
 
   const isValidWagerValue = async () =>
     (await triggerValidation('wager')) && !formState.errors['wager'];
 
-  const validate = (wager: string) => {
+  const validate = async (wager: string) => {
     if (!isValidDecimalInput(wager)) {
       return 'Please enter a valid wager';
     }
 
-    if (!isUpToMinimumWager(wager)) {
+    const wagerFloat = parseFloat(wager);
+
+    if (!isUpToMinimumWager(wagerFloat)) {
       return `Minimum wager allowed is ${0.02} ${chain!.getCurrency()}`;
+    }
+
+    const accountBalance = await currentWeb3Account!.getBalance(
+      currentWeb3Provider!
+    );
+
+    if (accountBalance < wagerFloat) {
+      return `Insufficient balance`;
     }
 
     return true;
@@ -48,7 +66,10 @@ export function WagerFormSection({ onSubmit }: Props) {
         <DecimalInput
           placeholder={`${CoinflipGame.getMinWagerEth()}`}
           className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
-          {...register('wager', { validate })}
+          {...register('wager', {
+            validate,
+            onChange: () => clearErrors('wager'),
+          })}
           onEnter={async () => (await isValidWagerValue()) && onSubmit?.()}
           preventSubmit
         />

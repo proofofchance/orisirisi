@@ -12,6 +12,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { MainButton } from './main-control-buttons/main-button';
 import { UploadProofMainButton } from './main-control-buttons/upload-proof-main-button';
+import { useCurrentWeb3Provider } from '@orisirisi/orisirisi-web3-ui';
+import toast from 'react-hot-toast';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export function MainControlButtons({
   currentWeb3Account,
@@ -22,6 +25,8 @@ export function MainControlButtons({
   game: CoinflipGame;
 } & PropsWithClassName) {
   const { push } = useRouter();
+
+  const currentWeb3Provider = useCurrentWeb3Provider();
 
   const renderMainButton = () => {
     if (currentWeb3Account && game.is_awaiting_my_play_proof) {
@@ -37,9 +42,24 @@ export function MainControlButtons({
         <MainButton
           disabled={!currentWeb3Account}
           disabledReason="Connect wallet first ↑"
-          onClick={() =>
-            push(`/games/${game.id}/play?chain_id=${game.chain_id}`)
-          }
+          onClick={async () => {
+            const myBalance = await currentWeb3Account!.getBalance(
+              currentWeb3Provider!
+            );
+
+            if (myBalance < game.wager) {
+              return toast.error(
+                `Insufficient balance. You need ${
+                  game.wager
+                } ${Chain.fromChainID(game.chain_id).getCurrency()} to play`,
+                {
+                  position: 'bottom-left',
+                }
+              );
+            }
+
+            return push(`/games/${game.id}/play?chain_id=${game.chain_id}`);
+          }}
           icon={<PlayIcon className="h-8" />}
           label="Play"
         />

@@ -1,5 +1,5 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
-import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers';
+import { BrowserProvider, JsonRpcSigner, Signer, formatEther } from 'ethers';
 import { Web3Provider, Web3ProviderError, Web3ProviderType } from './providers';
 
 export enum Web3AccountError {
@@ -13,6 +13,12 @@ export class Web3Account {
     private signer: Signer | null,
     private providerType: Web3ProviderType
   ) {}
+
+  async getBalance(provider: Web3Provider) {
+    const balance = await provider.toBrowserProvider().getBalance(this.address);
+    const balanceInEth = formatEther(balance);
+    return parseFloat(balanceInEth);
+  }
 
   getAddress() {
     return this.address.toLowerCase();
