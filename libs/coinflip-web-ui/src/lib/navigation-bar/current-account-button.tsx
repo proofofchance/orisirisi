@@ -5,7 +5,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Button from './current-account-button/button';
 import { shortenPublicAddress } from '../data-utils';
-import { logout } from '@orisirisi/orisirisi-web3-ui';
+import { disconnect } from '@orisirisi/orisirisi-web3-ui';
 import { useRef, useState } from 'react';
 import { useOnClickOutside } from '@orisirisi/orisirisi-web-ui';
 
@@ -22,10 +22,10 @@ export function CurrentAccountButton({ publicAddress }: CurrentAccountProps) {
   const menu = () => (
     <div className="bg-white rounded-md text-black flex flex-col justify-center items-center p-1 absolute w-48 top-20">
       <div
-        onClick={logout}
+        onClick={disconnect}
         className="w-full flex items-center justify-center p-2 hover:cursor-pointer hover:bg-slate-200"
       >
-        Logout <ArrowTopRightOnSquareIcon className="h-4 ml-1" />
+        Disconnect <ArrowTopRightOnSquareIcon className="h-4 ml-1" />
       </div>
     </div>
   );

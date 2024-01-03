@@ -8,7 +8,7 @@ import {
 import { useCache } from './use-cache';
 import { useCurrentWeb3Account } from './use-current-web3-account';
 import {
-  logout,
+  disconnect,
   useCurrentWeb3ProviderType,
 } from './use-current-web3-provider';
 import toast from 'react-hot-toast';
@@ -40,7 +40,7 @@ export function useConnectWithMetaMask() {
         );
     }
 
-    MetaMask.handleConnectionEvents(logout, (addresses) =>
+    MetaMask.handleConnectionEvents(disconnect, (addresses) =>
       setCurrentWeb3Account(Web3Account.fromAddresses(addresses, MetaMask.type))
     );
 

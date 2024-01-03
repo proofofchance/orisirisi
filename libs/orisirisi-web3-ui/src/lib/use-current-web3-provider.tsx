@@ -37,7 +37,7 @@ const currentChainAtom = atom((get) =>
 );
 export const useCurrentChain = () => useAtomValue(currentChainAtom);
 
-export const logout = () => {
+export const disconnect = () => {
   Cache.clear();
   Browser.reloadWindow();
 };
