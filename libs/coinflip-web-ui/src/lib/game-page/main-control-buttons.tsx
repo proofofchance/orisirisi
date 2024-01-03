@@ -32,9 +32,11 @@ export function MainControlButtons({
         />
       );
     }
-    if (currentWeb3Account && game.isOngoing() && game.iHaveNotPlayed()) {
+    if (game.isOngoing() && game.iHaveNotPlayed()) {
       return (
         <MainButton
+          disabled={!currentWeb3Account}
+          disabledReason="Connect wallet first"
           onClick={() =>
             push(`/games/${game.id}/play?chain_id=${game.chain_id}`)
           }
