@@ -1,17 +1,24 @@
 import Link from 'next/link';
-import { PropsWithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
+import {
+  PropsWithClassName,
+  cn,
+  useIsClient,
+} from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
 import { ConnectWalletButton } from './navigation-bar/connect-wallet-button';
 import { CurrentAccountButton } from './navigation-bar/current-account-button';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useCoinflipOngoingGameActivities } from './hooks';
 import { BrowserStorage } from '@orisirisi/orisirisi-browser';
+import { Tooltip } from 'react-tooltip';
 
 export { ConnectWalletOptionsModal } from './navigation-bar/connect-wallet-button';
 
 export function NavigationBar({ className }: PropsWithClassName) {
   const isClient = useIsClient();
   const { currentWeb3Account } = useCurrentWeb3Account();
+
+  const isNotConnected = !currentWeb3Account;
 
   return (
     <BackgroundWrapper className={className}>
@@ -25,11 +32,18 @@ export function NavigationBar({ className }: PropsWithClassName) {
           <Link href="/games" className="mr-4">
             Browse Games
           </Link>
-          {isClient && currentWeb3Account && (
-            <Link href="/create-game" className="mr-4">
-              Create Game
-            </Link>
-          )}
+          {isNotConnected && <Tooltip id="create-game-tooltip" />}
+          <Link
+            href={isNotConnected ? '#' : '/create-game'}
+            className={cn(
+              'mr-4',
+              isNotConnected && 'cursor-not-allowed opacity-70'
+            )}
+            data-tooltip-id="create-game-tooltip"
+            data-tooltip-content="Must be connected first"
+          >
+            Create Game
+          </Link>
           {isClient && currentWeb3Account && (
             <UnreadGameActivityCount
               publicAddress={currentWeb3Account.address!}
