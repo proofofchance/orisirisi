@@ -1,11 +1,10 @@
 import Link from 'next/link';
-import {
-  PropsWithClassName,
-  cn,
-  useIsClient,
-} from '@orisirisi/orisirisi-web-ui';
+import { PropsWithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
-import { ConnectWalletButton } from './navigation-bar/connect-wallet-button';
+import {
+  ConnectWalletButton,
+  ConnectWalletOptionsModal,
+} from './navigation-bar/connect-wallet-button';
 import { CurrentAccountButton } from './navigation-bar/current-account-button';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useCoinflipOngoingGameActivities } from './hooks';
@@ -21,45 +20,50 @@ export function NavigationBar({ className }: PropsWithClassName) {
   const isNotConnected = !currentWeb3Account;
 
   return (
-    <BackgroundWrapper className={className}>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <Link href="/" className="text-white text-xl font-semibold">
-            Coinflip
-          </Link>
-        </div>
-        <div className={`text-white md:flex gap-x-6 items-center`}>
-          <Link href="/games" className="mr-4">
-            Browse Games
-          </Link>
-          {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
-          {isClient && isNotConnected ? (
-            <div
-              className="cursor-not-allowed opacity-70"
-              data-tooltip-id="create-game-link-tooltip"
-              data-tooltip-content="Connect wallet first →"
-            >
-              Create Game
-            </div>
-          ) : (
-            <Link href="/create-game" className="mr-4">
-              Create Game
+    <>
+      <ConnectWalletOptionsModal />
+      <BackgroundWrapper className={className}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <Link href="/" className="text-white text-xl font-semibold">
+              Coinflip
             </Link>
-          )}
+          </div>
+          <div className={`text-white md:flex gap-x-6 items-center`}>
+            <Link href="/games" className="mr-4">
+              Browse Games
+            </Link>
+            {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
+            {isClient && isNotConnected ? (
+              <div
+                className="cursor-not-allowed opacity-70"
+                data-tooltip-id="create-game-link-tooltip"
+                data-tooltip-content="Connect wallet first →"
+              >
+                Create Game
+              </div>
+            ) : (
+              <Link href="/create-game" className="mr-4">
+                Create Game
+              </Link>
+            )}
 
-          {isClient && currentWeb3Account && (
-            <UnreadGameActivityCount
-              publicAddress={currentWeb3Account.address!}
-            />
-          )}
-          {isClient && currentWeb3Account ? (
-            <CurrentAccountButton publicAddress={currentWeb3Account.address!} />
-          ) : (
-            <ConnectWalletButton />
-          )}
+            {isClient && currentWeb3Account && (
+              <UnreadGameActivityCount
+                publicAddress={currentWeb3Account.address!}
+              />
+            )}
+            {isClient && currentWeb3Account ? (
+              <CurrentAccountButton
+                publicAddress={currentWeb3Account.address!}
+              />
+            ) : (
+              <ConnectWalletButton />
+            )}
+          </div>
         </div>
-      </div>
-    </BackgroundWrapper>
+      </BackgroundWrapper>
+    </>
   );
 }
 
