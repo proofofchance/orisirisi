@@ -145,7 +145,7 @@ describe('uploadGamePlayProofsAndCreditGameWinners', () => {
           }
         );
 
-      await coinflipContract.uploadGamePlayProofsAndCreditGameWinners(
+      await coinflipContract.uploadProofsAndCreditWinners(
         gameId,
         [1, 2],
         [firstPlayerPOC.getProof(), secondPlayerPOC.getProof()]
