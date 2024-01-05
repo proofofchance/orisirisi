@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.18",
     "@nx/next": "16.7.4",
     "@walletconnect/ethereum-provider": "^2.10.0",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "ethers": "^6.7.1",
     "jotai": "^2.6.0",
