@@ -3,7 +3,7 @@ import {
   Web3Account,
   Web3ProviderType,
 } from '@orisirisi/orisirisi-web3';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { CachedWeb3ProviderType, useCache } from './use-cache';
 import { disconnect } from './use-current-web3-provider';
 
