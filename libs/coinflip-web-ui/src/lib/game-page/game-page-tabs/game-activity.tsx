@@ -22,8 +22,12 @@ export function GameActivity({
         return getGamePlayCreatedReport();
       case 'game_play_proof_created':
         return getPlayProofReport();
-      case 'game_expired':
+      case 'ongoing':
+        return 'Awaiting participating players...';
+      case 'expired':
         return 'Game expired!';
+      case 'awaiting_proofs_upload':
+        return 'Awaiting proof uploads from players...';
       default:
         throw new Error(`Unknown game activity kind ${gameActivity.kind}`);
     }
