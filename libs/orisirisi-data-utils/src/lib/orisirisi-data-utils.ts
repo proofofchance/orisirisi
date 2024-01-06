@@ -105,3 +105,15 @@ export class Countdown {
     this.minutesLeft === 0 &&
     this.secondsLeft === 0;
 }
+
+export const getRandomHexColor = (): `#${string}` => {
+  // Generate a random number between 0 and 16777215 (FFFFFF in hexadecimal)
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  // Pad the color with zeros to ensure it has six digits
+  return `#${randomColor.padStart(6, '0')}`;
+};
+
+export const pickRandom = <T>(values: T[]) => {
+  const randomIndex = getRandomInteger(values.length - 1);
+  return values[randomIndex];
+};
