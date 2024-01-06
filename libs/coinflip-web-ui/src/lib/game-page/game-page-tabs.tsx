@@ -3,6 +3,7 @@ import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tabs } from './game-page-tabs/tabs';
 import { GameDetails } from './game-page-tabs/game-details';
 import { GameActivity } from './game-page-tabs/game-activity';
+import { GamePlayProof } from './game-page-tabs/game-play-proof';
 
 type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
 
@@ -57,11 +58,16 @@ export function GamePageTabs({
         title: 'Proofs Of Chance',
         id: 'proofs-of-chance',
         body: (
-          <div id="proofs-of-chance" className="flex justify-center">
-            <p className="w-2/3 text-center">
+          <div id="proofs-of-chance" className="flex flex-col items-center">
+            <p className="w-2/3 text-center mt-6">
               All the play proofs will be listed here after all uploads is
               complete.
             </p>
+            <div className="flex gap-4 mt-4">
+              {game.play_proofs?.map((proof, i) => (
+                <GamePlayProof key={i} proof={proof} />
+              ))}
+            </div>
           </div>
         ),
       });
