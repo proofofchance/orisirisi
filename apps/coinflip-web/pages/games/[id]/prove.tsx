@@ -27,8 +27,6 @@ export function ProveGame() {
     [id, chainId]
   );
   const { game } = useCoinflipGame(fetchGameParams);
-  const gamePath = game && `/games/${game.id}?chain_id=${game.chain_id}`;
-  useAuthentication(gamePath);
 
   console.log({ game });
 
