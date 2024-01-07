@@ -2,7 +2,6 @@ import {
   CoinflipGameActivity,
   CoinflipHTTPService,
   CoinflipHTTPServiceError,
-  CoinflipHTTPServiceErrorType,
 } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 
