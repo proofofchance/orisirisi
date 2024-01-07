@@ -93,7 +93,7 @@ export class ProofOfChance {
     ) as HexString;
   }
   static getRandomSalt() {
-    return Crypto.getRandomString().slice(-6);
+    return Crypto.getRandomString(6);
   }
   async getProofOfChance() {
     return await buildProofOfChance(this.getChanceAndSalt());
