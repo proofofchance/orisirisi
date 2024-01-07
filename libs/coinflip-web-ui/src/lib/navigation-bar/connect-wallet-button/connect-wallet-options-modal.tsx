@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode, useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 import { Tooltip } from 'react-tooltip';
-import { Modal } from './modal';
+import { Modal } from '../../modals';
 import { cn } from '@orisirisi/orisirisi-web-ui';
 import {
   useConnectWithMetaMask,

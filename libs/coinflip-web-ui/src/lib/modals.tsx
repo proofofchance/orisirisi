@@ -2,17 +2,17 @@ import { PropsWithChildren } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { cn } from '@orisirisi/orisirisi-web-ui';
 
-export interface ModalContext {
+export interface ModalVisibility {
   show?: boolean;
   close: () => void;
 }
 
-export const defaultModalContext = {
+export const defaultModalVisibility = {
   show: false,
   close: () => null,
 };
 
-interface ModalProps extends ModalContext, PropsWithChildren {
+interface ModalProps extends ModalVisibility, PropsWithChildren {
   overlayClassName?: string;
   variant?: 'sm';
   className?: string;
