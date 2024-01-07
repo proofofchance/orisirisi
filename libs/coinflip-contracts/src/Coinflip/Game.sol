@@ -7,18 +7,16 @@ library Game {
     enum Status {
         Ongoing,
         Expired,
-        AwaitingProofsUpload,
+        AwaitingChancesUpload,
         Concluded
     }
 
-    function getEntropy(
-        string memory proofOfChance
-    ) internal pure returns (uint16) {
+    function getEntropy(string memory chance) internal pure returns (uint16) {
         uint16 sum = 0;
-        bytes memory proofOfChanceBytes = bytes(proofOfChance);
+        bytes memory chanceInBytes = bytes(chance);
 
-        for (uint8 i = 0; i < proofOfChanceBytes.length; i++) {
-            sum += uint8(proofOfChanceBytes[i]);
+        for (uint8 i = 0; i < chanceInBytes.length; i++) {
+            sum += uint8(chanceInBytes[i]);
         }
 
         return sum;

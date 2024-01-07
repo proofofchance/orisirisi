@@ -105,7 +105,10 @@ describe('playGame', () => {
         .playGame(
           gameId,
           oppositeCoinSide(createGameParams.coinSide),
-          await ProofOfChance.fromChance('some-chance').toPlayHash(),
+          await ProofOfChance.fromChance(
+            'some-chance',
+            'random-salt'
+          ).getProofOfChance(),
           {
             value: createGameParams.wager,
           }
@@ -116,15 +119,18 @@ describe('playGame', () => {
   });
 });
 
-describe('uploadGamePlayProofsAndCreditGameWinners', () => {
+describe('revealChancesAndCreditWinners', () => {
   context('When using valid parameters', () => {
     it('uploads game proofs successfully', async () => {
       const { coinflipContract, player: secondPlayer } =
         await deployCoinflipContracts();
 
-      const firstPlayerPOC = ProofOfChance.fromChance('first-player-chance-2');
+      const firstPlayerPOC = ProofOfChance.fromChance(
+        'first-player-chance-2',
+        'random-salt'
+      );
       const createGameParams = (await CreateGameParams.new(coinflipContract))
-        .withPlayHash(await firstPlayerPOC.toPlayHash())
+        .withProofOfChance(await firstPlayerPOC.getProofOfChance())
         .withNumberOfPlayers(2);
 
       await coinflipContract.createGame(...createGameParams.toArgs(), {
@@ -133,30 +139,33 @@ describe('uploadGamePlayProofsAndCreditGameWinners', () => {
 
       const gameId = 1;
 
-      const secondPlayerPOC = ProofOfChance.fromChance('some-chance');
+      const secondPlayerPOC = ProofOfChance.fromChance(
+        'some-chance',
+        'random-salt'
+      );
       await coinflipContract
         .connect(secondPlayer)
         .playGame(
           gameId,
           oppositeCoinSide(createGameParams.coinSide),
-          await secondPlayerPOC.toPlayHash(),
+          await secondPlayerPOC.getProofOfChance(),
           {
             value: createGameParams.wager,
           }
         );
 
-      await coinflipContract.uploadProofsAndCreditWinners(
+      await coinflipContract.revealChancesAndCreditWinners(
         gameId,
         [1, 2],
-        [firstPlayerPOC.getProof(), secondPlayerPOC.getProof()]
+        [firstPlayerPOC.getChanceAndSalt(), secondPlayerPOC.getChanceAndSalt()]
       );
 
-      expect(await coinflipContract.playProofs(gameId, 1)).to.equal(
-        firstPlayerPOC.getProof()
+      expect(await coinflipContract.playChances(gameId, 1)).to.equal(
+        firstPlayerPOC.chance
       );
 
-      expect(await coinflipContract.playProofs(gameId, 2)).to.equal(
-        secondPlayerPOC.getProof()
+      expect(await coinflipContract.playChances(gameId, 2)).to.equal(
+        secondPlayerPOC.chance
       );
     });
   });
@@ -204,7 +213,7 @@ class CreateGameParams {
   wager: bigint;
   numberOfPlayers: number;
   coinSide: CoinSide;
-  playHash: string;
+  proofOfChance: string;
 
   private constructor(public expiryTimestamp: number) {
     this.wager = parseEther(
@@ -215,11 +224,11 @@ class CreateGameParams {
       CoinflipGame.minPossiblePlayers
     );
     this.coinSide = getRandomCoinSide();
-    this.playHash =
+    this.proofOfChance =
       '0x4299a2c05eaaf9f217898179738f3feb40669058bff3b6cb1017aecd48d6dd84';
   }
-  withPlayHash(playHash: BytesLike) {
-    this.playHash = playHash.toString();
+  withProofOfChance(proofOfChance: BytesLike) {
+    this.proofOfChance = proofOfChance.toString();
     return this;
   }
   withNumberOfPlayers(numberOfPlayers: number) {
@@ -231,7 +240,7 @@ class CreateGameParams {
     this.numberOfPlayers,
     this.expiryTimestamp,
     this.coinSide,
-    this.playHash,
+    this.proofOfChance,
   ];
 
   static async new(coinflipContract: Coinflip) {

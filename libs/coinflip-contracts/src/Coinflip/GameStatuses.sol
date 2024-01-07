@@ -34,8 +34,8 @@ contract GameStatuses {
         expiryTimestamps[gameID] = expiryTimestamp;
     }
 
-    function setGameStatusAsAwaitingProofsUpload(uint gameID) internal {
-        statuses[gameID] = Game.Status.AwaitingProofsUpload;
+    function setGameStatusAsAwaitingChancesUpload(uint gameID) internal {
+        statuses[gameID] = Game.Status.AwaitingChancesUpload;
     }
 
     function setGameStatusAsConcluded(uint gameID) internal {

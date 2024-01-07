@@ -42,7 +42,7 @@ contract Coinflip is
     uint public minWager;
     uint16 public maxPossibleGamePlayCount;
     error MaxPossibleGamePlayCountError(uint16 maxPossibleGamePlayCount);
-    error IncompleteProofOfChancesError(uint expectedProofOfChanceSize);
+    error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
 
     constructor(
         address payable _wallets,
@@ -61,14 +61,14 @@ contract Coinflip is
     }
 
     /// @dev Creates a new game
-    /// @param playHash Keccak256 hash of `secretLuckProof` that would
-    /// be later uploaded
+    /// @param proofOfChance sha256 hash of `chance + salt` that would
+    /// be later revealed
     function createGame(
         uint wager,
         uint16 maxGamePlayCount,
         uint expiryTimestamp,
         Coin.Side coinSide,
-        bytes32 playHash
+        bytes32 proofOfChance
     ) external payable mustBeOperational {
         console.log('Wager %s', wager);
 
@@ -98,14 +98,14 @@ contract Coinflip is
             wager
         );
 
-        createGamePlay(newGameID, coinSide, playHash);
+        createGamePlay(newGameID, coinSide, proofOfChance);
     }
 
     /// Exposed so that players can play using their wallet instead of paying directly here  */
     function playGame(
         uint gameID,
         Coin.Side coinSide,
-        bytes32 playHash
+        bytes32 proofOfChance
     )
         external
         payable
@@ -117,37 +117,41 @@ contract Coinflip is
         maybeTopUpWallet();
         uint wager = getGameWager(gameID);
         payGameWager(gameID, wager);
-        createGamePlay(gameID, coinSide, playHash);
-        maybeSetGameStatusAsAwaitingProofsUpload(gameID);
+        createGamePlay(gameID, coinSide, proofOfChance);
+        maybeSetGameStatusAsAwaitingChancesUpload(gameID);
     }
 
-    function maybeSetGameStatusAsAwaitingProofsUpload(uint gameID) private {
+    function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
         uint16 playCount = playCounts[gameID];
         uint16 maxPlayCount = maxPlayCounts[gameID];
 
         if (playCount == maxPlayCount) {
-            setGameStatusAsAwaitingProofsUpload(gameID);
+            setGameStatusAsAwaitingChancesUpload(gameID);
         }
     }
 
-    function uploadProofsAndCreditWinners(
+    function revealChancesAndCreditWinners(
         uint gameID,
         uint16[] memory gamePlayIDs,
-        string[] memory proofOfChances
+        bytes[] memory chanceAndSalts
     )
         external
         onlyOwner
-        mustMatchGameStatus(gameID, Game.Status.AwaitingProofsUpload)
+        mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
-        if (proofOfChances.length != maxPlayCounts[gameID]) {
-            revert IncompleteProofOfChancesError(gameID);
+        if (chanceAndSalts.length != maxPlayCounts[gameID]) {
+            revert IncompleteChanceAndSaltsError(gameID);
         }
-        require(gamePlayIDs.length == proofOfChances.length);
+        require(gamePlayIDs.length == chanceAndSalts.length);
 
         for (uint16 i = 0; i < gamePlayIDs.length; i++) {
-            string memory proofOfChance = proofOfChances[i];
-            createGamePlayProof(gameID, gamePlayIDs[i], proofOfChance);
-            updateGameOutcome(gameID, proofOfChances[i]);
+            bytes memory chanceAndSalt = chanceAndSalts[i];
+            string memory chance = createGamePlayChance(
+                gameID,
+                gamePlayIDs[i],
+                chanceAndSalt
+            );
+            updateGameOutcome(gameID, chance);
         }
         address[] memory winners = players[gameID][outcomes[gameID]];
         creditGameWinners(gameID, winners);
@@ -223,10 +227,7 @@ contract Coinflip is
         wallets.transferToGameWallet(gameID, msg.sender, wager);
     }
 
-    function updateGameOutcome(
-        uint gameID,
-        string memory proofOfChance
-    ) private {
-        outcomes[gameID] = Coin.flip(Game.getEntropy(proofOfChance));
+    function updateGameOutcome(uint gameID, string memory chance) private {
+        outcomes[gameID] = Coin.flip(Game.getEntropy(chance));
     }
 }
