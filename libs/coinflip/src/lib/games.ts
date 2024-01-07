@@ -1,4 +1,5 @@
 import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
+import { PlayProof } from '@orisirisi/proof-of-chance';
 import { CoinSide } from './coin';
 
 export type GameStatus =
@@ -11,7 +12,7 @@ export class Game {
   static minPossiblePlayers = 2;
   static maxPossiblePlayers = 20;
 
-  constructor(
+  private constructor(
     public id: number,
     public chain_id: number,
     public wager: number,
@@ -24,7 +25,8 @@ export class Game {
     public status: GameStatus,
     public unavailable_coin_side: CoinSide | null,
     public is_awaiting_my_play_proof: boolean | null,
-    public my_game_play_id: number | null
+    public my_game_play_id: number | null,
+    public play_proofs: PlayProof[] | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -51,14 +53,17 @@ export class Game {
     return this.status === 'completed';
   }
 
-  static fromJSON(json: Game): Game {
-    // @ts-ignore
-    return Object.assign(new Game(), json);
-  }
   static manyFromJSON(jsonList: Game[]): Game[] {
     // Use the class name directly to avoid scope creep
     return jsonList.map(Game.fromJSON);
   }
+  static fromJSON(json: Game): Game {
+    // @ts-ignore
+    const game = Object.assign(new Game(), json);
+    game.play_proofs = PlayProof.manyfromJSON(game.play_proofs);
+    return game;
+  }
+
   static getMinWagerEth(chainId: ChainID = ChainID.Ethereum): number {
     switch (chainId) {
       case ChainID.Local:
@@ -101,7 +106,7 @@ export class GameActivity {
       | 'game_created'
       | 'game_play_created'
       | 'game_play_proof_created'
-      | 'game_expired',
+      | GameStatus,
     public block_timestamp: number,
     public transaction_hash: string
   ) {}
@@ -113,7 +118,7 @@ export class GameActivity {
     return Object.assign(new GameActivity(), json);
   }
   static manyFromJSON(jsonList: GameActivity[]): GameActivity[] {
-    // Use the class name directly to avoid scope creep
+    // Use the class name directly to avoid referencing caller's scope
     return jsonList.map(GameActivity.fromJSON);
   }
 }

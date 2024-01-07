@@ -1,6 +1,34 @@
 import * as crypto from 'crypto';
 import { encodeBytes32String } from 'ethers';
 
+export class PlayProof {
+  private constructor(
+    public readonly player_address: `0x${string}`,
+    public readonly proof: string
+  ) {}
+  getColor(gameId: number) {
+    const first4Digits = this.player_address.substring(0, 6);
+    const consistentColorIndex =
+      (Number(first4Digits) + gameId) % PlayProof.colors.length;
+    return PlayProof.colors[consistentColorIndex];
+  }
+  private static colors: `#${string}`[] = [
+    '#fff',
+    '#a9c7ff',
+    '#a6a6a6',
+    '#5f86fa',
+    '#a9ffb2',
+    '#2969FF',
+  ];
+  static manyfromJSON(manyJson: PlayProof[] | null): PlayProof[] | null {
+    if (!manyJson) return null;
+    return manyJson.map(PlayProof.fromJSON);
+  }
+  static fromJSON(json: PlayProof): PlayProof {
+    return new PlayProof(json.player_address, json.proof);
+  }
+}
+
 export class ProofOfChance {
   static DELIMITER = '+';
   static FILE_EXTENSION = '.txt';

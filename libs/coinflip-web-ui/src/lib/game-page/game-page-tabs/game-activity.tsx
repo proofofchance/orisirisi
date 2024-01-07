@@ -28,6 +28,8 @@ export function GameActivity({
         return 'Game expired!';
       case 'awaiting_proofs_upload':
         return 'Awaiting proof uploads from players...';
+      case 'completed':
+        return 'Game concluded. These are the winners: <List-winners-here>';
       default:
         throw new Error(`Unknown game activity kind ${gameActivity.kind}`);
     }

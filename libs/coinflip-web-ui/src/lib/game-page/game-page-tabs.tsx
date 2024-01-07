@@ -54,20 +54,25 @@ export function GamePageTabs({
     ];
 
     if (!game.isOngoing()) {
+      const playProofs = game.play_proofs;
+
       tabs.push({
         title: 'Proofs Of Chance',
         id: 'proofs-of-chance',
         body: (
-          <div id="proofs-of-chance" className="flex flex-col items-center">
-            <p className="w-2/3 text-center mt-6">
-              All the play proofs will be listed here after all uploads is
-              complete.
-            </p>
-            <div className="flex gap-4 mt-4">
-              {game.play_proofs?.map((proof, i) => (
-                <GamePlayProof key={i} proof={proof} />
-              ))}
-            </div>
+          <div id="proofs-of-chance" className="flex flex-col w-full px-8">
+            {playProofs ? (
+              <div className="flex gap-4 mt-4">
+                {playProofs.map((proof, i) => (
+                  <GamePlayProof key={i} gameId={game.id} proof={proof} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-center mt-6 self-center">
+                All the play proofs will be listed here after all uploads is
+                complete.
+              </p>
+            )}
           </div>
         ),
       });
