@@ -31,7 +31,7 @@ contract Coinflip is
 
     event GameCreated(
         uint gameID,
-        uint16 maxPlayCount,
+        uint16 numberOfPlayers,
         uint expiryTimestamp,
         address creator,
         uint wager
@@ -123,9 +123,9 @@ contract Coinflip is
 
     function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
         uint16 playCount = playCounts[gameID];
-        uint16 maxPlayCount = maxPlayCounts[gameID];
+        uint16 numberOfPlayers = numberOfPlayersPerGame[gameID];
 
-        if (playCount == maxPlayCount) {
+        if (playCount == numberOfPlayers) {
             setGameStatusAsAwaitingChancesUpload(gameID);
         }
     }
@@ -139,7 +139,7 @@ contract Coinflip is
         onlyOwner
         mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
-        if (chanceAndSalts.length != maxPlayCounts[gameID]) {
+        if (chanceAndSalts.length != numberOfPlayersPerGame[gameID]) {
             revert IncompleteChanceAndSaltsError(gameID);
         }
         require(gamePlayIDs.length == chanceAndSalts.length);

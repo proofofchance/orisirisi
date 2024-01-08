@@ -19,7 +19,7 @@ contract GamePlays {
     mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
 
     mapping(uint gameID => uint16 playCount) public playCounts;
-    mapping(uint gameID => uint16 maxPlayCount) maxPlayCounts;
+    mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
 
     error InvalidPlayChance();
     error AllMatchingPlaysError(uint gameID, Coin.Side availableCoinSide);
@@ -54,7 +54,7 @@ contract GamePlays {
     }
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
-        uint16 playsLeft = maxPlayCounts[gameID] - playCounts[gameID];
+        uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
         uint16 headPlayCount = coinSideCounts[gameID][Coin.Side.Head];
         uint16 tailPlayCount = coinSideCounts[gameID][Coin.Side.Tail];
 
@@ -142,7 +142,7 @@ contract GamePlays {
         uint gameID,
         uint16 maxGameMovesCount
     ) internal {
-        maxPlayCounts[gameID] = maxGameMovesCount;
+        numberOfPlayersPerGame[gameID] = maxGameMovesCount;
     }
 }
 
