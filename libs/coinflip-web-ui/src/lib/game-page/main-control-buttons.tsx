@@ -29,7 +29,7 @@ export function MainControlButtons({
   const currentWeb3Provider = useCurrentWeb3Provider();
 
   const renderMainButton = () => {
-    if (currentWeb3Account && game.is_awaiting_my_play_proof) {
+    if (currentWeb3Account && game.is_awaiting_my_chance_reveal) {
       return (
         <UploadProofMainButton
           game={game}

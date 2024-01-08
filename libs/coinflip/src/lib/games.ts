@@ -1,11 +1,11 @@
 import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
-import { PlayProof } from '@orisirisi/proof-of-chance';
+import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
 import { CoinSide } from './coin';
 
 export type GameStatus =
   | 'ongoing'
   | 'expired'
-  | 'awaiting_proofs_upload'
+  | 'awaiting_revealed_chances'
   | 'completed';
 
 export class Game {
@@ -24,9 +24,9 @@ export class Game {
     public expiry_timestamp: number,
     public status: GameStatus,
     public unavailable_coin_side: CoinSide | null,
-    public is_awaiting_my_play_proof: boolean | null,
+    public is_awaiting_my_chance_reveal: boolean | null,
     public my_game_play_id: number | null,
-    public play_proofs: PlayProof[] | null
+    public public_proof_of_chances: PublicProofOfChance[] | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -43,8 +43,8 @@ export class Game {
   isOngoing(): boolean {
     return this.status === 'ongoing';
   }
-  isAwaitingProofsUpload(): boolean {
-    return this.status === 'awaiting_proofs_upload';
+  isAwaitingRevealedChances(): boolean {
+    return this.status === 'awaiting_revealed_chances';
   }
   isExpired(): boolean {
     return this.status === 'expired';
@@ -60,7 +60,9 @@ export class Game {
   static fromJSON(json: Game): Game {
     // @ts-ignore
     const game = Object.assign(new Game(), json);
-    game.play_proofs = PlayProof.manyfromJSON(game.play_proofs);
+    game.public_proof_of_chances = PublicProofOfChance.manyfromJSON(
+      game.public_proof_of_chances
+    );
     return game;
   }
 
@@ -105,7 +107,7 @@ export class GameActivity {
     public kind:
       | 'game_created'
       | 'game_play_created'
-      | 'game_play_proof_created'
+      | 'game_play_chance_revealed'
       | GameStatus,
     public block_timestamp: number,
     public transaction_hash: string

@@ -10,31 +10,26 @@ import {
 import { CoinbaseWalletIcon, MetamaskIcon, WalletConnectIcon } from './icons';
 
 const showConnectWalletOptionsModal = atom<boolean | null>(null);
-
 export function useConnectWalletOptionsModal() {
-  const [showModal, toggleShow] = useAtom(showConnectWalletOptionsModal);
-
-  const initModal = () => toggleShow(false);
-
+  const [showModal, setShowModal] = useAtom(showConnectWalletOptionsModal);
   const openModal = () => {
     if (showModal === null) {
       throw new Error('<ConnectWalletOptionsModal /> must be initialized');
     }
-
-    toggleShow(true);
+    setShowModal(true);
   };
-  const closeModal = () => toggleShow(false);
-
+  const closeModal = () => setShowModal(false);
+  if (showModal === null) {
+    setShowModal(false);
+  }
   return {
-    showModal,
+    showModal: showModal!,
     openModal,
     closeModal,
-    initModal,
   };
 }
-
 export function ConnectWalletOptionsModal() {
-  const { initModal, showModal, closeModal } = useConnectWalletOptionsModal();
+  const { showModal, closeModal } = useConnectWalletOptionsModal();
   const connectWithMetaMask = useConnectWithMetaMask();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
@@ -50,11 +45,6 @@ export function ConnectWalletOptionsModal() {
       <div className="h-4 w-4">{icon}</div>
     </div>
   );
-
-  if (showModal === null) {
-    initModal();
-    return null;
-  }
 
   return (
     <Modal

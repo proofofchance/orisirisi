@@ -3,7 +3,7 @@ import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tabs } from './game-page-tabs/tabs';
 import { GameDetails } from './game-page-tabs/game-details';
 import { GameActivity } from './game-page-tabs/game-activity';
-import { GamePlayProofs } from './game-page-tabs/game-play-proofs';
+import { GameProofOfChances } from './game-page-tabs/game-proof-of-chances';
 
 type GamePageTabId = 'details' | 'proofs-of-chance' | 'activities';
 
@@ -17,7 +17,7 @@ export function GamePageTabs({
   gameActivities: CoinflipGameActivity[];
 }) {
   const getDefaultTabId = (): GamePageTabId => {
-    if (game.is_awaiting_my_play_proof) {
+    if (game.is_awaiting_my_chance_reveal) {
       return 'proofs-of-chance';
     }
     if (game.isOngoing() && game.iHaveNotPlayed()) {
@@ -59,7 +59,10 @@ export function GamePageTabs({
         id: 'proofs-of-chance',
         body: (
           <div id="proofs-of-chance" className="flex flex-col w-full px-8">
-            <GamePlayProofs gameId={game.id} playProofs={game.play_proofs} />
+            <GameProofOfChances
+              gameId={game.id}
+              proofOfChances={game.public_proof_of_chances}
+            />
           </div>
         ),
       });

@@ -33,7 +33,7 @@ export function UploadProofMainButton({
         game_id: game!.id,
         chain_id: game.chain_id,
         public_address: currentWeb3Account.address,
-        game_play_proof: proofOfChance.getProof(),
+        chance_and_salt: proofOfChance.getChanceAndSalt(),
       });
 
       toast.dismiss(loadingToastId);

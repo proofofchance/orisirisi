@@ -102,7 +102,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
       await coinflipContract.playGame(
         game!.id,
         coinSide,
-        await proofOfChance!.toPlayHash(),
+        await proofOfChance!.getProofOfChance(),
         { value: parseEther(game!.wager.toString()) }
       );
 

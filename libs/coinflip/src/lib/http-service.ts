@@ -19,7 +19,7 @@ export interface UpdateMyGamePlayParams {
   game_id: number;
   chain_id: number;
   public_address: string;
-  game_play_proof: string;
+  chance_and_salt: string;
 }
 
 export enum HTTPServiceErrorType {
@@ -73,13 +73,13 @@ export class HTTPService {
       game_id,
       chain_id,
       public_address,
-      game_play_proof,
+      chance_and_salt,
     }: UpdateMyGamePlayParams,
     signal?: AbortSignal
   ) {
     const body = JSON.stringify({
       public_address,
-      game_play_proof,
+      chance_and_salt,
     });
 
     const response = await fetch(

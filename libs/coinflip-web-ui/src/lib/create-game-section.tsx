@@ -139,7 +139,7 @@ export function CreateGameSection() {
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
         coinSide,
-        await proofOfChance!.toPlayHash(),
+        await proofOfChance!.getProofOfChance(),
         { value: parseEther(wager) }
       );
 

@@ -20,13 +20,13 @@ export function GameActivity({
         return getGameCreatedReport();
       case 'game_play_created':
         return getGamePlayCreatedReport();
-      case 'game_play_proof_created':
-        return getPlayProofReport();
+      case 'game_play_chance_revealed':
+        return getPlayChanceCreatedReport();
       case 'ongoing':
         return 'Awaiting participating players...';
       case 'expired':
         return 'Game expired!';
-      case 'awaiting_proofs_upload':
+      case 'awaiting_revealed_chances':
         return 'Awaiting proof uploads from players...';
       case 'completed':
         return 'Game concluded. These are the winners: <List-winners-here>';
@@ -53,7 +53,7 @@ export function GameActivity({
     return `Player:${triggerPublicAddress} predicts ${coinSide}`;
   };
 
-  const getPlayProofReport = () => {
+  const getPlayChanceCreatedReport = () => {
     if (triggerIsMe) {
       return 'You uploaded your game play proof';
     }

@@ -1,2 +1,2 @@
 export * from './lib/orisirisi-data-utils';
-export * from './lib/hashes';
+export * from './lib/crypto';
