@@ -2,8 +2,9 @@ import * as crypto from 'crypto';
 
 export class Crypto {
   static getRandomString(size: number): string {
-    const array = new Uint8Array(size);
-    return window.crypto.getRandomValues(array).toString();
+    const emptyBytes = new Uint8Array(size);
+    const randomBytes = window.crypto.getRandomValues(emptyBytes);
+    return new TextDecoder().decode(randomBytes);
   }
 }
 
