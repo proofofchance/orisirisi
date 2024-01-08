@@ -53,7 +53,7 @@ export function ChanceFormSection({
   const chance = watch('chance');
   const isProofOfChanceDownloaded = watch('isProofOfChanceDownloaded');
   const disableDownloadButton =
-    !!chanceErrorMessage() || isProofOfChanceDownloaded;
+    !!chanceErrorMessage() || isProofOfChanceDownloaded || !chance;
 
   const CHANCE_MAX_LENGTH = ProofOfChance.CHANCE_MAX_LENGTH;
   const charactersLeft = CHANCE_MAX_LENGTH - countCharacters(chance);
