@@ -1,19 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 
-export function useWindowTitle(title: string, prevailOnUnmount = false) {
-  const defaultTitle = useRef(document.title);
-
+export function useWindowTitle(title: string) {
   useEffect(() => {
     document.title = title;
   }, [title]);
-
-  useEffect(() => {
-    const initialTitle = defaultTitle.current;
-
-    return () => {
-      if (!prevailOnUnmount) {
-        document.title = initialTitle;
-      }
-    };
-  }, [prevailOnUnmount]);
 }
