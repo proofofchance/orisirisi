@@ -4,3 +4,4 @@ export * from './lib/types';
 export * from './lib/input-fields';
 export { Provider } from './lib/provider';
 export { useOnClickOutside } from './lib/use-on-click-outside';
+export * from './lib/use-window-title';
