@@ -41,6 +41,7 @@ export function CoinSideFormSection({
   const isHeadDisabled = disabledCoinSide === CoinSide.Head;
   const isTailDisabled = disabledCoinSide === CoinSide.Tail;
 
+  // TODO: Use round button to represent 'Head' and 'Tail' sides
   return (
     <FormSectionShell title="Pick a Coin Side">
       <div className="mt-8 flex gap-4 items-center">
