@@ -46,7 +46,9 @@ function GameCard({
   game: CoinflipGame;
   goToGamePage: (id: number, chain_id: number) => void;
 }) {
-  const gameExpiryCountdown = useGameExpiryCountdown(game.expiry_timestamp);
+  const gameExpiryCountdown = useGameExpiryCountdown(
+    game.getExpiryTimestampMs()
+  );
 
   return (
     <Link

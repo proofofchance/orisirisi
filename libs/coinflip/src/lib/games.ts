@@ -40,6 +40,8 @@ export class Game {
     return Chain.fromChainID(this.chain_id);
   }
 
+  getExpiryTimestampMs = () => this.expiry_timestamp * 1000;
+
   isOngoing(): boolean {
     return this.status === 'ongoing';
   }
@@ -107,13 +109,13 @@ export class GameActivity {
     public kind:
       | 'game_created'
       | 'game_play_created'
-      | 'game_play_chance_revealed'
-      | GameStatus,
+      | 'game_play_chance_revealed',
     public block_timestamp: number,
     public transaction_hash: string
   ) {}
 
   getPlayCreatedData = () => this.data as GamePlayCreatedActivityData;
+  getBlockTimestampMs = () => this.block_timestamp * 1000;
 
   static fromJSON(json: GameActivity): GameActivity {
     // @ts-ignore
