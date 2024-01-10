@@ -79,12 +79,14 @@ export class Countdown {
     public secondsLeft: number
   ) {}
 
-  static getNext(untilTimestamp: number): Countdown {
-    const now = Math.ceil(new Date().getTime() / 1000);
-    const timeLeft = Math.max(untilTimestamp - now, 0);
+  static getNext(untilTimestampMs: number): Countdown {
+    const now = new Date().getTime();
+    const timeLeftInSecs = Math.floor(
+      Math.max(untilTimestampMs - now, 0) / 1000
+    );
 
     const [daysLeft, hoursAndMinutesAndSecondsLeft] = getDivisionAndRemainder(
-      timeLeft,
+      timeLeftInSecs,
       aDay
     );
     const [hoursLeft, minutesAndSecondsLeft] = getDivisionAndRemainder(
