@@ -4,7 +4,9 @@ import {
   ChainLogo,
   CopyGameLinkButton,
   ExploreOtherGamesView,
-  GamePageTabs,
+  GameActivitiesView,
+  GameDetails,
+  GamePlayProofModal,
   MainControlButtons,
   useAuthErrorToastRequest,
   useCoinflipGame,
@@ -13,7 +15,7 @@ import {
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
-import { useIsClient } from '@orisirisi/orisirisi-web-ui';
+import { useIsClient, useWindowTitle } from '@orisirisi/orisirisi-web-ui';
 
 export default function GamePage() {
   const isClient = useIsClient();
@@ -24,6 +26,7 @@ export default function GamePage() {
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
   const id = parseInteger(query.id as string);
+  useWindowTitle(`Coinflip - Game #${id}`);
   const chainId = parseInteger(query.chain_id as string);
 
   if (isClient && id && !chainId) {
@@ -55,21 +58,26 @@ export default function GamePage() {
 
   return (
     <>
-      <div className="text-white mt-4">
-        <div className="flex justify-between">
-          <h2 className="text-xl">GAME #{id}</h2>
-          <div className="w-4">
-            <ChainLogo chain={game.getChain()} />
+      <GamePlayProofModal />
+      <div className="px-8 md:px-20 lg:px-60 text-white mb-48">
+        <div className="mt-4">
+          <div className="flex justify-between mb-4">
+            <h2 className="text-2xl">GAME #{id}</h2>
+            <div className="w-4">
+              <ChainLogo chain={game.getChain()} />
+            </div>
           </div>
+          <GameDetails game={game} />
         </div>
-        <GamePageTabs
-          currentWeb3Account={currentWeb3Account}
-          game={game}
-          gameActivities={gameActivities}
-        />
-      </div>
 
-      <ExploreOtherGamesView gameId={game.id} className="mt-20" />
+        <GameActivitiesView
+          gameActivities={gameActivities}
+          game={game}
+          currentWeb3Account={currentWeb3Account}
+        />
+
+        <ExploreOtherGamesView gameId={game.id} className="mt-28" />
+      </div>
 
       {game.isOngoing() && <CopyGameLinkButton className="fixed bottom-20" />}
       <MainControlButtons

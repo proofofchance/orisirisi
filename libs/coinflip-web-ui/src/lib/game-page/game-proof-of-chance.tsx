@@ -1,37 +1,30 @@
-import { DocumentIcon } from '@heroicons/react/24/solid';
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
-import { shortenPublicAddress } from '../../data-utils';
-import { Modal } from '../../modals';
+import { shortenPublicAddress } from '../data-utils';
+import { DocumentIcon } from '@heroicons/react/24/solid';
 import { atom, useAtom } from 'jotai';
+import { Modal } from '../modals';
 
-export function GameProofOfChances({
-  gameId,
-  proofOfChances,
+export function UnrevealedGameProofOfChance({
+  playerAddress,
+  ...rest
 }: {
-  gameId: number;
-  proofOfChances: PublicProofOfChance[] | null;
+  playerAddress: string;
+} & {
+  [key: `data-${string}`]: unknown;
 }) {
-  if (!proofOfChances)
-    return (
-      <p className="text-center mt-6 self-center">
-        All the play proofs will be listed here after all uploads is complete.
-      </p>
-    );
   return (
-    <>
-      <GamePlayProofModal />
-      <div className="flex gap-4 mt-4">
-        {proofOfChances.map((proofOfChance, i) => (
-          <GameProofOfChance
-            key={i}
-            gameId={gameId}
-            proofOfChance={proofOfChance}
-          />
-        ))}
-      </div>
-    </>
+    <div
+      className="flex flex-col items-center cursor-not-allowed opacity-70"
+      {...rest}
+    >
+      <DocumentIcon className="text-gray-400 h-20 hover:h-24 transition duration-150 ease-in-out" />
+      <span className="text-xs">
+        {shortenPublicAddress(playerAddress)}'s proof
+      </span>
+    </div>
   );
 }
+
 export function GameProofOfChance({
   gameId,
   proofOfChance,
@@ -40,8 +33,9 @@ export function GameProofOfChance({
   proofOfChance: PublicProofOfChance;
 }) {
   const { openModal } = useGamePlayProofModal();
+
   return (
-    <div className="flex flex-col cursor-pointer">
+    <div className="flex flex-col items-center cursor-pointer">
       <DocumentIcon
         onClick={() => openModal(proofOfChance)}
         style={{
@@ -68,7 +62,7 @@ function useGamePlayProofModal() {
     closeModal,
   };
 }
-function GamePlayProofModal() {
+export function GamePlayProofModal() {
   const { showModal, proof, closeModal } = useGamePlayProofModal();
 
   if (!proof) return null;

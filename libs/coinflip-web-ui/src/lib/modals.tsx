@@ -29,14 +29,14 @@ export function Modal(props: ModalProps) {
       <div
         onClick={close}
         className={cn(
-          'w-[100vw] h-[100vh] absolute top-0 left-0 z-10 bg-slate-900 opacity-40 cursor-pointer',
+          'w-[100vw] h-[100vh] fixed top-0 left-0 z-10 bg-slate-900 opacity-40 cursor-pointer',
           props.overlayClassName
         )}
       ></div>
       <div
         data-id="modal"
         className={cn(
-          'bg-[#F4F5F7] absolute z-20 rounded-2xl px-8 py-6 text-[#181C25]',
+          'bg-[#F4F5F7] fixed z-20 rounded-2xl px-8 py-6 text-[#181C25]',
           props.className
         )}
       >

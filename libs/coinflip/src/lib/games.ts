@@ -12,6 +12,11 @@ export class Game {
   static minPossiblePlayers = 2;
   static maxPossiblePlayers = 20;
 
+  public readonly proofOfChanceByPlayerAddress: Map<
+    string,
+    PublicProofOfChance
+  > = new Map();
+
   private constructor(
     public id: number,
     public chain_id: number,
@@ -26,7 +31,8 @@ export class Game {
     public unavailable_coin_side: CoinSide | null,
     public is_awaiting_my_chance_reveal: boolean | null,
     public my_game_play_id: number | null,
-    public public_proof_of_chances: PublicProofOfChance[] | null
+    public public_proof_of_chances: PublicProofOfChance[] | null,
+    public chances_revealed_at: number | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -41,6 +47,11 @@ export class Game {
   }
 
   getExpiryTimestampMs = () => this.expiry_timestamp * 1000;
+
+  hasAllProofsUploaded = () => this.chances_revealed_at !== null;
+
+  getProofOfChanceByPlayerAddress = (playerAddress: string) =>
+    this.proofOfChanceByPlayerAddress.get(playerAddress) || null;
 
   isOngoing(): boolean {
     return this.status === 'ongoing';
@@ -64,6 +75,9 @@ export class Game {
     const game = Object.assign(new Game(), json);
     game.public_proof_of_chances = PublicProofOfChance.manyfromJSON(
       game.public_proof_of_chances
+    );
+    game.public_proof_of_chances?.forEach((poc) =>
+      game.proofOfChanceByPlayerAddress.set(poc.player_address, poc)
     );
     return game;
   }
@@ -110,12 +124,17 @@ export class GameActivity {
       | 'game_created'
       | 'game_play_created'
       | 'game_play_chance_revealed',
-    public block_timestamp: number,
+    public occurred_at: number,
     public transaction_hash: string
   ) {}
 
+  isGameCreatedKind = () => this.kind === 'game_created';
+  isGamePlayCreatedKind = () => this.kind === 'game_play_created';
+  isGamePlayChanceRevealedKind = () =>
+    this.kind === 'game_play_chance_revealed';
+
   getPlayCreatedData = () => this.data as GamePlayCreatedActivityData;
-  getBlockTimestampMs = () => this.block_timestamp * 1000;
+  getOccurredAtMs = () => this.occurred_at * 1000;
 
   static fromJSON(json: GameActivity): GameActivity {
     // @ts-ignore
