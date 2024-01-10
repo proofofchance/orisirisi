@@ -36,8 +36,7 @@ contract Coinflip is
         address creator,
         uint wager
     );
-
-    event NewGameWinner(uint gameID, address winner);
+    event NewGameOutcome(uint gameID, Coin.Side outcome);
 
     uint public minWager;
     uint16 public maxPossibleGamePlayCount;
@@ -155,7 +154,6 @@ contract Coinflip is
         }
         address[] memory winners = players[gameID][outcomes[gameID]];
         creditGameWinners(gameID, winners);
-        announceGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
     }
 
@@ -201,15 +199,6 @@ contract Coinflip is
         );
     }
 
-    function announceGameWinners(
-        uint gameID,
-        address[] memory winners
-    ) private {
-        for (uint16 i = 0; i < winners.length; i++) {
-            emit NewGameWinner(gameID, winners[i]);
-        }
-    }
-
     function setMaxPossibleGamePlayCount(
         uint16 maxPossibleGamePlayCount_
     ) external onlyOwner {
@@ -228,6 +217,9 @@ contract Coinflip is
     }
 
     function updateGameOutcome(uint gameID, string memory chance) private {
-        outcomes[gameID] = Coin.flip(Game.getEntropy(chance));
+        Coin.Side outcome = Coin.flip(Game.getEntropy(chance));
+        outcomes[gameID] = outcome;
+
+        emit NewGameOutcome(gameID, outcome);
     }
 }
