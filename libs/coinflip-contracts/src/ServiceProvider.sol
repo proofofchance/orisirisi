@@ -4,7 +4,11 @@ pragma solidity ^0.8.23;
 import './Ownable.sol';
 
 contract ServiceProvider is Ownable {
-    uint8 private serviceChargePercent = 2; // in percentage
+    // due to charges for the minimum wager allowed
+    // expected to be high due to the gas fee for the minimum wager
+    // initialServiceCharges (at deployment):
+    // If transaction fee is $6
+    uint8 private serviceChargePercent = 8;
 
     error InvalidServiceChargePercent();
 
