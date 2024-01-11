@@ -60,6 +60,9 @@ export class Game {
   isExpired(): boolean {
     return this.status === 'expired';
   }
+  isNotCompleteYet(): boolean {
+    return !this.isCompleted();
+  }
   isCompleted(): boolean {
     return this.status === 'completed';
   }

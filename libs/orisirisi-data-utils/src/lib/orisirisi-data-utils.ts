@@ -101,6 +101,7 @@ export class Countdown {
     return new Countdown(daysLeft, hoursLeft, minutesLeft, secondsLeft);
   }
 
+  isNotFinished = () => !this.isFinished();
   isFinished = () =>
     this.daysLeft === 0 &&
     this.hoursLeft === 0 &&

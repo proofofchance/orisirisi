@@ -16,7 +16,7 @@ export function GameDetails({ game }: { game: CoinflipGame }) {
           game.wager_usd
         )}`}
       />
-      {(game.isOngoing() || !gameExpiryCountdown.isFinished()) && (
+      {game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished() && (
         <GameDetailRow
           label="Time left to participate"
           detail={<GameExpiryCountdown countdown={gameExpiryCountdown} />}
