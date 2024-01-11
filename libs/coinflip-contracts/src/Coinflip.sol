@@ -36,7 +36,7 @@ contract Coinflip is
         address creator,
         uint wager
     );
-    event NewGameOutcome(uint gameID, Coin.Side outcome);
+    event NewGameOutcome(uint gameID, Coin.Side coinSide);
 
     uint public minWager;
     uint16 public maxPossibleGamePlayCount;
@@ -143,6 +143,7 @@ contract Coinflip is
         }
         require(gamePlayIDs.length == chanceAndSalts.length);
 
+        Coin.Side outcome;
         for (uint16 i = 0; i < gamePlayIDs.length; i++) {
             bytes memory chanceAndSalt = chanceAndSalts[i];
             string memory chance = createGamePlayChance(
@@ -150,11 +151,13 @@ contract Coinflip is
                 gamePlayIDs[i],
                 chanceAndSalt
             );
-            updateGameOutcome(gameID, chance);
+            outcome = Coin.flip(Game.getEntropy(chance));
         }
+        outcomes[gameID] = outcome;
         address[] memory winners = players[gameID][outcomes[gameID]];
         creditGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
+        emit NewGameOutcome(gameID, outcome);
     }
 
     function creditExpiredGamePlayers(
@@ -214,12 +217,5 @@ contract Coinflip is
 
     function payGameWager(uint gameID, uint wager) private {
         wallets.transferToGameWallet(gameID, msg.sender, wager);
-    }
-
-    function updateGameOutcome(uint gameID, string memory chance) private {
-        Coin.Side outcome = Coin.flip(Game.getEntropy(chance));
-        outcomes[gameID] = outcome;
-
-        emit NewGameOutcome(gameID, outcome);
     }
 }
