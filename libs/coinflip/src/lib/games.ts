@@ -32,7 +32,7 @@ export class Game {
     public is_awaiting_my_chance_reveal: boolean | null,
     public my_game_play_id: number | null,
     public public_proof_of_chances: PublicProofOfChance[] | null,
-    public chances_revealed_at: number | null
+    public completed_at: number | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -47,8 +47,6 @@ export class Game {
   }
 
   getExpiryTimestampMs = () => this.expiry_timestamp * 1000;
-
-  hasAllProofsUploaded = () => this.chances_revealed_at !== null;
 
   getProofOfChanceByPlayerAddress = (playerAddress: string) =>
     this.proofOfChanceByPlayerAddress.get(playerAddress) || null;
