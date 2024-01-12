@@ -36,6 +36,11 @@ contract Coinflip is
         address creator,
         uint wager
     );
+    event GamePlayChanceRevealed(
+        uint gameID,
+        uint16 gamePlayID,
+        bytes chanceAndSalt
+    );
     // Completed means the players completed all the actions
     // required to deduce the game outcome.
     // Whereas GameConcluded means it is either completed or expired
@@ -149,12 +154,20 @@ contract Coinflip is
         Coin.Side outcome;
         for (uint16 i = 0; i < gamePlayIDs.length; i++) {
             bytes memory chanceAndSalt = chanceAndSalts[i];
-            string memory chance = createGamePlayChance(
-                gameID,
-                gamePlayIDs[i],
-                chanceAndSalt
+            uint16 gamePlayID = gamePlayIDs[i];
+
+            if (sha256(chanceAndSalt) != proofOfChances[gameID][gamePlayID]) {
+                revert InvalidPlayChance();
+            }
+
+            (string memory chance, ) = abi.decode(
+                chanceAndSalt,
+                (string, string)
             );
+
             outcome = Coin.flip(Game.getEntropy(chance));
+
+            emit GamePlayChanceRevealed(gameID, gamePlayID, chanceAndSalt);
         }
         outcomes[gameID] = outcome;
         address[] memory winners = players[gameID][outcomes[gameID]];

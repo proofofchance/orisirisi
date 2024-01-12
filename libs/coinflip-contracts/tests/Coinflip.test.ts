@@ -154,19 +154,20 @@ describe('revealChancesAndCreditWinners', () => {
           }
         );
 
-      await coinflipContract.revealChancesAndCreditWinners(
-        gameId,
-        [1, 2],
-        [firstPlayerPOC.getChanceAndSalt(), secondPlayerPOC.getChanceAndSalt()]
-      );
-
-      expect(await coinflipContract.playChances(gameId, 1)).to.equal(
-        firstPlayerPOC.chance
-      );
-
-      expect(await coinflipContract.playChances(gameId, 2)).to.equal(
-        secondPlayerPOC.chance
-      );
+      await expect(
+        coinflipContract.revealChancesAndCreditWinners(
+          gameId,
+          [1, 2],
+          [
+            firstPlayerPOC.getChanceAndSalt(),
+            secondPlayerPOC.getChanceAndSalt(),
+          ]
+        )
+      )
+        .to.emit(coinflipContract, 'GamePlayChanceRevealed')
+        .withArgs(1, 1, firstPlayerPOC.getChanceAndSalt())
+        .and.to.emit(coinflipContract, 'GamePlayChanceRevealed')
+        .withArgs(1, 2, secondPlayerPOC.getChanceAndSalt());
     });
   });
 });

@@ -11,8 +11,6 @@ contract GamePlays {
 
     mapping(uint gameID => mapping(uint16 playID => bytes32 proofOfChance))
         public proofOfChances;
-    mapping(uint gameID => mapping(uint16 playID => string chance))
-        public playChances;
 
     mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
     mapping(uint gameID => address[] player) allPlayers;
@@ -32,26 +30,6 @@ contract GamePlays {
         address player,
         bytes32 proofOfChance
     );
-
-    event GamePlayChanceRevealed(
-        uint16 gamePlayID,
-        uint gameID,
-        address player,
-        string chance
-    );
-
-    // TODO: Check for vulnerability due to zero IDs
-    modifier mustBeValidChance(
-        uint gameID,
-        uint16 gamePlayID,
-        bytes memory chanceAndSalt
-    ) {
-        if (sha256(chanceAndSalt) != proofOfChances[gameID][gamePlayID]) {
-            revert InvalidPlayChance();
-        }
-
-        _;
-    }
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
         uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
@@ -102,24 +80,6 @@ contract GamePlays {
             msg.sender,
             proofOfChance
         );
-    }
-
-    function createGamePlayChance(
-        uint gameID,
-        uint16 gamePlayID,
-        bytes memory chanceAndSalt
-    )
-        internal
-        mustBeValidChance(gameID, gamePlayID, chanceAndSalt)
-        returns (string memory chance_)
-    {
-        (string memory chance, ) = abi.decode(chanceAndSalt, (string, string));
-
-        playChances[gameID][gamePlayID] = chance;
-
-        emit GamePlayChanceRevealed(gamePlayID, gameID, msg.sender, chance);
-
-        return chance;
     }
 
     function getAvailableCoinSide(
