@@ -22,7 +22,7 @@ export function MainButton({
       <button
         onClick={(e) => !disabled && onClick?.(e)}
         className={cn(
-          'bg-transparent text-white hover:bg-white hover:text-black fill-current focus:outline-none border-[1px] border-white w-24 h-24 flex justify-center items-center rounded-full shadow-md',
+          'bg-white text-black hover:bg-slate-200 fill-current focus:outline-none border-[1px] border-white w-24 h-24 flex justify-center items-center rounded-full shadow-md',
           disabled && 'opacity-60 cursor-not-allowed'
         )}
         data-tooltip-id={tooltipId}
