@@ -24,8 +24,8 @@ contract GamePlays {
     error AlreadyPlayedError(uint gameID, uint16 playID);
 
     event GamePlayCreated(
-        uint16 gamePlayID,
         uint gameID,
+        uint16 gamePlayID,
         Coin.Side coinSide,
         address player,
         bytes32 proofOfChance
