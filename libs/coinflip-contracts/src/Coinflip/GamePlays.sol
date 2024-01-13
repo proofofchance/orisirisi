@@ -74,8 +74,8 @@ contract GamePlays {
         incrementPlayCount(gameID);
 
         emit GamePlayCreated(
-            gamePlayID,
             gameID,
+            gamePlayID,
             coinSide,
             msg.sender,
             proofOfChance
