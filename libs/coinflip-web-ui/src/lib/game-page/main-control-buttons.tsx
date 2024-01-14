@@ -28,7 +28,7 @@ export function MainControlButtons({
 
   const currentWeb3Provider = useCurrentWeb3Provider();
 
-  const renderMainButton = () => {
+  const getMainButton = () => {
     if (currentWeb3Account && game.is_awaiting_my_chance_reveal) {
       return (
         <UploadProofMainButton
@@ -66,16 +66,22 @@ export function MainControlButtons({
       );
     }
 
-    return (
-      <MainButton
-        onClick={() =>
-          push(`/games/${game.id}/prove?chain_id=${game.chain_id}`)
-        }
-        icon={<ShieldCheckIcon className="h-8" />}
-        label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}
-      />
-    );
+    return null;
+    // TODO: Maybe add back if we need a slide show for proving more intuitively
+    // (
+    //   <MainButton
+    //     onClick={() =>
+    //       push(`/games/${game.id}/prove?chain_id=${game.chain_id}`)
+    //     }
+    //     icon={<ShieldCheckIcon className="h-8" />}
+    //     label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}
+    //   />
+    // );
   };
+
+  const mainButton = getMainButton();
+
+  if (!mainButton) return null;
 
   return (
     <div
@@ -88,7 +94,7 @@ export function MainControlButtons({
         <button>
           <ChevronLeftIcon className="h-8" />
         </button>
-        {renderMainButton()}
+        {mainButton}
         <button>
           <ChevronRightIcon className="h-8" />
         </button>
