@@ -44,7 +44,11 @@ contract Coinflip is
     // Completed means the players completed all the actions
     // required to deduce the game outcome.
     // Whereas GameConcluded means it is either completed or expired
-    event GameCompleted(uint gameID, Coin.Side coinSide);
+    event GameCompleted(
+        uint gameID,
+        Coin.Side coinSide,
+        uint amountForEachWinner
+    );
 
     uint public minWager;
     uint16 public maxPossibleGamePlayCount;
@@ -171,9 +175,9 @@ contract Coinflip is
         }
         outcomes[gameID] = outcome;
         address[] memory winners = players[gameID][outcomes[gameID]];
-        creditGameWinners(gameID, winners);
+        uint amountForEachWinner = creditGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
-        emit GameCompleted(gameID, outcome);
+        emit GameCompleted(gameID, outcome, amountForEachWinner);
     }
 
     function creditExpiredGamePlayers(
@@ -199,7 +203,10 @@ contract Coinflip is
         setGameStatusAsConcluded(gameID);
     }
 
-    function creditGameWinners(uint gameID, address[] memory winners) private {
+    function creditGameWinners(
+        uint gameID,
+        address[] memory winners
+    ) private returns (uint amountForEachWinner) {
         uint gameWager = getGameWager(gameID);
         uint totalWager = gameWager * playCounts[gameID];
 
@@ -216,6 +223,8 @@ contract Coinflip is
             winners,
             amountForEachPlayer
         );
+
+        return amountForEachPlayer;
     }
 
     function setMaxPossibleGamePlayCount(
