@@ -32,7 +32,9 @@ export class Game {
     public is_awaiting_my_chance_reveal: boolean | null,
     public my_game_play_id: number | null,
     public public_proof_of_chances: PublicProofOfChance[] | null,
-    public completed_at: number | null
+    public outcome: CoinSide | null,
+    public completed_at: number | null,
+    public game_plays: GamePlay[] | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -47,6 +49,8 @@ export class Game {
   }
 
   getExpiryTimestampMs = () => this.expiry_timestamp * 1000;
+  getCompletedAtMs = () =>
+    this.completed_at ? this.completed_at * 1000 : null;
 
   getProofOfChanceByPlayerAddress = (playerAddress: string) =>
     this.proofOfChanceByPlayerAddress.get(playerAddress) || null;
@@ -80,6 +84,7 @@ export class Game {
     game.public_proof_of_chances?.forEach((poc) =>
       game.proofOfChanceByPlayerAddress.set(poc.player_address, poc)
     );
+    game.game_plays = GamePlay.manyFromJSON(game.game_plays);
     return game;
   }
 
@@ -145,5 +150,28 @@ export class GameActivity {
   static manyFromJSON(jsonList: GameActivity[]): GameActivity[] {
     // Use the class name directly to avoid referencing caller's scope
     return jsonList.map(GameActivity.fromJSON);
+  }
+}
+
+export type GamePlayStatus = 'pending' | 'won' | 'lost' | 'expired';
+export class GamePlay {
+  constructor(
+    public id: number,
+    public game_id: number,
+    public chain_id: number,
+    public player_address: string,
+    public proof_of_chance: string,
+    public chance_and_salt: string | null,
+    public status: GamePlayStatus
+  ) {}
+
+  static fromJSON(json: GamePlay): GamePlay {
+    // @ts-ignore
+    return Object.assign(new GamePlay(), json);
+  }
+  static manyFromJSON(jsonList: GamePlay[] | null): GamePlay[] | null {
+    if (!jsonList) return null;
+    // Use the class name directly to avoid referencing caller's scope
+    return jsonList.map(GamePlay.fromJSON);
   }
 }

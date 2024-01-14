@@ -15,8 +15,11 @@ export function oppositeCoinSide(coinSide: CoinSide): CoinSide {
   }
 }
 
-export function coinSideToString(coinSide: CoinSide): string {
+export function coinSideToString(coinSide: CoinSide | null): string | null {
   switch (coinSide) {
+    case null:
+      return null;
+
     case CoinSide.Head:
       return 'Head';
 

@@ -1,5 +1,6 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import {
+  CoinSide,
   CoinflipGame,
   CoinflipGameActivity,
   CoinflipGameStatus,
@@ -13,6 +14,8 @@ import {
   UnrevealedGameProofOfChance,
 } from './game-proof-of-chance';
 import { shortenPublicAddress } from '../data-utils';
+import styled from 'styled-components';
+import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 
 export function GameActivitiesView({
   gameActivities,
@@ -30,10 +33,16 @@ export function GameActivitiesView({
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
       {/* TODO: GameStatus Activity for a Completed Game  */}
-      <GameStatusActivity
-        status={game.status}
-        expiryTimestamp={game.getExpiryTimestampMs()}
-      />
+      {game.isCompleted() ? (
+        <GameCompletedActivity game={game} />
+      ) : (
+        <GameStatusActivity
+          status={game.status}
+          expiryTimestampMs={game.getExpiryTimestampMs()}
+          completedAtMs={game.getCompletedAtMs()}
+        />
+      )}
+
       {gameActivities.map((gameActivity, i) => {
         const maybeProofOfChance = game.getProofOfChanceByPlayerAddress(
           gameActivity.trigger_public_address
@@ -71,12 +80,75 @@ export function GameActivitiesView({
   );
 }
 
+function GameCompletedActivity({ game }: { game: CoinflipGame }) {
+  return (
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all mt-2">
+      <h3 className="text-xl">Game Result</h3>
+      <Coin className="self-center" side={game.outcome} />
+    </div>
+  );
+}
+
+function Coin({
+  side,
+  className,
+}: { side: CoinSide | null } & PropsWithClassName) {
+  const [isFlipping, setIsFlipping] = useState(true);
+
+  useEffect(() => {
+    if (isFlipping) {
+      const FLIP_ANIMATION_MS = 2 * 1000;
+
+      const timeoutId = setTimeout(() => {
+        setIsFlipping(false);
+      }, FLIP_ANIMATION_MS);
+
+      return () => {
+        clearInterval(timeoutId);
+      };
+    }
+  }, [isFlipping, setIsFlipping]);
+
+  return (
+    <CoinShell onClick={() => setIsFlipping(true)} className={className}>
+      <div
+        className={cn(
+          'bg-slate-400 w-14 h-14 flex justify-center items-center text-black rounded-full',
+          isFlipping && 'animate-flip'
+        )}
+      >
+        <div className="bg-white w-12 h-12 flex justify-center items-center text-black rounded-full text-sm">
+          {isFlipping ? '~' : coinSideToString(side)}
+        </div>
+      </div>
+    </CoinShell>
+  );
+}
+
+const CoinShell = styled.div`
+  @keyframes flip {
+    from {
+      transform: rotateX(0);
+    }
+    to {
+      transform: rotateX(180deg);
+    }
+  }
+
+  .animate-flip {
+    /* animation: flip 2s linear infinite; */
+    animation: flip 0.25s ease-in-out infinite;
+    animation-fill-mode: forwards;
+  }
+`;
+
 function GameStatusActivity({
   status,
-  expiryTimestamp,
+  expiryTimestampMs,
 }: {
   status: CoinflipGameStatus;
-  expiryTimestamp: number;
+  expiryTimestampMs: number;
+  completedAtMs: number | null;
 }) {
   const getReportAndTimestamp = () => {
     switch (status) {
@@ -86,7 +158,7 @@ function GameStatusActivity({
           new Date().toLocaleString(),
         ];
       case 'expired':
-        return ['Game expired!', new Date(expiryTimestamp).toLocaleString()];
+        return ['Game expired!', new Date(expiryTimestampMs).toLocaleString()];
       case 'awaiting_revealed_chances':
         return [
           'Awaiting proof uploads from all players...',
