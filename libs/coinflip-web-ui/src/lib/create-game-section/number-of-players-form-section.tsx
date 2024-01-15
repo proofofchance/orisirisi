@@ -38,8 +38,8 @@ export function NumberOfPlayersFormSection() {
 }
 
 export class NumberOfPlayers {
-  private static min = CoinflipGame.minPossiblePlayers;
-  private static max = CoinflipGame.maxPossiblePlayers;
+  private static min = CoinflipGame.minNumberOfPlayers;
+  private static max = CoinflipGame.maxNumberOfPlayers;
   private static delimiter = ' ';
   private static suffix = 'Players';
   private constructor(public value: number) {}

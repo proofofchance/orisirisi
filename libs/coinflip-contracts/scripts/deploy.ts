@@ -44,7 +44,7 @@ export async function deployCoinflipContracts() {
     args: [
       walletsAddress,
       serviceProviderAddress,
-      CoinflipGame.maxPossiblePlayers,
+      CoinflipGame.maxNumberOfPlayers,
       parseEther(CoinflipGame.getMinWagerEth().toString()),
     ],
   });

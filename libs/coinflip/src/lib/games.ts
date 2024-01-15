@@ -9,8 +9,8 @@ export type GameStatus =
   | 'completed';
 
 export class Game {
-  static minPossiblePlayers = 2;
-  static maxPossiblePlayers = 20;
+  static minNumberOfPlayers = 2;
+  static maxNumberOfPlayers = 20;
 
   public readonly proofOfChanceByPlayerAddress: Map<
     string,
@@ -25,7 +25,6 @@ export class Game {
     public max_possible_win_usd: number,
     public players_left: number,
     public total_players_required: number,
-    public max_play_count: number,
     public expiry_timestamp: number,
     public status: GameStatus,
     public unavailable_coin_side: CoinSide | null,
@@ -90,13 +89,15 @@ export class Game {
 
   // This calculated such that initial service percent, 2% is balances the min gas fee at that time
   // The service charge per contract will then be adjusted as the gas prices aberrate
-  static getMinWagerEth(chainId: ChainID = ChainID.Ethereum): number {
+  static getMinWagerEth(chainId: ChainID = ChainID.BNB): number {
     switch (chainId) {
       case ChainID.Local:
       case ChainID.LocalAlt:
       case ChainID.SepoliaTestNet:
-      case ChainID.Ethereum:
+        // case ChainID.Ethereum:
         return 0.04;
+      case ChainID.BNB:
+        return 1;
       case ChainID.Polygon:
         return 1;
     }
@@ -121,16 +122,18 @@ interface GamePlayCreatedActivityData {
   public_hash: string;
 }
 
+type GameActivityKind =
+  | 'game_created'
+  | 'game_play_created'
+  | 'game_play_chance_revealed';
+
 export class GameActivity {
   constructor(
     public id: number,
     public game_id: number,
     public trigger_public_address: string,
     public data: GamePlayCreatedActivityData | Record<string, never>,
-    public kind:
-      | 'game_created'
-      | 'game_play_created'
-      | 'game_play_chance_revealed',
+    public kind: GameActivityKind,
     public occurred_at: number,
     public transaction_hash: string
   ) {}
@@ -142,6 +145,13 @@ export class GameActivity {
 
   getPlayCreatedData = () => this.data as GamePlayCreatedActivityData;
   getOccurredAtMs = () => this.occurred_at * 1000;
+
+  static countActivityKind(
+    activities: GameActivity[],
+    kind: GameActivityKind
+  ): number {
+    return activities.filter((a) => a.kind === kind).length;
+  }
 
   static fromJSON(json: GameActivity): GameActivity {
     // @ts-ignore
