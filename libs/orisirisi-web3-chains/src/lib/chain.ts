@@ -1,8 +1,8 @@
 export enum ChainID {
   // Arbitrum = 42161,
   // Avalanche = 43114,
-  // BNB = 56,
-  Ethereum = 1,
+  BNB = 56,
+  // Ethereum = 1,
   Local = 31337,
   LocalAlt = 1337,
   // Optimism = 10,
@@ -21,10 +21,10 @@ export class Chain {
       //   return 'ARB';
       // case ChainID.Avalanche:
       //   return 'AVAX';
-      // case ChainID.BNB:
-      //   return 'BNB';
-      case ChainID.Ethereum:
-        return 'ETH';
+      case ChainID.BNB:
+        return 'BNB';
+      // case ChainID.Ethereum:
+      // return 'ETH';
       case ChainID.Local:
       case ChainID.LocalAlt:
         return 'LocalETH';
