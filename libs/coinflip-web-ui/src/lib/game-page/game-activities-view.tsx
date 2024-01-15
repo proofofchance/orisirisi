@@ -26,6 +26,36 @@ export function GameActivitiesView({
   currentWeb3Account: Web3Account | null;
   game: CoinflipGame;
 }) {
+  const topActivityView = () => {
+    if (game.isCompleted()) return <GameCompletedActivity game={game} />;
+
+    if (
+      !game.isCompleted() &&
+      CoinflipGameActivity.countActivityKind(
+        gameActivities,
+        'game_play_chance_revealed'
+      ) === game.total_players_required
+    )
+      return (
+        <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
+          <p className="text-sm m-2">Game Coin is currently flipping.</p>
+
+          <Coin side={null} flipInfinitely className="self-center" />
+
+          <p className="text-sm self-end mt-6 mb-2">
+            The outcome will be shown in any moment from now...
+          </p>
+        </div>
+      );
+
+    return (
+      <GameStatusActivity
+        status={game.status}
+        expiryTimestampMs={game.getExpiryTimestampMs()}
+        completedAtMs={game.getCompletedAtMs()}
+      />
+    );
+  };
   return (
     <>
       <h3 className="text-2xl mt-8 mb-6">Activities</h3>
@@ -33,15 +63,7 @@ export function GameActivitiesView({
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
       {/* TODO: GameStatus Activity for a Completed Game  */}
-      {game.isCompleted() ? (
-        <GameCompletedActivity game={game} />
-      ) : (
-        <GameStatusActivity
-          status={game.status}
-          expiryTimestampMs={game.getExpiryTimestampMs()}
-          completedAtMs={game.getCompletedAtMs()}
-        />
-      )}
+      {topActivityView()}
 
       {gameActivities.map((gameActivity, i) => {
         const maybeProofOfChance = game.getProofOfChanceByPlayerAddress(
@@ -82,7 +104,7 @@ export function GameActivitiesView({
 
 function GameCompletedActivity({ game }: { game: CoinflipGame }) {
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all mt-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
       <h3 className="text-xl">Game Result</h3>
       <Coin className="self-center" side={game.outcome} />
     </div>
@@ -92,11 +114,12 @@ function GameCompletedActivity({ game }: { game: CoinflipGame }) {
 function Coin({
   side,
   className,
-}: { side: CoinSide | null } & PropsWithClassName) {
+  flipInfinitely = false,
+}: { side: CoinSide | null; flipInfinitely?: boolean } & PropsWithClassName) {
   const [isFlipping, setIsFlipping] = useState(true);
 
   useEffect(() => {
-    if (isFlipping) {
+    if (isFlipping && !flipInfinitely) {
       const FLIP_ANIMATION_MS = 2 * 1000;
 
       const timeoutId = setTimeout(() => {
@@ -107,7 +130,7 @@ function Coin({
         clearInterval(timeoutId);
       };
     }
-  }, [isFlipping, setIsFlipping]);
+  }, [isFlipping, flipInfinitely, setIsFlipping]);
 
   return (
     <CoinShell onClick={() => setIsFlipping(true)} className={className}>
@@ -175,7 +198,7 @@ function GameStatusActivity({
   const [report, timestamp] = reportAndTimestamp;
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all mt-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
       <p className="pb-4">{report}</p>
       <span className="text-xs self-end">{timestamp}</span>
     </div>
@@ -239,7 +262,7 @@ function GameActivity({
   ).toLocaleString();
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all my-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all my-2">
       <p className="pb-4">{getReport()}</p>
       {children}
       <span className="mt-2 text-xs self-end">{activityReadableTimestamp}</span>
