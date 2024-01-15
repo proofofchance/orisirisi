@@ -51,19 +51,19 @@ contract Coinflip is
     );
 
     uint public minWager;
-    uint16 public maxPossibleGamePlayCount;
-    error MaxPossibleGamePlayCountError(uint16 maxPossibleGamePlayCount);
+    uint16 public maxNumberOfPlayers;
+    error MaxNumberOfPlayersError();
     error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
 
     constructor(
         address payable _wallets,
         address _serviceProvider,
-        uint16 _maxPossibleGamePlayCount,
+        uint16 _maxNumberOfPlayers,
         uint _minWager
     ) {
         wallets = Wallets(_wallets);
         serviceProvider = ServiceProvider(_serviceProvider);
-        maxPossibleGamePlayCount = _maxPossibleGamePlayCount;
+        maxNumberOfPlayers = _maxNumberOfPlayers;
         minWager = _minWager;
     }
 
@@ -76,34 +76,34 @@ contract Coinflip is
     /// be later revealed
     function createGame(
         uint wager,
-        uint16 maxGamePlayCount,
+        uint16 numberOfPlayers,
         uint expiryTimestamp,
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) external payable mustBeOperational {
         console.log('Wager %s', wager);
 
-        if (maxGamePlayCount < Coin.TOTAL_SIDES_COUNT) {
+        if (numberOfPlayers < Coin.TOTAL_SIDES_COUNT) {
             revert MinimumPlayCountError();
         }
 
-        console.log('maxGamePlayCount %s', maxGamePlayCount);
+        console.log('numberOfPlayers %s', numberOfPlayers);
 
-        if (maxGamePlayCount > maxPossibleGamePlayCount) {
-            revert MaxPossibleGamePlayCountError(maxPossibleGamePlayCount);
+        if (numberOfPlayers > maxNumberOfPlayers) {
+            revert MaxNumberOfPlayersError();
         }
 
         uint newGameID = gamesCount + 1;
         maybeTopUpWallet();
         createGameWager(newGameID, wager);
         payGameWager(newGameID, wager);
-        setMaxGamePlayCount(newGameID, maxGamePlayCount);
+        setNumberOfPlayers(newGameID, numberOfPlayers);
         setGameStatusAsOngoing(newGameID, expiryTimestamp);
         gamesCount++;
 
         emit GameCreated(
             newGameID,
-            maxGamePlayCount,
+            numberOfPlayers,
             expiryTimestamp,
             msg.sender,
             wager
@@ -155,7 +155,7 @@ contract Coinflip is
         }
         require(gamePlayIDs.length == chanceAndSalts.length);
 
-        Coin.Side outcome;
+        uint8 flipOutcome = 0;
         for (uint16 i = 0; i < gamePlayIDs.length; i++) {
             bytes memory chanceAndSalt = chanceAndSalts[i];
             uint16 gamePlayID = gamePlayIDs[i];
@@ -164,15 +164,21 @@ contract Coinflip is
                 revert InvalidPlayChance();
             }
 
-            (string memory chance, ) = abi.decode(
-                chanceAndSalt,
-                (string, string)
-            );
+            (bytes16 chance, ) = abi.decode(chanceAndSalt, (bytes16, bytes8));
 
-            outcome = Coin.flip(Game.getEntropy(chance));
-
+            for (uint8 j = 0; j < 16; j++) {
+                bytes1 chance_character = chance[j];
+                if (chance_character == 0) {
+                    break;
+                }
+                flipOutcome++;
+                if (flipOutcome == 2) {
+                    flipOutcome = 0;
+                }
+            }
             emit GamePlayChanceRevealed(gameID, gamePlayID, chanceAndSalt);
         }
+        Coin.Side outcome = Coin.Side(flipOutcome);
         outcomes[gameID] = outcome;
         address[] memory winners = players[gameID][outcomes[gameID]];
         uint amountForEachWinner = creditGameWinners(gameID, winners);
@@ -227,10 +233,10 @@ contract Coinflip is
         return amountForEachPlayer;
     }
 
-    function setMaxPossibleGamePlayCount(
-        uint16 maxPossibleGamePlayCount_
+    function setMaxNumberOfPlayers(
+        uint16 maxNumberOfPlayers_
     ) external onlyOwner {
-        maxPossibleGamePlayCount = maxPossibleGamePlayCount_;
+        maxNumberOfPlayers = maxNumberOfPlayers_;
     }
 
     function maybeTopUpWallet() private {

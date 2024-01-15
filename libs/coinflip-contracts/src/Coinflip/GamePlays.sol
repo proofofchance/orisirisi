@@ -98,11 +98,8 @@ contract GamePlays {
         playCounts[gameID]++;
     }
 
-    function setMaxGamePlayCount(
-        uint gameID,
-        uint16 maxGameMovesCount
-    ) internal {
-        numberOfPlayersPerGame[gameID] = maxGameMovesCount;
+    function setNumberOfPlayers(uint gameID, uint16 numberOfPlayers) internal {
+        numberOfPlayersPerGame[gameID] = numberOfPlayers;
     }
 }
 
