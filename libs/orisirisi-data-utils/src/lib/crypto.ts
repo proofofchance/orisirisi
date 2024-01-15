@@ -1,10 +1,52 @@
 import * as crypto from 'crypto';
 
 export class Crypto {
+  static stringToHexString = (input: string, byteSize: number): string => {
+    if (isInBrowser) {
+      let byteArray = new TextEncoder().encode(input);
+      if (byteArray.length < byteSize) {
+        const zeroPadding = new Uint8Array(byteSize - byteArray.length);
+        byteArray = new Uint8Array([...byteArray, ...zeroPadding]);
+      }
+
+      return (
+        '0x' +
+        Array.from(byteArray)
+          .map((byte) => byte.toString(16).padStart(2, '0'))
+          .join('')
+      );
+    } else {
+      let buffer = Buffer.from(input, 'utf-8');
+      if (buffer.length < byteSize) {
+        const zeroPadding = Buffer.alloc(byteSize - buffer.length);
+        buffer = Buffer.concat([buffer, zeroPadding]);
+      }
+
+      return '0x' + buffer.toString('hex');
+    }
+  };
+  static getRandomHexString(size: number): string {
+    return (
+      '0x' +
+      [...Crypto.getRandomBytes(size)]
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('')
+    );
+  }
+  static hexStringToUtf8 = (hexString: string): string => {
+    const byteArray = Uint8Array.from(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    );
+    const text = new TextDecoder().decode(byteArray);
+    return text;
+  };
   static getRandomString(size: number): string {
+    return new TextDecoder().decode(Crypto.getRandomBytes(size));
+  }
+  static getRandomBytes(size: number): Uint8Array {
     const emptyBytes = new Uint8Array(size);
-    const randomBytes = window.crypto.getRandomValues(emptyBytes);
-    return new TextDecoder().decode(randomBytes);
+    return window.crypto.getRandomValues(emptyBytes);
   }
 }
 
@@ -52,5 +94,6 @@ function hexStringToBuffer(hexString: string): Uint8Array {
   return uint8Array;
 }
 
-const getCrypto = () =>
-  typeof window !== 'undefined' ? window.crypto : crypto.webcrypto;
+const getCrypto = () => (isInBrowser ? window.crypto : crypto.webcrypto);
+
+const isInBrowser = typeof window !== 'undefined';

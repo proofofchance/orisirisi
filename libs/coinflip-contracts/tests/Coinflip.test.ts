@@ -9,8 +9,9 @@ import {
 } from '@orisirisi/coinflip';
 import { WalletsContract } from '../src';
 import { Coinflip } from '../typechain-types';
-import { getRandomInteger } from '@orisirisi/orisirisi-data-utils';
+import { getRandomInteger, pickRandom } from '@orisirisi/orisirisi-data-utils';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
+import { anyValue } from '@nomicfoundation/hardhat-chai-matchers/withArgs';
 
 describe('createGame', () => {
   context('When using valid parameters', () => {
@@ -107,7 +108,7 @@ describe('playGame', () => {
           oppositeCoinSide(createGameParams.coinSide),
           await ProofOfChance.fromChance(
             'some-chance',
-            'random-salt'
+            getRandomSalt()
           ).getProofOfChance(),
           {
             value: createGameParams.wager,
@@ -126,8 +127,8 @@ describe('revealChancesAndCreditWinners', () => {
         await deployCoinflipContracts();
 
       const firstPlayerPOC = ProofOfChance.fromChance(
-        'first-player-chance-2',
-        'random-salt'
+        'chance-1',
+        getRandomSalt()
       );
       const createGameParams = (await CreateGameParams.new(coinflipContract))
         .withProofOfChance(await firstPlayerPOC.getProofOfChance())
@@ -140,8 +141,8 @@ describe('revealChancesAndCreditWinners', () => {
       const gameId = 1;
 
       const secondPlayerPOC = ProofOfChance.fromChance(
-        'some-chance',
-        'random-salt'
+        'chance-2',
+        getRandomSalt()
       );
       await coinflipContract
         .connect(secondPlayer)
@@ -169,6 +170,58 @@ describe('revealChancesAndCreditWinners', () => {
         .and.to.emit(coinflipContract, 'GamePlayChanceRevealed')
         .withArgs(1, 2, secondPlayerPOC.getChanceAndSalt());
     });
+
+    it('uses the total size of all chances to determine flip outcome', async () => {
+      const { coinflipContract, player: secondPlayer } =
+        await deployCoinflipContracts();
+
+      const firstChance = 'chance-1';
+      const firstPlayerPOC = ProofOfChance.fromChance(
+        firstChance,
+        getRandomSalt()
+      );
+      const createGameParams = (await CreateGameParams.new(coinflipContract))
+        .withProofOfChance(await firstPlayerPOC.getProofOfChance())
+        .withNumberOfPlayers(2);
+
+      await coinflipContract.createGame(...createGameParams.toArgs(), {
+        value: createGameParams.wager,
+      });
+
+      const gameId = 1;
+
+      const secondChance = 'chance-2';
+      const secondPlayerPOC = ProofOfChance.fromChance(
+        secondChance,
+        getRandomSalt()
+      );
+      await coinflipContract
+        .connect(secondPlayer)
+        .playGame(
+          gameId,
+          oppositeCoinSide(createGameParams.coinSide),
+          await secondPlayerPOC.getProofOfChance(),
+          {
+            value: createGameParams.wager,
+          }
+        );
+
+      const expectedOutcome: CoinSide =
+        (firstChance.length + secondChance.length) % 2;
+
+      await expect(
+        coinflipContract.revealChancesAndCreditWinners(
+          gameId,
+          [1, 2],
+          [
+            firstPlayerPOC.getChanceAndSalt(),
+            secondPlayerPOC.getChanceAndSalt(),
+          ]
+        )
+      )
+        .to.emit(coinflipContract, 'GameCompleted')
+        .withArgs(1, expectedOutcome, anyValue);
+    });
   });
 });
 
@@ -188,7 +241,7 @@ export async function deployCoinflipContracts() {
     [
       walletsAddress,
       serviceProviderContract.getAddress(),
-      CoinflipGame.maxPossiblePlayers,
+      CoinflipGame.maxNumberOfPlayers,
       parseEther(CoinflipGame.getMinWagerEth().toString()),
     ],
     deployer
@@ -221,8 +274,8 @@ class CreateGameParams {
       `${getRandomInteger(20, Math.ceil(CoinflipGame.getMinWagerEth()))}`
     );
     this.numberOfPlayers = getRandomInteger(
-      CoinflipGame.maxPossiblePlayers,
-      CoinflipGame.minPossiblePlayers
+      CoinflipGame.maxNumberOfPlayers,
+      CoinflipGame.minNumberOfPlayers
     );
     this.coinSide = getRandomCoinSide();
     this.proofOfChance =
@@ -251,3 +304,11 @@ class CreateGameParams {
     );
   }
 }
+
+const getRandomSalt = () =>
+  pickRandom([
+    '0x7131d177b1de6b6f',
+    '0x7131d177b1de5b2f',
+    '0x5131d177b1de6b6f',
+    '0x7141d177b1de6b6f',
+  ]);

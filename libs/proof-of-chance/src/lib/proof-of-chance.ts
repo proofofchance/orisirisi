@@ -10,11 +10,11 @@ export class PublicProofOfChance {
     public readonly chance_and_salt: HexString
   ) {
     const [chance, salt] = AbiCoder.defaultAbiCoder().decode(
-      ['string', 'string'],
+      ['bytes16', 'bytes8'],
       chance_and_salt
     );
-    this.chance = chance;
-    this.salt = salt;
+    this.chance = Crypto.hexStringToUtf8(chance);
+    this.salt = Crypto.hexStringToUtf8(salt);
   }
   async getProofOfChance() {
     return await buildProofOfChance(this.chance_and_salt);
@@ -45,18 +45,20 @@ export class PublicProofOfChance {
 }
 
 export class ProofOfChance {
-  static DELIMITER = '+';
   static FILE_EXTENSION = '.txt';
-  static CHANCE_MAX_LENGTH = 26;
+  static CHANCE_MAX_LENGTH = 16;
   private constructor(
     public readonly chance: string,
     private readonly salt: string
   ) {}
   static fromChance = (chance: string, salt?: string) => {
-    if (chance.length === 0 || chance.length > 28)
+    if (chance.length === 0 || chance.length > ProofOfChance.CHANCE_MAX_LENGTH)
       throw new Error('Invalid Chance');
 
-    return new ProofOfChance(chance, salt || ProofOfChance.getRandomSalt());
+    return new ProofOfChance(
+      Crypto.stringToHexString(chance, ProofOfChance.CHANCE_MAX_LENGTH),
+      salt || ProofOfChance.getRandomSalt()
+    );
   };
   // TODO: Improve file content to make it more intuitive
   async toFileContent() {
@@ -88,12 +90,12 @@ export class ProofOfChance {
   }
   getChanceAndSalt() {
     return AbiCoder.defaultAbiCoder().encode(
-      ['string', 'string'],
+      ['bytes16', 'bytes8'],
       [this.chance, this.salt]
     ) as HexString;
   }
   static getRandomSalt() {
-    return Crypto.getRandomString(6);
+    return Crypto.getRandomHexString(8);
   }
   async getProofOfChance() {
     return await buildProofOfChance(this.getChanceAndSalt());
