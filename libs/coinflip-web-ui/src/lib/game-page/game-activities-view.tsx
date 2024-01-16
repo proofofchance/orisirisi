@@ -11,13 +11,15 @@ import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tooltip } from 'react-tooltip';
 import {
-  GameProofOfChance,
-  UnrevealedGameProofOfChance,
-} from './game-proof-of-chance';
+  GamePlayProofOfChance,
+  UnrevealedGamePlayProofOfChance,
+} from './game-play-proof-of-chance';
 import { shortenPublicAddress } from '../data-utils';
 import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
+import { GameProofOfChance } from './game-proof-of-chance';
+import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
 
 export function GameActivitiesView({
   gameActivities,
@@ -29,7 +31,16 @@ export function GameActivitiesView({
   game: CoinflipGame;
 }) {
   const topActivityView = () => {
-    if (game.isCompleted()) return <GameCompletedActivity game={game} />;
+    if (game.isCompleted())
+      return (
+        <>
+          <GameOutcomeActivity gameOutcome={game.outcome!} />
+          <GameProofOfChanceActivity
+            gameId={game.id}
+            proofOfChances={game.public_proof_of_chances!}
+          />
+        </>
+      );
 
     if (
       !game.isCompleted() &&
@@ -93,7 +104,7 @@ export function GameActivitiesView({
             >
               {gameActivity.isGamePlayChanceRevealedKind() &&
                 !maybeProofOfChance && (
-                  <UnrevealedGameProofOfChance
+                  <UnrevealedGamePlayProofOfChance
                     playerAddress={gameActivity.trigger_public_address}
                     data-tooltip-id="unrevealed-poc-tooltip"
                     data-tooltip-content="Proof will be revealed after every player has uploaded"
@@ -101,7 +112,7 @@ export function GameActivitiesView({
                 )}
               {gameActivity.isGamePlayChanceRevealedKind() &&
                 maybeProofOfChance && (
-                  <GameProofOfChance
+                  <GamePlayProofOfChance
                     gameId={game.id}
                     proofOfChance={maybeProofOfChance!}
                   />
@@ -152,17 +163,38 @@ function WonOrLostCard({
   };
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-4">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-2">
       <div className="flex flex-col items-center">{getWonOrLostContent()}</div>
     </div>
   );
 }
 
-function GameCompletedActivity({ game }: { game: CoinflipGame }) {
+function GameOutcomeActivity({ gameOutcome }: { gameOutcome: CoinSide }) {
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
-      <h3 className="text-xl">Game Result</h3>
-      <Coin className="self-center" side={game.outcome} />
+      <h3 className="text-xl">Game Outcome</h3>
+      <Coin className="self-center" side={gameOutcome} />
+      <span className="text-xs self-end">{new Date().toLocaleString()}</span>
+    </div>
+  );
+}
+
+function GameProofOfChanceActivity({
+  gameId,
+  proofOfChances,
+}: {
+  gameId: number;
+  proofOfChances: PublicProofOfChance[];
+}) {
+  return (
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
+      <h3 className="text-lg mb-2">
+        Game's Proof of Chance{' '}
+        <span className="text-xs">(used to determine outcome)</span>
+      </h3>
+      <GameProofOfChance gameId={gameId} proofOfChances={proofOfChances} />
+
+      <span className="text-xs self-end">{new Date().toLocaleString()}</span>
     </div>
   );
 }

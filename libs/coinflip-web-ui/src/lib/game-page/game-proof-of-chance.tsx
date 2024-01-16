@@ -1,84 +1,62 @@
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
-import { shortenPublicAddress } from '../data-utils';
 import { DocumentIcon } from '@heroicons/react/24/solid';
 import { atom, useAtom } from 'jotai';
 import { Modal } from '../modals';
 
-export function UnrevealedGameProofOfChance({
-  playerAddress,
-  ...rest
-}: {
-  playerAddress: string;
-} & {
-  [key: `data-${string}`]: unknown;
-}) {
-  return (
-    <div
-      className="flex flex-col items-center cursor-not-allowed opacity-70"
-      {...rest}
-    >
-      <DocumentIcon className="text-gray-400 h-20 hover:h-24 transition duration-150 ease-in-out" />
-      <span className="text-xs">
-        {shortenPublicAddress(playerAddress)}'s proof
-      </span>
-    </div>
-  );
-}
-
 export function GameProofOfChance({
   gameId,
-  proofOfChance,
+  proofOfChances,
 }: {
   gameId: number;
-  proofOfChance: PublicProofOfChance;
+  proofOfChances: PublicProofOfChance[];
 }) {
-  const { openModal } = useGamePlayProofModal();
+  const { openModal } = useGameProofModal();
 
   return (
     <div className="flex flex-col items-center cursor-pointer">
       <DocumentIcon
-        onClick={() => openModal(proofOfChance)}
+        onClick={() => openModal(gameId, proofOfChances)}
         style={{
-          color: proofOfChance.getColor(gameId),
+          color: PublicProofOfChance.combinedColor,
         }}
         className="h-20 hover:h-24 transition duration-150 ease-in-out"
       />
-      <span className="text-xs">
-        {shortenPublicAddress(proofOfChance.player_address)}'s proof
-      </span>
+      <span className="text-xs">Game's proof</span>
     </div>
   );
 }
 
-const gamePlayProofModal = atom<PublicProofOfChance | null>(null);
-function useGamePlayProofModal() {
-  const [proof, setProof] = useAtom(gamePlayProofModal);
-  const openModal = (proof: PublicProofOfChance) => setProof(proof);
-  const closeModal = () => setProof(null);
+const gameProofModal = atom<
+  [gameId: number, proofs: PublicProofOfChance[]] | null
+>(null);
+function useGameProofModal() {
+  const [modalProps, setModalProps] = useAtom(gameProofModal);
+  const openModal = (gameId: number, proofs: PublicProofOfChance[]) =>
+    setModalProps([gameId, proofs]);
+  const closeModal = () => setModalProps(null);
   return {
-    showModal: !!proof,
-    proof,
+    showModal: !!modalProps,
+    modalProps,
     openModal,
     closeModal,
   };
 }
-export function GamePlayProofModal() {
-  const { showModal, proof, closeModal } = useGamePlayProofModal();
+export function GameProofModal() {
+  const { showModal, modalProps, closeModal } = useGameProofModal();
 
-  if (!proof) return null;
+  if (!modalProps) return null;
+
+  const [gameId, proofs] = modalProps;
 
   return (
     <Modal
       className="top-[90px] w-[400px] left-[calc(50vw-200px)]"
-      title={`${shortenPublicAddress(proof.player_address)}'s Proof Of Chance`}
+      title={`Game ${gameId}'s Proof Of Chance`}
       show={showModal}
       close={closeModal}
     >
       <div className="flex flex-col mt-4">
-        <p>Player's chance used in computing coinflip result: {proof.chance}</p>
-        <p>
-          <i>Proof with random salt from players computer: {proof.salt}</i>
-        </p>
+        <p>Table here</p>
       </div>
     </Modal>
   );

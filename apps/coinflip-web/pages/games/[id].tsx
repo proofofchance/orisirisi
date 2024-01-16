@@ -7,6 +7,7 @@ import {
   GameActivitiesView,
   GameDetails,
   GamePlayProofModal,
+  GameProofModal,
   MainControlButtons,
   useAuthErrorToastRequest,
   useCoinflipGame,
@@ -58,6 +59,7 @@ export default function GamePage() {
 
   return (
     <>
+      <GameProofModal />
       <GamePlayProofModal />
       <div className="px-8 md:px-20 lg:px-60 text-white mb-48">
         <div className="mt-4">

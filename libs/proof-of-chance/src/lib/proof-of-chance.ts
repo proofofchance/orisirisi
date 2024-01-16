@@ -25,8 +25,18 @@ export class PublicProofOfChance {
       (Number(first4Digits) + gameId) % PublicProofOfChance.colors.length;
     return PublicProofOfChance.colors[consistentColorIndex];
   }
+  static sumCharactersOfChances = (pocs: PublicProofOfChance[]) =>
+    pocs.reduce((countSoFar, poc) => countSoFar + poc.chance.length, 0);
+  static combinedColor = '#fff';
   private static colors: `#${string}`[] = [
-    '#fff',
+    '#d4ff14',
+    '#9114ff',
+    '#45f7b6',
+    '#f78445',
+    '#fc8bef',
+    '#c9bff2',
+    '#e9fa87',
+    '#fae8ca',
     '#a9c7ff',
     '#a6a6a6',
     '#5f86fa',
@@ -42,6 +52,8 @@ export class PublicProofOfChance {
   static fromJSON(json: PublicProofOfChance): PublicProofOfChance {
     return new PublicProofOfChance(json.player_address, json.chance_and_salt);
   }
+  static countAllChances = (pocs: PublicProofOfChance[]) =>
+    pocs.reduce((countSoFar, poc) => countSoFar + poc.chance.length, 0);
 }
 
 export class ProofOfChance {

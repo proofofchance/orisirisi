@@ -35,3 +35,7 @@ export function totalCoinSides() {
 export function getRandomCoinSide(): CoinSide {
   return getRandomInteger(1);
 }
+
+export class Coin {
+  static flip = (entropy: number) => entropy % 2;
+}
