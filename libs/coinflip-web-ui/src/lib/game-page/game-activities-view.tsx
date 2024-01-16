@@ -3,6 +3,7 @@ import {
   CoinSide,
   CoinflipGame,
   CoinflipGameActivity,
+  CoinflipGamePlayStatus,
   CoinflipGameStatus,
   coinSideToString,
 } from '@orisirisi/coinflip';
@@ -16,6 +17,7 @@ import {
 import { shortenPublicAddress } from '../data-utils';
 import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
 
 export function GameActivitiesView({
   gameActivities,
@@ -37,7 +39,7 @@ export function GameActivitiesView({
       ) === game.total_players_required
     )
       return (
-        <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
+        <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
           <p className="text-sm m-2">Game Coin is currently flipping.</p>
 
           <Coin side={null} flipInfinitely className="self-center" />
@@ -56,13 +58,24 @@ export function GameActivitiesView({
       />
     );
   };
+
+  const myGamePlay = game.getGamePlayByPlayerAddress(
+    currentWeb3Account!.address
+  );
+
   return (
     <>
       <h3 className="text-2xl mt-8 mb-6">Activities</h3>
 
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
-      {/* TODO: GameStatus Activity for a Completed Game  */}
+      {game.isCompleted() && game.iHavePlayed() && (
+        <GamePlayStatus
+          gamePlayStatus={myGamePlay!.status}
+          amountForEachWinner={game.amount_for_each_winner!}
+          amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
+        />
+      )}
       {topActivityView()}
 
       {gameActivities.map((gameActivity, i) => {
@@ -72,7 +85,7 @@ export function GameActivitiesView({
 
         return (
           <div key={i}>
-            <GameActivityDivider />
+            <TimelineArrow />
             <GameActivity
               currentAccountAddress={
                 currentWeb3Account ? currentWeb3Account.getAddress() : null
@@ -102,9 +115,53 @@ export function GameActivitiesView({
   );
 }
 
+function GamePlayStatus({
+  gamePlayStatus,
+  amountForEachWinner,
+  amountForEachWinnerUsd,
+}: {
+  gamePlayStatus: CoinflipGamePlayStatus;
+  amountForEachWinner: number;
+  amountForEachWinnerUsd: number;
+}) {
+  const currentChain = useCurrentChain()!;
+
+  const getWinOrLoseContent = () => {
+    if (gamePlayStatus === 'won') {
+      return (
+        <>
+          <span role="img" aria-label="congrats-text">
+            Congrats 🎊
+          </span>
+          <span>
+            You won{' '}
+            <b className="tracking-wide">
+              {amountForEachWinner} {currentChain.getCurrency()} ~ $
+              {amountForEachWinnerUsd}
+            </b>{' '}
+            from this game.
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <span className="text-lg" role="img" aria-label="lost-text">
+          Ouch! 😔 You lost this game. Better luck next time!
+        </span>
+      );
+    }
+  };
+
+  return (
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mt-2">
+      <div className="flex flex-col items-center">{getWinOrLoseContent()}</div>
+    </div>
+  );
+}
+
 function GameCompletedActivity({ game }: { game: CoinflipGame }) {
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
       <h3 className="text-xl">Game Result</h3>
       <Coin className="self-center" side={game.outcome} />
     </div>
@@ -198,7 +255,7 @@ function GameStatusActivity({
   const [report, timestamp] = reportAndTimestamp;
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all mt-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
       <p className="pb-4">{report}</p>
       <span className="text-xs self-end">{timestamp}</span>
     </div>
@@ -262,7 +319,7 @@ function GameActivity({
   ).toLocaleString();
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 hover:p-5 transition-all my-2">
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all my-2">
       <p className="pb-4">{getReport()}</p>
       {children}
       <span className="mt-2 text-xs self-end">{activityReadableTimestamp}</span>
@@ -270,7 +327,7 @@ function GameActivity({
   );
 }
 
-function GameActivityDivider() {
+function TimelineArrow() {
   return (
     <div className="flex flex-col justify-center items-center">
       <ChevronUpIcon className="h-3 relative top-1" />

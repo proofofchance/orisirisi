@@ -33,7 +33,9 @@ export class Game {
     public public_proof_of_chances: PublicProofOfChance[] | null,
     public outcome: CoinSide | null,
     public completed_at: number | null,
-    public game_plays: GamePlay[] | null
+    public game_plays: GamePlay[] | null,
+    public amount_for_each_winner: number | null,
+    public amount_for_each_winner_usd: number | null
   ) {}
 
   iHavePlayed(): boolean {
@@ -53,6 +55,11 @@ export class Game {
 
   getProofOfChanceByPlayerAddress = (playerAddress: string) =>
     this.proofOfChanceByPlayerAddress.get(playerAddress) || null;
+
+  getGamePlayByPlayerAddress = (playerAddress: string) =>
+    this.game_plays?.find(
+      (gp) => gp.player_address === playerAddress.toLowerCase()
+    ) || null;
 
   isOngoing(): boolean {
     return this.status === 'ongoing';

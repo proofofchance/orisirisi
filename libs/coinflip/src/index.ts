@@ -13,6 +13,8 @@ export {
   GameActivity as CoinflipGameActivity,
   formatUSD,
   GameStatus as CoinflipGameStatus,
+  GamePlay as CoinflipGamePlay,
+  GamePlayStatus as CoinflipGamePlayStatus,
 } from './lib/games';
 
 export {
