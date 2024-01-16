@@ -38,7 +38,8 @@ export class Crypto {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
     );
-    const text = new TextDecoder().decode(byteArray);
+    const nonNullByteArray = byteArray.filter((byte) => byte !== 0);
+    const text = new TextDecoder().decode(nonNullByteArray);
     return text;
   };
   static getRandomString(size: number): string {
