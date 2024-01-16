@@ -208,7 +208,7 @@ function Coin({
 
   useEffect(() => {
     if (isFlipping && !flipInfinitely) {
-      const FLIP_ANIMATION_MS = 2 * 1000;
+      const FLIP_ANIMATION_MS = 1 * 1000;
 
       const timeoutId = setTimeout(() => {
         setIsFlipping(false);
@@ -247,8 +247,7 @@ const CoinShell = styled.div`
   }
 
   .animate-flip {
-    /* animation: flip 2s linear infinite; */
-    animation: flip 0.25s ease-in-out infinite;
+    animation: flip 0.25s linear infinite;
     animation-fill-mode: forwards;
   }
 `;
