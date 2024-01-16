@@ -66,7 +66,7 @@ export function GameActivitiesView({
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
       {game.isCompleted() && game.iHavePlayed() && (
-        <GamePlayStatus
+        <WonOrLostCard
           gamePlayStatus={
             game.getGamePlayByPlayerAddress(currentWeb3Account!.address)!.status
           }
@@ -74,6 +74,7 @@ export function GameActivitiesView({
           amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
         />
       )}
+
       {topActivityView()}
 
       {gameActivities.map((gameActivity, i) => {
@@ -113,7 +114,7 @@ export function GameActivitiesView({
   );
 }
 
-function GamePlayStatus({
+function WonOrLostCard({
   gamePlayStatus,
   amountForEachWinner,
   amountForEachWinnerUsd,
@@ -124,7 +125,7 @@ function GamePlayStatus({
 }) {
   const currentChain = useCurrentChain()!;
 
-  const getWinOrLoseContent = () => {
+  const getWonOrLostContent = () => {
     if (gamePlayStatus === 'won') {
       return (
         <>
@@ -151,8 +152,8 @@ function GamePlayStatus({
   };
 
   return (
-    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mt-2">
-      <div className="flex flex-col items-center">{getWinOrLoseContent()}</div>
+    <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-4">
+      <div className="flex flex-col items-center">{getWonOrLostContent()}</div>
     </div>
   );
 }
@@ -307,9 +308,9 @@ function GameActivity({
 
   const getPlayChanceCreatedReport = () => {
     if (triggerIsMe) {
-      return 'You uploaded your game play proof';
+      return 'You uploaded your proof of chance';
     }
-    return `Player:${triggerPublicAddress} uploaded their game play proof`;
+    return `Player:${triggerPublicAddress} uploaded their proof of chance`;
   };
 
   const activityReadableTimestamp = new Date(
