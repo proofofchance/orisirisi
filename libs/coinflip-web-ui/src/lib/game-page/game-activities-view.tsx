@@ -59,10 +59,6 @@ export function GameActivitiesView({
     );
   };
 
-  const myGamePlay = game.getGamePlayByPlayerAddress(
-    currentWeb3Account!.address
-  );
-
   return (
     <>
       <h3 className="text-2xl mt-8 mb-6">Activities</h3>
@@ -71,7 +67,9 @@ export function GameActivitiesView({
 
       {game.isCompleted() && game.iHavePlayed() && (
         <GamePlayStatus
-          gamePlayStatus={myGamePlay!.status}
+          gamePlayStatus={
+            game.getGamePlayByPlayerAddress(currentWeb3Account!.address)!.status
+          }
           amountForEachWinner={game.amount_for_each_winner!}
           amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
         />
