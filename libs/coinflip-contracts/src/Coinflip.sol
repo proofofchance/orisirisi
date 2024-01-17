@@ -50,6 +50,8 @@ contract Coinflip is
         uint amountForEachWinner
     );
 
+    event ExpiredGameRefunded(uint gameID, uint refundedAmountPerPlayer);
+
     uint public minWager;
     uint16 public maxNumberOfPlayers;
     error MaxNumberOfPlayersError();
@@ -171,11 +173,13 @@ contract Coinflip is
                 if (chance_character == 0) {
                     break;
                 }
+
                 flipOutcome++;
                 if (flipOutcome == 2) {
                     flipOutcome = 0;
                 }
             }
+
             emit GamePlayChanceRevealed(gameID, gamePlayID, chanceAndSalt);
         }
         Coin.Side outcome = Coin.Side(flipOutcome);
@@ -186,15 +190,24 @@ contract Coinflip is
         emit GameCompleted(gameID, outcome, amountForEachWinner);
     }
 
-    function creditExpiredGamePlayers(
+    function refundExpiredGamePlayersForAllGames(
+        uint[] memory gameIDs
+    ) external {
+        console.log('blocktimestamp %s', block.timestamp);
+        for (uint8 i = 0; i < gameIDs.length; i++) {
+            refundExpiredGamePlayers(gameIDs[i]);
+        }
+    }
+
+    function refundExpiredGamePlayers(
         uint gameID
-    ) external onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
+    ) private onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
         address[] memory allPlayers = allPlayers[gameID];
         uint16 allPlayersSize = uint16(allPlayers.length);
 
         uint totalWager = getGameWager(gameID) * allPlayersSize;
 
-        uint amountForEachPlayer = serviceProvider
+        uint refundAmountPerPlayer = serviceProvider
             .getSplitAmountAfterServiceChargeDeduction(
                 totalWager,
                 allPlayersSize
@@ -203,10 +216,12 @@ contract Coinflip is
         wallets.creditPlayersAndCreditAppTheRest(
             gameID,
             allPlayers,
-            amountForEachPlayer
+            refundAmountPerPlayer
         );
 
         setGameStatusAsConcluded(gameID);
+
+        emit ExpiredGameRefunded(gameID, refundAmountPerPlayer);
     }
 
     function creditGameWinners(

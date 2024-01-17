@@ -12,6 +12,7 @@ import { Coinflip } from '../typechain-types';
 import { getRandomInteger, pickRandom } from '@orisirisi/orisirisi-data-utils';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { anyValue } from '@nomicfoundation/hardhat-chai-matchers/withArgs';
+import { time } from '@nomicfoundation/hardhat-network-helpers';
 
 describe('createGame', () => {
   context('When using valid parameters', () => {
@@ -225,6 +226,44 @@ describe('revealChancesAndCreditWinners', () => {
   });
 });
 
+describe('refundExpiredGamePlayersForAllGames', () => {
+  context('When using valid parameters', () => {
+    it('refunds expired game wager successfully', async () => {
+      const { coinflipContract, creator, walletsContract } =
+        await deployCoinflipContracts();
+
+      const firstPlayerPOC = ProofOfChance.fromChance(
+        'chance-1',
+        getRandomSalt()
+      );
+      const createGameParams = (await CreateGameParams.new(coinflipContract))
+        .withProofOfChance(await firstPlayerPOC.getProofOfChance())
+        .withNumberOfPlayers(2)
+        .withExpiryTimestampFromNow(200);
+
+      await coinflipContract.createGame(...createGameParams.toArgs(), {
+        value: createGameParams.wager,
+      });
+
+      const gameId = 1;
+
+      await time.increaseTo(createGameParams.expiryTimestamp + 200);
+
+      const balanceBeforeRefund = await walletsContract.getBalance(creator);
+
+      await expect(
+        coinflipContract.refundExpiredGamePlayersForAllGames([gameId])
+      )
+        .to.emit(coinflipContract, 'ExpiredGameRefunded')
+        .withArgs(1, anyValue);
+
+      const balanceAfterRefund = await walletsContract.getBalance(creator);
+
+      expect(balanceAfterRefund).to.be.greaterThan(balanceBeforeRefund);
+    });
+  });
+});
+
 export async function deployCoinflipContracts() {
   const [deployer, player, ...otherPlayers] = await ethers.getSigners();
 
@@ -287,6 +326,10 @@ class CreateGameParams {
   }
   withNumberOfPlayers(numberOfPlayers: number) {
     this.numberOfPlayers = numberOfPlayers;
+    return this;
+  }
+  withExpiryTimestampFromNow(expiryTimestampMs: number) {
+    this.expiryTimestamp = new Date().getTime() + expiryTimestampMs;
     return this;
   }
   toArgs = (): [bigint, number, number, CoinSide, string] => [
