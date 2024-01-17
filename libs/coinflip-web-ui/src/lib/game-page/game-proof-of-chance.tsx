@@ -101,7 +101,7 @@ export function GameProofModal() {
           <hr />
 
           <p id="game-proof-modal--conclusion" className="mt-6">
-            Since the total chance length, <b>{totalChanceLength}</b> is an{' '}
+            Since the total chance length, <b>{totalChanceLength}</b>, is an{' '}
             <b>{totalChanceLengthIsEven ? 'EVEN' : 'ODD'} NUMBER</b>, the
             outcome is proven to be{' '}
             <b>{totalChanceLengthIsEven ? 'HEAD' : 'TAIL'}</b>
