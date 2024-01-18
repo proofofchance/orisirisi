@@ -61,7 +61,7 @@ export function GameProofModal() {
       close={closeModal}
     >
       <>
-        <h3 className="my-2">How is the Outcome Determined? </h3>
+        <h3 className="my-2">How was the outcome determined? </h3>
         <p className="text-sm">
           If total chance length is an <b>EVEN NUMBER</b>, the outcome is{' '}
           <b>HEAD</b>. If it is an <b>ODD NUMBER</b>, the outcome is <b>TAIL</b>
