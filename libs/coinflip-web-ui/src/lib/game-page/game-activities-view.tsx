@@ -56,7 +56,7 @@ export function GameActivitiesView({
           <Coin side={null} flipInfinitely className="self-center" />
 
           <p className="text-sm self-end mt-6 mb-2">
-            The outcome will be shown in any moment from now...
+            Refresh to see the outcome in a minute...
           </p>
         </div>
       );
