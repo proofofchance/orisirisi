@@ -3,6 +3,7 @@ import { DocumentIcon } from '@heroicons/react/24/solid';
 import { atom, useAtom } from 'jotai';
 import { Modal } from '../modals';
 import { shortenPublicAddress } from '../data-utils';
+import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 
 export function GameProofOfChance({
   gameId,
@@ -43,6 +44,7 @@ function useGameProofModal() {
   };
 }
 export function GameProofModal() {
+  const { currentWeb3Account } = useCurrentWeb3Account();
   const { showModal, modalProps, closeModal } = useGameProofModal();
 
   if (!modalProps) return null;
@@ -77,16 +79,25 @@ export function GameProofModal() {
           </div>
           <hr />
 
-          {proofs.map(({ player_address, chance }, i) => (
-            <div className="text-center" key={i}>
-              <div className="grid grid-cols-3 gap-4 p-4 font-semibold">
-                <div>{shortenPublicAddress(player_address)}</div>
-                <div>{chance}</div>
-                <div>{chance.length}</div>
+          {proofs.map(({ player_address, chance }, i) => {
+            const isMyAddress =
+              currentWeb3Account &&
+              player_address === currentWeb3Account.address;
+
+            return (
+              <div className="text-center" key={i}>
+                <div className="grid grid-cols-3 gap-4 p-4 font-semibold">
+                  <div>
+                    {shortenPublicAddress(player_address)}{' '}
+                    {isMyAddress && <span>(You)</span>}
+                  </div>
+                  <div>{chance}</div>
+                  <div>{chance.length}</div>
+                </div>
+                <hr />
               </div>
-              <hr />
-            </div>
-          ))}
+            );
+          })}
 
           <div>
             <div
