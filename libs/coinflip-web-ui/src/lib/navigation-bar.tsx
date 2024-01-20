@@ -10,6 +10,7 @@ import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useCoinflipOngoingGameActivities } from './hooks';
 import { BrowserStorage } from '@orisirisi/orisirisi-browser';
 import { Tooltip } from 'react-tooltip';
+import { BellIcon } from '@heroicons/react/24/solid';
 
 export { ConnectWalletOptionsModal } from './navigation-bar/connect-wallet-button';
 
@@ -78,19 +79,34 @@ function UnreadGameActivityCount({ publicAddress }: { publicAddress: string }) {
 
   const unreadGameActivities = ongoingGameActivities!.filter(
     (gameActivity) =>
-      gameActivity.block_timestamp > lastReadGameActivityBlockTimestamp
+      gameActivity.occurred_at > lastReadGameActivityBlockTimestamp
   );
 
   const readUnreadGameActivities = () => {
     const latestGameActivityBlockTimestamp = Math.max(
-      ...unreadGameActivities.map((a) => a.block_timestamp)
+      ...unreadGameActivities.map((a) => a.occurred_at)
     );
 
     LastReadGameActivityBlockTimestamp.set(latestGameActivityBlockTimestamp);
   };
 
   return (
-    <div onClick={readUnreadGameActivities}>{unreadGameActivities.length}</div>
+    <div
+      className="flex justify-center items-center ml-[-8px]"
+      onClick={readUnreadGameActivities}
+    >
+      <Tooltip id="notification-wip-info" />
+      <div
+        className="absolute opacity-60 cursor-pointer"
+        data-tooltip-id="notification-wip-info"
+        data-tooltip-content="Coming soon"
+      >
+        <BellIcon className="w-6 h-6 hover:w-7 hover:h-7" />
+        <div className="flex justify-center items-center bg-white rounded-full w-4 h-4 text-[#884837] text-sm font-semibold absolute right-[-8px] bottom-[-12px]">
+          {unreadGameActivities.length}
+        </div>
+      </div>
+    </div>
   );
 }
 
