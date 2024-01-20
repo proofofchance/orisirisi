@@ -394,10 +394,10 @@ function TimelineArrow() {
 }
 
 export const formatTime = (time: Date): string => {
-  const isMoreThanADayAway =
-    Math.abs(time.getTime() - new Date().getTime()) > 3600;
+  const isMoreThan3DaysAway =
+    Math.abs(time.getTime() - new Date().getTime()) > 3 * 3600;
 
-  if (isMoreThanADayAway) {
+  if (isMoreThan3DaysAway) {
     return time.toLocaleString();
   }
   return timeAgo(time).toString();
