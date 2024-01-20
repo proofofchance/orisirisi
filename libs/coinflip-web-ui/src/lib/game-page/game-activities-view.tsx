@@ -18,9 +18,9 @@ import {
 import { shortenPublicAddress } from '../data-utils';
 import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
-import { useCurrentChain } from '@orisirisi/orisirisi-web3-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export function GameActivitiesView({
   gameActivities,
@@ -71,6 +71,13 @@ export function GameActivitiesView({
     );
   };
 
+  let myGameStatus = null;
+  if (game.iHavePlayed()) {
+    myGameStatus = game.getGamePlayByPlayerAddress(
+      currentWeb3Account!.address
+    )!.status;
+  }
+
   return (
     <>
       <h3 className="text-2xl mt-8 mb-6">Activities</h3>
@@ -84,11 +91,11 @@ export function GameActivitiesView({
           </div>
         </div>
       )}
-      {game.isCompleted() && game.iHavePlayed() && (
+      {game.isCompleted() && (
         <WonOrLostCard
-          gamePlayStatus={
-            game.getGamePlayByPlayerAddress(currentWeb3Account!.address)!.status
-          }
+          outcome={game.outcome!}
+          chain={game.getChain()}
+          gamePlayStatus={myGameStatus}
           amountForEachWinner={game.amount_for_each_winner!}
           amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
         />
@@ -134,17 +141,31 @@ export function GameActivitiesView({
 }
 
 function WonOrLostCard({
+  outcome,
+  chain,
   gamePlayStatus,
   amountForEachWinner,
   amountForEachWinnerUsd,
 }: {
-  gamePlayStatus: CoinflipGamePlayStatus;
+  outcome: CoinSide;
+  chain: Chain;
+  gamePlayStatus: CoinflipGamePlayStatus | null;
   amountForEachWinner: number;
   amountForEachWinnerUsd: number;
 }) {
-  const currentChain = useCurrentChain()!;
-
   const getWonOrLostContent = () => {
+    if (gamePlayStatus === null) {
+      return (
+        <span>
+          Every participating player that chose {coinSideToString(outcome)} won{' '}
+          <b className="tracking-wide">
+            {amountForEachWinner} {chain.getCurrency()} ~
+            {formatUSD(amountForEachWinnerUsd, 0)}
+          </b>{' '}
+          from this game.
+        </span>
+      );
+    }
     if (gamePlayStatus === 'won') {
       return (
         <>
@@ -154,7 +175,7 @@ function WonOrLostCard({
           <span>
             You won{' '}
             <b className="tracking-wide">
-              {amountForEachWinner} {currentChain.getCurrency()} ~
+              {amountForEachWinner} {chain.getCurrency()} ~
               {formatUSD(amountForEachWinnerUsd, 0)}
             </b>{' '}
             from this game.
