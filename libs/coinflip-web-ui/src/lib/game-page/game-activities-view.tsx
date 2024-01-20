@@ -6,6 +6,7 @@ import {
   CoinflipGamePlayStatus,
   CoinflipGameStatus,
   coinSideToString,
+  formatUSD,
 } from '@orisirisi/coinflip';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
@@ -153,8 +154,8 @@ function WonOrLostCard({
           <span>
             You won{' '}
             <b className="tracking-wide">
-              {amountForEachWinner} {currentChain.getCurrency()} ~ $
-              {amountForEachWinnerUsd}
+              {amountForEachWinner} {currentChain.getCurrency()} ~
+              {formatUSD(amountForEachWinnerUsd, 0)}
             </b>{' '}
             from this game.
           </span>
