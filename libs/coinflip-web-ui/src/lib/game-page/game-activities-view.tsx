@@ -21,6 +21,7 @@ import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { timeAgo } from '@orisirisi/orisirisi-data-utils';
 
 export function GameActivitiesView({
   gameActivities,
@@ -72,7 +73,7 @@ export function GameActivitiesView({
   };
 
   let myGameStatus = null;
-  if (game.iHavePlayed()) {
+  if (game.isCompleted() && game.iHavePlayed()) {
     myGameStatus = game.getGamePlayByPlayerAddress(
       currentWeb3Account!.address
     )!.status;
@@ -203,7 +204,7 @@ function GameOutcomeActivity({ gameOutcome }: { gameOutcome: CoinSide }) {
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
       <h3 className="text-xl">Game Outcome</h3>
       <Coin className="self-center" side={gameOutcome} />
-      <span className="text-xs self-end">{new Date().toLocaleString()}</span>
+      <span className="text-xs self-end">{formatTime(new Date())}</span>
     </div>
   );
 }
@@ -223,7 +224,7 @@ function GameProofOfChanceActivity({
       </h3>
       <GameProofOfChance gameId={gameId} proofOfChances={proofOfChances} />
 
-      <span className="text-xs self-end">{new Date().toLocaleString()}</span>
+      <span className="text-xs self-end">{formatTime(new Date())}</span>
     </div>
   );
 }
@@ -292,16 +293,13 @@ function GameStatusActivity({
   const getReportAndTimestamp = () => {
     switch (status) {
       case 'ongoing':
-        return [
-          'Awaiting participating players...',
-          new Date().toLocaleString(),
-        ];
+        return ['Awaiting participating players...', formatTime(new Date())];
       case 'expired':
-        return ['Game expired!', new Date(expiryTimestampMs).toLocaleString()];
+        return ['Game expired!', formatTime(new Date(expiryTimestampMs))];
       case 'awaiting_revealed_chances':
         return [
           'Awaiting proof uploads from all players...',
-          new Date().toLocaleString(),
+          formatTime(new Date()),
         ];
       default:
         return null;
@@ -373,9 +371,9 @@ function GameActivity({
     return `Player:${triggerPublicAddress} uploaded their proof of chance`;
   };
 
-  const activityReadableTimestamp = new Date(
-    gameActivity.getOccurredAtMs()
-  ).toLocaleString();
+  const activityReadableTimestamp = formatTime(
+    new Date(gameActivity.getOccurredAtMs())
+  );
 
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all my-2">
@@ -394,3 +392,13 @@ function TimelineArrow() {
     </div>
   );
 }
+
+export const formatTime = (time: Date): string => {
+  const isMoreThanADayAway =
+    Math.abs(time.getTime() - new Date().getTime()) > 3600;
+
+  if (isMoreThanADayAway) {
+    return time.toLocaleString();
+  }
+  return timeAgo(time).toString();
+};
