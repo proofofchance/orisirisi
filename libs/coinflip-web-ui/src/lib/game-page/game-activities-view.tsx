@@ -76,6 +76,13 @@ export function GameActivitiesView({
 
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
+      {game.isRefunded() && (
+        <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-2">
+          <div className="flex flex-col items-center">
+            All participating players got refunded
+          </div>
+        </div>
+      )}
       {game.isCompleted() && game.iHavePlayed() && (
         <WonOrLostCard
           gamePlayStatus={
