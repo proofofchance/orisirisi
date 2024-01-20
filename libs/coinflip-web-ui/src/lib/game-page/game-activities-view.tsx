@@ -163,7 +163,7 @@ function WonOrLostCard({
     } else {
       return (
         <span className="text-lg" role="img" aria-label="lost-text">
-          Ouch! 😔 You lost this game. Better luck next time!
+          Oh no! 😔 You lost this game. Better luck next time!
         </span>
       );
     }
