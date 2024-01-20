@@ -92,7 +92,7 @@ function UnreadGameActivityCount({ publicAddress }: { publicAddress: string }) {
 
   return (
     <div
-      className="flex justify-center items-center ml-[-8px]"
+      className="flex justify-center items-center ml-[-8px] pr-4"
       onClick={readUnreadGameActivities}
     >
       <Tooltip id="notification-wip-info" />
