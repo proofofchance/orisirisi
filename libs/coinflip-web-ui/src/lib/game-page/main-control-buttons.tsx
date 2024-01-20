@@ -2,7 +2,7 @@ import { CoinflipGame } from '@orisirisi/coinflip';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { useRouter } from 'next/router';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+// import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -58,7 +58,9 @@ export function MainControlButtons({
               );
             }
 
-            return push(`/games/${game.id}/play?chain_id=${game.chain_id}`);
+            return push(
+              `/games/${game.id}/play?chain=${game.getChain().getShortName()}`
+            );
           }}
           icon={<PlayIcon className="h-8" />}
           label="Play"
@@ -71,7 +73,7 @@ export function MainControlButtons({
     // (
     //   <MainButton
     //     onClick={() =>
-    //       push(`/games/${game.id}/prove?chain_id=${game.chain_id}`)
+    //       push(`/games/${game.id}/prove?chain=${game.getChain().getShortName()}`)
     //     }
     //     icon={<ShieldCheckIcon className="h-8" />}
     //     label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}

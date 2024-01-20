@@ -6,6 +6,7 @@ import {
 } from '@orisirisi/coinflip-web-ui';
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import {
   useCurrentWeb3Account,
   useCurrentWeb3Provider,
@@ -20,13 +21,16 @@ export function PlayGame() {
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
   const id = parseInteger(query.id as string);
-  const chainId = parseInteger(query.chain_id as string);
+  const chainShortName = query.chain as string | null;
+  const chain = Chain.fromShortName(chainShortName);
 
-  if (isClient && id && !chainId) {
+  if (isClient && id && !chain.ok) {
     dispatchErrorToastRequest('ChainID needs to specified!');
 
     replace('/games');
   }
+
+  const chainId = chain.ok ? chain.ok.id : null;
 
   const currentWeb3Provider = useCurrentWeb3Provider();
   const { currentWeb3Account } = useCurrentWeb3Account();
@@ -40,7 +44,8 @@ export function PlayGame() {
   );
   const { game } = useCoinflipGame(fetchGameParams);
 
-  const gamePath = game && `/games/${game.id}?chain_id=${game.chain_id}`;
+  const gamePath =
+    game && `/games/${game.id}?chain=${game.getChain().getShortName()}`;
 
   game &&
     currentWeb3Provider &&

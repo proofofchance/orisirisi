@@ -17,6 +17,7 @@ import {
 import { parseInteger } from '@orisirisi/orisirisi-data-utils';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useIsClient, useWindowTitle } from '@orisirisi/orisirisi-web-ui';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export default function GamePage() {
   const isClient = useIsClient();
@@ -28,13 +29,17 @@ export default function GamePage() {
 
   const id = parseInteger(query.id as string);
   useWindowTitle(`Coinflip - Game #${id}`);
-  const chainId = parseInteger(query.chain_id as string);
 
-  if (isClient && id && !chainId) {
-    dispatchErrorToastRequest('ChainID needs to specified!');
+  const chainShortName = query.chain as string | null;
+  const chain = Chain.fromShortName(chainShortName);
+
+  if (isClient && id && !chain.ok) {
+    dispatchErrorToastRequest('Chain needs to specified!');
 
     replace('/games');
   }
+
+  const chainId = chain.ok ? chain.ok.id : null;
 
   const fetchGameParams = useMemo(
     () =>

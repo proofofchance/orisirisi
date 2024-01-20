@@ -5,6 +5,7 @@ import { ChainLogo } from './chain-logo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export function GamesView({
   games,
@@ -17,7 +18,7 @@ export function GamesView({
   const { push } = useRouter();
 
   const goToGamePage = (id: number, chain_id: number) =>
-    push(`/games/${id}?chain_id=${chain_id}`);
+    push(`/games/${id}?chain=${Chain.shortNameFromChainId(chain_id)}`);
 
   if (!isLoading && games.length === 0) return <GamesEmptyView />;
 
@@ -52,7 +53,7 @@ function GameCard({
 
   return (
     <Link
-      href={`/games/${game.id}?chain_id=${game.chain_id}`}
+      href={`/games/${game.id}?chain=${game.getChain().getShortName()}`}
       className="rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all"
     >
       <div className="flex justify-between">
