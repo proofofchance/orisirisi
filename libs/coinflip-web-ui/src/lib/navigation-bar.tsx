@@ -31,7 +31,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
             </Link>
           </div>
           <div className={`text-white md:flex gap-x-6 items-center`}>
-            <Link href="/games" className="mr-4">
+            <Link href="/games" className="mr-2">
               Games
             </Link>
             {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
