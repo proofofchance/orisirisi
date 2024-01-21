@@ -9,9 +9,12 @@ import {
 } from '@orisirisi/coinflip-web-ui';
 import { Toaster } from 'react-hot-toast';
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
+import { useDisconnectForUnsupportedChain } from '@orisirisi/orisirisi-web3-ui';
 
 function CoinflipWebApp({ Component, pageProps }: AppProps) {
   const isClient = useIsClient();
+  useDisconnectForUnsupportedChain();
+
   return (
     <>
       <Head>

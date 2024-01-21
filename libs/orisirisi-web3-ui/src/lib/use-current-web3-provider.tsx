@@ -37,6 +37,14 @@ const currentChainAtom = atom((get) =>
 );
 export const useCurrentChain = () => useAtomValue(currentChainAtom);
 
+export function useDisconnectForUnsupportedChain() {
+  const currentChain = useCurrentChain();
+
+  if (currentChain && !currentChain!.isSupported()) {
+    disconnect();
+  }
+}
+
 export const disconnect = () => {
   Cache.clear();
   Browser.reloadWindow();
