@@ -32,7 +32,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
           </div>
           <div className={`text-white md:flex gap-x-6 items-center`}>
             <Link href="/games" className="mr-4">
-              Browse Games
+              Games
             </Link>
             {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
             {isClient && isNotConnected ? (
