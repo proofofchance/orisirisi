@@ -47,6 +47,9 @@ importers:
       react-is:
         specifier: 18.2.0
         version: 18.2.0
+      react-social-icons:
+        specifier: ^6.9.0
+        version: 6.9.0(react-dom@18.2.0)(react@18.2.0)
       react-tooltip:
         specifier: ^5.25.1
         version: 5.25.1(react-dom@18.2.0)(react@18.2.0)
@@ -1428,6 +1431,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.0
+
+  /@babel/runtime@7.23.8:
+    resolution: {integrity: sha512-Y7KbAP984rn1VGMbGqKmBLio9V7y5Je9GvU4rQPCPinCyNfUcToxIXl06d59URp/F3LwinvODxab5N/G6qggkw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.0
+    dev: false
 
   /@babel/template@7.22.5:
     resolution: {integrity: sha512-X7yV7eiwAxdj9k94NEylvbVHLiVG1nvzCV2EAowhxLTwODV1jl9UzZ48leOC0sH7OnuHrIkllaBgneUykIcZaw==}
@@ -10479,6 +10489,17 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+
+  /react-social-icons@6.9.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-JQjki4pqtp38VRDRK9z1vQ71F/nZvHzBF4Zw3HtVM5+H24baXaLNvrzdtS939qBDAF9ZxwnIQFb9HbU67/+9xA==}
+    peerDependencies:
+      react: 15.x.x || 16.x.x || 17.x.x || 18.x.x
+      react-dom: 15.x.x || 16.x.x || 17.x.x || 18.x.x
+    dependencies:
+      '@babel/runtime': 7.23.8
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /react-tooltip@5.25.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-GDD0hrfbwGr2C6zEzVzzDzXSKeHM55cRFZQv2/EFmiFKVxWZk8hzOO5FNcwCpPyqVxQKUtYckReU5bXMd63alQ==}

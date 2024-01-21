@@ -1,5 +1,6 @@
 export { Background } from './lib/background';
 export { NavigationBar, ConnectWalletOptionsModal } from './lib/navigation-bar';
+export * from './lib/social-links';
 export { CreateGameSection } from './lib/create-game-section';
 export { PlayGameSection } from './lib/play-game-section';
 export * from './lib/hooks';
