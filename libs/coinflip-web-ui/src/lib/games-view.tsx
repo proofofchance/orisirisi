@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { GameStatusBadge } from './game-status-badge';
 
 export function GamesView({
   games,
@@ -51,6 +52,8 @@ function GameCard({
     game.getExpiryTimestampMs()
   );
 
+  const showCountdown =
+    game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished();
   return (
     <Link
       href={`/games/${game.id}?chain=${game.getChain().getShortName()}`}
@@ -72,7 +75,7 @@ function GameCard({
         <div className="mt-2">
           Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
         </div>
-        {game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished() && (
+        {showCountdown ? (
           <div className="text-sm mt-4 flex gap-2 items-center">
             <span className="h-4 w-4">
               <StopWatchIcon />
@@ -80,6 +83,10 @@ function GameCard({
             <span>
               <GameExpiryCountdown countdown={gameExpiryCountdown} />
             </span>
+          </div>
+        ) : (
+          <div className="flex mt-4">
+            <GameStatusBadge gameStatus={game.status} />
           </div>
         )}
       </div>

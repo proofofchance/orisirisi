@@ -8,6 +8,11 @@ export type GameStatus =
   | 'awaiting_revealed_chances'
   | 'completed';
 
+export type ConcludedGameStatus = Exclude<
+  GameStatus,
+  'ongoing' | 'awaiting_revealed_chances'
+>;
+
 export class Game {
   static minNumberOfPlayers = 2;
   static maxNumberOfPlayers = 20;
