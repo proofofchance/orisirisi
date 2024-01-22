@@ -9,22 +9,23 @@ import {UsingGamePlays} from './Coinflip/GamePlays.sol';
 import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
-import {MaybeOperational} from './MaybeOperational.sol';
-import {ServiceProvider} from './ServiceProvider.sol';
 import {Wallets} from './Wallets.sol';
 import {Payments} from './Payments.sol';
+import {Ownable} from './Ownable.sol';
 
 contract Coinflip is
     UsingGamePlays,
     UsingGameWagers,
     UsingGameStatuses,
-    MaybeOperational
+    Ownable
 {
+    //////////////////////////
+    ///      COINFLIP     ///
+    ////////////////////////
     mapping(uint => Coin.Side) outcomes;
     uint public gamesCount;
 
     Wallets public immutable wallets;
-    ServiceProvider public immutable serviceProvider;
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
@@ -59,12 +60,10 @@ contract Coinflip is
 
     constructor(
         address payable _wallets,
-        address _serviceProvider,
         uint16 _maxNumberOfPlayers,
         uint _minWager
     ) {
         wallets = Wallets(_wallets);
-        serviceProvider = ServiceProvider(_serviceProvider);
         maxNumberOfPlayers = _maxNumberOfPlayers;
         minWager = _minWager;
     }
@@ -207,11 +206,10 @@ contract Coinflip is
 
         uint totalWager = getGameWager(gameID) * allPlayersSize;
 
-        uint refundAmountPerPlayer = serviceProvider
-            .getSplitAmountAfterServiceChargeDeduction(
-                totalWager,
-                allPlayersSize
-            );
+        uint refundAmountPerPlayer = getSplitAmountAfterServiceChargeDeduction(
+            totalWager,
+            allPlayersSize
+        );
 
         wallets.creditPlayersAndCreditAppTheRest(
             gameID,
@@ -231,11 +229,10 @@ contract Coinflip is
         uint gameWager = getGameWager(gameID);
         uint totalWager = gameWager * playCounts[gameID];
 
-        uint amountForEachPlayer = serviceProvider
-            .getSplitAmountAfterServiceChargeDeduction(
-                totalWager,
-                winners.length
-            );
+        uint amountForEachPlayer = getSplitAmountAfterServiceChargeDeduction(
+            totalWager,
+            winners.length
+        );
 
         console.log('amountForEachWinner %s', amountForEachPlayer);
 
@@ -263,5 +260,77 @@ contract Coinflip is
 
     function payGameWager(uint gameID, uint wager) private {
         wallets.transferToGameWallet(gameID, msg.sender, wager);
+    }
+
+    //////////////////////////////////
+    ///      SERVICE PROVIDER     ///
+    ////////////////////////////////
+    // due to charges for the minimum wager allowed
+    // expected to be high due to the gas fee for the minimum wager
+    // initialServiceCharges (at deployment):
+    // If transaction fee is $6
+    uint8 public serviceChargePercent = 8;
+
+    error InvalidServiceChargePercent();
+
+    function setServiceChargePercent(
+        uint8 _serviceChargePercent
+    ) external onlyOwner {
+        if (_serviceChargePercent >= 100) {
+            revert InvalidServiceChargePercent();
+        }
+
+        serviceChargePercent = _serviceChargePercent;
+    }
+
+    /**
+     * @dev Returns the service provider wallet owner
+     */
+    function getServiceProviderWallet() external view returns (address) {
+        return owner();
+    }
+
+    function getServiceCharge(uint amount) external view returns (uint) {
+        return (amount * serviceChargePercent) / 100;
+    }
+
+    function getSplitAmountAfterServiceChargeDeduction(
+        uint amount,
+        uint places
+    ) private view returns (uint) {
+        uint splitAmount = amount / places;
+        splitAmount =
+            splitAmount -
+            ((splitAmount * serviceChargePercent) / 100);
+
+        return splitAmount;
+    }
+
+    //////////////////////////
+    /// MAYBE-OPERATIONAL ///
+    ////////////////////////
+    bool private operational = true;
+
+    error InOperative();
+
+    /**
+     * @dev Modifier that requires the "operational" boolean variable to be "true"
+     *      This is used on all state changing functions to pause the contract in
+     *      the event there is an issue that needs to be fixed
+     */
+    modifier mustBeOperational() {
+        if (!operational) {
+            revert InOperative();
+        }
+        _; // All modifiers require an "_" which indicates where the function body will be added
+    }
+
+    /**
+     * @dev Sets contract operations on/off
+     *
+     * When operational mode is disabled, all write transactions except for this one will fail
+     */
+    function setOperatingStatus(bool mode) external onlyOwner {
+        operational = mode;
     }
 }

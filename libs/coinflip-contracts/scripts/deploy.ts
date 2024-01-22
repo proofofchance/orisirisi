@@ -4,11 +4,9 @@ import { CoinflipGame } from '@orisirisi/coinflip';
 
 // TODO: Deploy per chain
 async function main() {
-  const { walletsAddress, serviceProviderAddress, coinflipAddress } =
-    await deployCoinflipContracts();
+  const { walletsAddress, coinflipAddress } = await deployCoinflipContracts();
 
   console.log('Wallets address : ', walletsAddress);
-  console.log('ServiceProvider Address : ', serviceProviderAddress);
   console.log('Coinflip Address : ', coinflipAddress);
 }
 
@@ -29,16 +27,10 @@ export async function deployCoinflipContracts() {
     deployOptions
   );
 
-  const { address: serviceProviderAddress } = await deployments.deploy(
-    'ServiceProvider',
-    deployOptions
-  );
-
   const { address: coinflipAddress } = await deployments.deploy('Coinflip', {
     ...deployOptions,
     args: [
       walletsAddress,
-      serviceProviderAddress,
       CoinflipGame.maxNumberOfPlayers,
       parseEther(CoinflipGame.getMinWagerEth().toString()),
     ],
@@ -46,7 +38,6 @@ export async function deployCoinflipContracts() {
 
   return {
     walletsAddress,
-    serviceProviderAddress,
     coinflipAddress,
   };
 }
