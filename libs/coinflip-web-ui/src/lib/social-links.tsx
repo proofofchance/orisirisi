@@ -29,7 +29,7 @@ export function SocialLinks() {
           <SocialIcon
             style={{ height: '100%', width: '100%' }}
             target="_blank"
-            url="https://www.tiktok.com/@proofofchance"
+            url="https://www.github.com/proofofchance"
           />
         </div>
       </div>
