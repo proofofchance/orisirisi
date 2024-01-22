@@ -99,6 +99,7 @@ export function GameActivitiesView({
           gamePlayStatus={myGameStatus}
           amountForEachWinner={game.amount_for_each_winner!}
           amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
+          numberOfPlayers={game.total_players_required}
         />
       )}
 
@@ -147,23 +148,31 @@ function WonOrLostCard({
   gamePlayStatus,
   amountForEachWinner,
   amountForEachWinnerUsd,
+  numberOfPlayers,
 }: {
   outcome: CoinSide;
   chain: Chain;
   gamePlayStatus: CoinflipGamePlayStatus | null;
   amountForEachWinner: number;
   amountForEachWinnerUsd: number;
+  numberOfPlayers: number;
 }) {
   const getWonOrLostContent = () => {
     if (gamePlayStatus === null) {
       return (
         <span>
-          Every participating player that chose {coinSideToString(outcome)} won{' '}
+          <span role="img" aria-label="congrats-text">
+            🎉
+          </span>{' '}
+          Participating players that predicted {coinSideToString(outcome)}{' '}
+          shared ~{' '}
           <b className="tracking-wide">
-            {amountForEachWinner} {chain.getCurrency()} ~
-            {formatUSD(amountForEachWinnerUsd, 0)}
+            {formatUSD(amountForEachWinnerUsd * numberOfPlayers, 0)}
           </b>{' '}
-          from this game.
+          from this game{' '}
+          <span role="img" aria-label="congrats-text">
+            🎉
+          </span>
         </span>
       );
     }
