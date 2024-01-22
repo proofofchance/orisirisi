@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 import {Game} from './Game.sol';
 
-contract GameStatuses {
+contract UsingGameStatuses {
     mapping(uint => Game.Status) statuses;
     mapping(uint => uint) expiryTimestamps;
 
@@ -49,5 +49,3 @@ contract GameStatuses {
         return statuses[gameID];
     }
 }
-
-contract UsingGameStatuses is GameStatuses {}

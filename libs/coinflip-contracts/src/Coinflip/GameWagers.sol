@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 import {Game} from './Game.sol';
 
-contract GameWagers {
+contract UsingGameWagers {
     mapping(uint gameID => uint wager) wagers;
 
     error InvalidWager();
@@ -24,5 +24,3 @@ contract GameWagers {
         return wagers[gameID];
     }
 }
-
-contract UsingGameWagers is GameWagers {}

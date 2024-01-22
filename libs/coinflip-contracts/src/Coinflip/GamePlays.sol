@@ -6,7 +6,7 @@ import 'hardhat/console.sol';
 import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
 
-contract GamePlays {
+contract UsingGamePlays {
     mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
 
     mapping(uint gameID => mapping(uint16 playID => bytes32 proofOfChance))
@@ -102,5 +102,3 @@ contract GamePlays {
         numberOfPlayersPerGame[gameID] = numberOfPlayers;
     }
 }
-
-contract UsingGamePlays is GamePlays {}
