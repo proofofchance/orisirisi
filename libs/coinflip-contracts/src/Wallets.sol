@@ -99,16 +99,15 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             address player = players[i];
             gameBalances[app][gameID] -= amount;
             nonGameBalances[player] += amount;
-
             emit CreditFromGame(app, gameID, player, amount);
         }
     }
 
     function creditAppTheRest(address app, uint gameID) private {
-        gameBalances[app][gameID] = 0;
         uint restAmount = gameBalances[app][gameID];
         address appOwner = owner();
         nonGameBalances[appOwner] = restAmount;
+        gameBalances[app][gameID] = 0;
         emit CreditFromGame(app, gameID, appOwner, restAmount);
     }
 
