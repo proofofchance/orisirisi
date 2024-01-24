@@ -7,18 +7,18 @@ import {Payments} from './Payments.sol';
 
 /// ProofOfChance wallets that supports only coinflip at the time of deployment
 /// It acts as a regular wallet that can be 'Credited' and 'Debited'
-/// More importantly, it allows ProofOfChance apps to 'CreditPlayer` or `DebitPlayer` in
+/// More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in
 /// the context of a given game
+/// TODO: Consider renaming to GameWallets
 contract Wallets is UsingReentrancyGuard, Ownable {
     mapping(address => bool) apps;
     mapping(address app => mapping(uint gameID => uint balance)) gameBalances;
     mapping(address owner => uint amount) nonGameBalances;
 
-    event Credit(address player, uint amount);
-    event Debit(address player, uint amount);
-    event CreditPlayer(address app, uint gameID, address player, uint amount);
-    event DebitPlayer(address app, uint gameID, address player, uint amount);
-    event CreditApp(address app, uint gameID, uint amount);
+    event Credit(address owner, uint amount);
+    event Debit(address owner, uint amount);
+    event CreditFromGame(address app, uint gameID, address owner, uint amount);
+    event DebitForGame(address app, uint gameID, address owner, uint amount);
 
     error InsufficientFunds();
     error UnAuthorizedApp();
@@ -54,7 +54,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         address app = msg.sender;
         gameBalances[app][gameID] += amount;
 
-        emit DebitPlayer(app, gameID, player, amount);
+        emit DebitForGame(app, gameID, player, amount);
     }
 
     /* 
@@ -100,15 +100,16 @@ contract Wallets is UsingReentrancyGuard, Ownable {
             gameBalances[app][gameID] -= amount;
             nonGameBalances[player] += amount;
 
-            emit CreditPlayer(app, gameID, player, amount);
+            emit CreditFromGame(app, gameID, player, amount);
         }
     }
 
     function creditAppTheRest(address app, uint gameID) private {
-        uint rest = gameBalances[app][gameID];
-        nonGameBalances[app] = rest;
         gameBalances[app][gameID] = 0;
-        emit CreditApp(app, gameID, rest);
+        uint restAmount = gameBalances[app][gameID];
+        address appOwner = owner();
+        nonGameBalances[appOwner] = restAmount;
+        emit CreditFromGame(app, gameID, appOwner, restAmount);
     }
 
     function withdrawAll() external nonReentrant {
