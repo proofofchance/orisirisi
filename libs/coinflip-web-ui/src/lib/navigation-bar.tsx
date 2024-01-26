@@ -60,7 +60,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
             )}
             {isClient && currentWeb3Account && currentChain ? (
               <WalletBalanceButton
-                publicAddress={currentWeb3Account.address!}
+                currentWeb3Account={currentWeb3Account!}
                 currentChain={currentChain}
               />
             ) : (

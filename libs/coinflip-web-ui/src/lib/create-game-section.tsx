@@ -133,6 +133,10 @@ export function CreateGameSection() {
       currentChain!.id
     );
 
+    const awaitingApprovalToastId = toast.loading('Awaiting approval', {
+      position: 'bottom-right',
+    });
+
     try {
       await coinflipContract.createGame(
         parseEther(wager).toString(),
@@ -142,6 +146,8 @@ export function CreateGameSection() {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(wager) }
       );
+
+      toast.dismiss(awaitingApprovalToastId);
 
       toast.loading('Creating Game', {
         position: 'bottom-right',
@@ -155,6 +161,7 @@ export function CreateGameSection() {
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:
+          toast.dismiss(awaitingApprovalToastId);
           console.log('User Rejected. TODO: Add a toast here');
           break;
       }

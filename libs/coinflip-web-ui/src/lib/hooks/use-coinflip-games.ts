@@ -53,10 +53,10 @@ export function useCoinflipGames({
       return setIsLoading(false);
     CoinflipHTTPService.fetchGames(buildParams(), fetchController.signal)
       .then((games) => setGames(games))
-      .then(() => setIsLoading(false))
       .catch((error: unknown) => {
         if (!fetchController.signal.aborted) throw error;
-      });
+      })
+      .finally(() => setIsLoading(false));
 
     return () => {
       fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');

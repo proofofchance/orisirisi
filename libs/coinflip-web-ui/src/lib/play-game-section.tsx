@@ -98,6 +98,10 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
       currentChain!.id
     );
 
+    const awaitingApprovalToastId = toast.loading('Awaiting approval', {
+      position: 'bottom-right',
+    });
+
     try {
       await coinflipContract.playGame(
         game!.id,
@@ -105,6 +109,8 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(game!.wager.toString()) }
       );
+
+      toast.dismiss(awaitingApprovalToastId);
 
       toast.loading('Creating your Game Play', {
         position: 'bottom-right',
@@ -120,6 +126,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:
+          toast.dismiss(awaitingApprovalToastId);
           toast.error("Oops! Looks like you've rejected the transaction.", {
             position: 'bottom-right',
           });

@@ -14,6 +14,7 @@ export class CoinflipContract {
   static getAddress(chainId: ChainID) {
     switch (chainId) {
       case ChainID.Local:
+      case ChainID.LocalAlt:
         return coinflipLocalDeployment.address;
       default:
         throw new Error('Undeployed Contract');
@@ -32,6 +33,7 @@ export class WalletsContract {
   static getAddress(chainId: ChainID) {
     switch (chainId) {
       case ChainID.Local:
+      case ChainID.LocalAlt:
         return walletsLocalDeployment.address;
       default:
         throw new Error('Undeployed Contract');

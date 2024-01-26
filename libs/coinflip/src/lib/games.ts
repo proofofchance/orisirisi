@@ -210,6 +210,9 @@ export class GameWallet {
     public balance: string,
     public balance_usd: string
   ) {}
+  isWithdrawable() {
+    return +this.balance > 0;
+  }
   static fromJSON(json: GameWallet): GameWallet {
     // @ts-ignore
     return Object.assign(new GameWallet(), json);

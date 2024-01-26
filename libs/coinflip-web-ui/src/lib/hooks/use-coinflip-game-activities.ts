@@ -25,10 +25,10 @@ export function useCoinflipOngoingGameActivities(
           fetchController.signal
         )
           .then((game) => setGameActivities(game))
-          .then(() => setIsLoading(false))
           .catch((error: unknown) => {
             if (!fetchController.signal.aborted) throw error;
-          });
+          })
+          .finally(() => setIsLoading(false));
       };
 
       if (interval) {
