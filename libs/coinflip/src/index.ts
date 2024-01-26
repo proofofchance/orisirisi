@@ -16,6 +16,7 @@ export {
   ConcludedGameStatus as CoinflipConcludedGameStatus,
   GamePlay as CoinflipGamePlay,
   GamePlayStatus as CoinflipGamePlayStatus,
+  GameWallet as CoinflipGameWallet,
 } from './lib/games';
 
 export {
@@ -24,6 +25,7 @@ export {
   HTTPServiceErrorType as CoinflipHTTPServiceErrorType,
   FetchGamesParams as FetchCoinflipGamesParams,
   FetchGameParams as FetchCoinflipGameParams,
+  FetchGameWalletParams as FetchCoinflipGameWalletParams,
   UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
 } from './lib/http-service';
 

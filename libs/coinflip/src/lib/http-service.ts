@@ -1,5 +1,5 @@
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
-import { Game, GameActivity, GameStatus } from './games';
+import { Game, GameActivity, GameStatus, GameWallet } from './games';
 import { Result } from '@orisirisi/orisirisi-error-handling';
 
 export interface FetchGamesParams {
@@ -22,6 +22,11 @@ export interface UpdateMyGamePlayParams {
   chance_and_salt: string;
 }
 
+export interface FetchGameWalletParams {
+  chain_id: number;
+  owner_address: string;
+}
+
 export enum HTTPServiceErrorType {
   NotFound = 'not found',
   UnprocessableEntity = 'unprocessable entity',
@@ -38,7 +43,8 @@ export class HTTPServiceError extends Error {
 }
 
 export class HTTPService {
-  private static baseUrl = 'http://127.0.0.1:4446/coinflip';
+  private static baseHost = 'http://127.0.0.1:4446';
+  private static baseUrl = `${HTTPService.baseHost}/coinflip`;
 
   static async fetchGames(
     params: FetchGamesParams,
@@ -142,6 +148,19 @@ export class HTTPService {
       response,
       GameActivity.manyFromJSON
     );
+  }
+
+  static async fetchGameWallet(
+    { owner_address, chain_id }: FetchGameWalletParams,
+    signal: AbortSignal
+  ) {
+    const endpointPath = `${HTTPService.baseHost}/wallets/${owner_address}/${chain_id}`;
+
+    const response = await fetch(endpointPath, {
+      signal,
+    });
+
+    return this.maybeReturnHTTPServiceError(response, GameWallet.fromJSON);
   }
 
   private static maybeReturnHTTPServiceError = async <Resource>(

@@ -203,3 +203,15 @@ export class GamePlay {
     return jsonList.map(GamePlay.fromJSON);
   }
 }
+
+export class GameWallet {
+  constructor(
+    public owner_address: string,
+    public balance: string,
+    public balance_usd: string
+  ) {}
+  static fromJSON(json: GameWallet): GameWallet {
+    // @ts-ignore
+    return Object.assign(new GameWallet(), json);
+  }
+}
