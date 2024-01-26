@@ -270,16 +270,10 @@ export async function deployCoinflipContracts() {
   const walletsContract = await ethers.deployContract('Wallets', deployer);
   const walletsAddress = await walletsContract.getAddress();
 
-  const serviceProviderContract = await ethers.deployContract(
-    'ServiceProvider',
-    deployer
-  );
-
   const coinflipContract = await ethers.deployContract(
     'Coinflip',
     [
       walletsAddress,
-      serviceProviderContract.getAddress(),
       CoinflipGame.maxNumberOfPlayers,
       parseEther(CoinflipGame.getMinWagerEth().toString()),
     ],
@@ -297,7 +291,6 @@ export async function deployCoinflipContracts() {
     player,
     otherPlayers,
     walletsContract,
-    serviceProviderContract,
     coinflipContract,
   };
 }
