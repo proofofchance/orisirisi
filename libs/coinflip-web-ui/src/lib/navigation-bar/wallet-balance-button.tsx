@@ -37,7 +37,6 @@ export function WalletBalanceButton({
     [currentChain, publicAddress]
   );
   const { wallet, refresh: refreshWallet } = useCoinflipGameWallet(params);
-  console.log({ wallet });
 
   const [showMenu, setShowMenu] = useState(false);
   const ref = useRef(null);
