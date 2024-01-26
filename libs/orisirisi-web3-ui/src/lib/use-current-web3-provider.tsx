@@ -32,8 +32,8 @@ const currentWeb3ProviderAtom = atom<Web3Provider | null>((get) => {
 export const useCurrentWeb3Provider = () =>
   useAtomValue(currentWeb3ProviderAtom);
 
-const currentChainAtom = atom((get) =>
-  get(currentWeb3ProviderAtom)?.getChain()
+const currentChainAtom = atom(
+  async (get) => await get(currentWeb3ProviderAtom)?.getChain()
 );
 export const useCurrentChain = () => useAtomValue(currentChainAtom);
 

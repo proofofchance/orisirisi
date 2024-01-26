@@ -18,20 +18,16 @@ export enum MetaMaskError {
   ChainDisconnected = 4901,
 }
 
-interface ConnectInfo {
-  chainId: string;
-}
-
 export class MetaMask {
   static downloadLink = 'https://metamask.io/download/';
   static type = Web3ProviderType.MetaMask;
 
-  static getWeb3Provider() {
+  static async getWeb3Provider() {
     const provider = this.getProvider();
 
     if (!provider) return new Result(null, MetaMaskError.NotInstalled);
 
-    const { ok: chain, error } = this.getChain(provider);
+    const { ok: chain, error } = await this.getChain(provider);
 
     if (error) return new Result(null, error);
 
@@ -47,11 +43,11 @@ export class MetaMask {
     );
   }
 
-  static getChain(provider: MetaMaskProvider) {
-    if (!provider.networkVersion)
-      return new Result(null, MetaMaskError.UnAvailable);
+  static async getChain(provider: MetaMaskProvider) {
+    const networkVersion = await provider.request({ method: 'net_version' });
+    if (!networkVersion) return new Result(null, MetaMaskError.UnAvailable);
 
-    return new Result(Chain.fromNetworkVersion(provider.networkVersion), null);
+    return new Result(Chain.fromNetworkVersion(networkVersion), null);
   }
 
   static handleConnectionEvents = (

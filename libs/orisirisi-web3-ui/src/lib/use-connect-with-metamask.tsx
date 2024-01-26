@@ -19,7 +19,7 @@ export function useConnectWithMetaMask() {
   const { cacheWeb3ProviderType } = useCache();
 
   const connectWithMetaMask = async () => {
-    const { error: metaMaskError } = MetaMask.getWeb3Provider();
+    const { error: metaMaskError } = await MetaMask.getWeb3Provider();
 
     switch (metaMaskError) {
       case MetaMaskError.NotInstalled:
