@@ -48,10 +48,10 @@ export class Web3Provider {
     }
   }
 
-  getChain() {
+  async getChain() {
     switch (this.type) {
       case Web3ProviderType.MetaMask:
-        return MetaMask.getChain(this.provider as MetaMaskProvider).ok;
+        return (await MetaMask.getChain(this.provider as MetaMaskProvider)).ok;
       default:
         throw 'Unsupported Web3ProviderType';
     }

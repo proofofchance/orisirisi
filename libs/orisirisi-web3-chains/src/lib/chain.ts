@@ -81,8 +81,11 @@ export class Chain {
     }
   };
 
-  static fromNetworkVersion = (networkVersion: string) =>
-    new Chain(+networkVersion);
+  static fromNetworkVersion = (networkVersion: string) => {
+    return new Chain(Chain.maybeNormalizeLocalChainId(+networkVersion));
+  };
+  private static maybeNormalizeLocalChainId = (chainId: number) =>
+    chainId === 31337 ? 1337 : chainId;
 
   static defaultChain = () => new Chain(ChainID.Local);
 }

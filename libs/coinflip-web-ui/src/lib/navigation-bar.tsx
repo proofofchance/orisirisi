@@ -5,18 +5,22 @@ import {
   ConnectWalletButton,
   ConnectWalletOptionsModal,
 } from './navigation-bar/connect-wallet-button';
-import { CurrentAccountButton } from './navigation-bar/current-account-button';
-import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
+import {
+  useCurrentChain,
+  useCurrentWeb3Account,
+} from '@orisirisi/orisirisi-web3-ui';
 import { useCoinflipOngoingGameActivities } from './hooks';
 import { BrowserStorage } from '@orisirisi/orisirisi-browser';
 import { Tooltip } from 'react-tooltip';
 import { BellIcon } from '@heroicons/react/24/solid';
+import { WalletBalanceButton } from './navigation-bar/wallet-balance-button';
 
 export { ConnectWalletOptionsModal } from './navigation-bar/connect-wallet-button';
 
 export function NavigationBar({ className }: PropsWithClassName) {
   const isClient = useIsClient();
   const { currentWeb3Account } = useCurrentWeb3Account();
+  const currentChain = useCurrentChain();
 
   const isNotConnected = !currentWeb3Account;
 
@@ -54,9 +58,10 @@ export function NavigationBar({ className }: PropsWithClassName) {
                 publicAddress={currentWeb3Account.address!}
               />
             )}
-            {isClient && currentWeb3Account ? (
-              <CurrentAccountButton
+            {isClient && currentWeb3Account && currentChain ? (
+              <WalletBalanceButton
                 publicAddress={currentWeb3Account.address!}
+                currentChain={currentChain}
               />
             ) : (
               <ConnectWalletButton />
