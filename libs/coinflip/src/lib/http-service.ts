@@ -1,6 +1,6 @@
+import { Result } from '@orisirisi/orisirisi-error-handling';
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
 import { Game, GameActivity, GameStatus, GameWallet } from './games';
-import { Result } from '@orisirisi/orisirisi-error-handling';
 
 export interface FetchGamesParams {
   player_address?: string;

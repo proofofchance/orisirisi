@@ -79,6 +79,17 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     }
 
     // Do we need Re-entrant guard?
+    function creditPlayers(
+        address[] memory players,
+    ) external payable nonReentrant  {
+        require(msg.value % players.length == 0);
+        uint amountForEachPlayer = msg.value / players.length;
+        for (uint i = 0; i < players.length; i++) {
+            nonGameBalances[player[i]] += amountForEachPlayer;
+        }
+    }
+
+    // Do we need Re-entrant guard?
     function creditPlayersAndCreditAppTheRest(
         uint gameID,
         address[] memory players,
