@@ -5,6 +5,7 @@ import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 import {Payments} from './Payments.sol';
 
+// TODO: Move to orisirisi-contracts when more games are introduced
 /// ProofOfChance wallets that supports only coinflip at the time of deployment
 /// It acts as a regular wallet that can be 'Credited' and 'Debited'
 /// More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in
