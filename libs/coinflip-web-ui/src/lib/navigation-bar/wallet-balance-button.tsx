@@ -59,7 +59,7 @@ export function WalletBalanceButton({
 
       toast.dismiss(awaitingApprovalToastId);
 
-      toast.loading('Creating Game', {
+      toast.loading('Withdrawing balance', {
         position: 'bottom-right',
         duration: COINFLIP_INDEX_GRACE_PERIOD,
       });
