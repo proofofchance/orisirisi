@@ -46,6 +46,7 @@ export function CoinSideFormSection({
     <FormSectionShell title="Pick a Coin Side">
       <div className="mt-8 flex gap-4 items-center">
         <InsideFormShellButton
+          className="w-28 h-28"
           selected={coinSide === CoinSide.Head}
           icon={<ArrowSmallUpIcon className="h-6" />}
           disabled={isHeadDisabled}
@@ -54,26 +55,27 @@ export function CoinSideFormSection({
         />
         <div className="text-sm">OR</div>
         <InsideFormShellButton
+          className="w-28 h-28"
           selected={coinSide === CoinSide.Tail}
           icon={<ArrowSmallDownIcon className="h-6" />}
           disabled={isTailDisabled}
           label="Tail"
           onClick={async () => await pickCoinSide(CoinSide.Tail)}
         />
-        <div className="text-sm">OR</div>
-        <InsideFormShellButton
-          icon={<ArrowPathIcon className="h-6" />}
-          label="Pick Random"
-          onClick={async () => {
-            if (isHeadDisabled || isTailDisabled) {
-              await pickCoinSide(oppositeCoinSide(disabledCoinSide!));
-            } else {
-              await pickCoinSide(getRandomCoinSide());
-            }
-          }}
-        />
       </div>
-      <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />
+      <InsideFormShellButton
+        className="mt-12"
+        icon={<ArrowPathIcon className="h-6" />}
+        label="Pick Random"
+        onClick={async () => {
+          if (isHeadDisabled || isTailDisabled) {
+            await pickCoinSide(oppositeCoinSide(disabledCoinSide!));
+          } else {
+            await pickCoinSide(getRandomCoinSide());
+          }
+        }}
+      />
+      <ErrorMessageParagraph className="mt-4 text-sm" message={errorMessage} />
       {/* TODO: <div className="mt-6">Coin Animation here</div> */}
     </FormSectionShell>
   );
