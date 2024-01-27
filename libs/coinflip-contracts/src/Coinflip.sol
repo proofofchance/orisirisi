@@ -25,7 +25,7 @@ contract Coinflip is
     mapping(uint => Coin.Side) outcomes;
     uint public gamesCount;
 
-    Wallets public immutable wallets;
+    Wallets public wallets;
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
@@ -51,6 +51,7 @@ contract Coinflip is
         uint amountForEachWinner
     );
 
+    // TODO: Add indexes to events
     event ExpiredGameRefunded(uint gameID, uint refundedAmountPerPlayer);
 
     uint public minWager;
@@ -70,6 +71,10 @@ contract Coinflip is
 
     receive() external payable {
         Payments.pay(address(wallets), msg.value);
+    }
+
+    function updateWallets(address _wallets) external onlyOwner {
+        wallets = Wallets(_wallets);
     }
 
     /// @dev Creates a new game
