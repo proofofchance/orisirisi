@@ -24,7 +24,7 @@ export function NumberOfPlayersFormSection() {
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <TextInput
           disabled
-          className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[180px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('numberOfPlayers')}
           defaultValue={NumberOfPlayers.getMinAllowed().toString()}
         />

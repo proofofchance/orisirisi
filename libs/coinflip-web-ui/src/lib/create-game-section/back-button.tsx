@@ -5,7 +5,7 @@ export function BackButton({ ...props }: ButtonProps) {
   return (
     <button
       {...props}
-      className="px-2 py-1 border-white border-2 rounded-lg text-white hover:bg-white hover:text-black focus:outline-none"
+      className="mt-6 px-2 py-1 border-white border-2 rounded-lg text-white hover:bg-white hover:text-black focus:outline-none"
     >
       <ChevronLeftIcon className="h-6" />
     </button>

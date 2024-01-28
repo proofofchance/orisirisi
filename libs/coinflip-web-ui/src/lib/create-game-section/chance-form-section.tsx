@@ -119,7 +119,7 @@ export function ChanceFormSection({
               }
             }}
             maxLength={CHANCE_MAX_LENGTH}
-            className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
+            className="w-2/3 md:w-[320px] border-none sm:px-4 px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
             {...register('chance', {
               validate,
               onChange: async () => {
@@ -132,7 +132,7 @@ export function ChanceFormSection({
           />
           <InsideFormShellButton
             disabled={disableDownloadButton}
-            className=" bg-white text-black hover:bg-slate-100 rounded-bl-none rounded-tl-none w-36 text-sm"
+            className=" bg-white text-black hover:bg-slate-100 rounded-bl-none rounded-tl-none ml-7 w-28 md:w-36 text-xs md:text-sm"
             label="Download"
             icon={<ArrowDownTrayIcon className="h-5" />}
             onClick={async () => {

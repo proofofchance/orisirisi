@@ -62,10 +62,10 @@ export function WagerFormSection({ onSubmit }: Props) {
 
   return (
     <FormSectionShell title="How much do you want to stake?">
-      <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
+      <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <DecimalInput
           placeholder={`${CoinflipGame.getMinWagerEth()}`}
-          className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[180px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', {
             validate,
             onChange: () => clearErrors('wager'),

@@ -64,9 +64,9 @@ export function ExpiryFormSection({ onSubmit }: { onSubmit?: () => void }) {
 
   return (
     <FormSectionShell title="Set Game Expiry">
-      <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
+      <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <IntegerInput
-          className="w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[180px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('expiry', { validate })}
           max={getMaxExpiry(DEFAULT_EXPIRY_UNIT)}
           defaultValue={getDefaultExpiry(expiryUnit).toString()}
