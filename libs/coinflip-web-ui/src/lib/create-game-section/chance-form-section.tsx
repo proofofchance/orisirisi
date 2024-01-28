@@ -119,7 +119,7 @@ export function ChanceFormSection({
               }
             }}
             maxLength={CHANCE_MAX_LENGTH}
-            className="w-2/3 md:w-[320px] border-none sm:px-4 px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
+            className="w-2/3 md:w-[320px] border-none px-4 md:px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
             {...register('chance', {
               validate,
               onChange: async () => {

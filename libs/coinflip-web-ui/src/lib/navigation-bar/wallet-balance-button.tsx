@@ -84,14 +84,14 @@ export function WalletBalanceButton({
       {wallet!.isWithdrawable() && (
         <div
           onClick={withdrawWalletBalance}
-          className="w-full flex items-center pl-6 p-2 hover:cursor-pointer hover:bg-slate-200"
+          className="w-full flex items-center p-2 hover:cursor-pointer hover:bg-slate-200"
         >
           Withdraw <ArrowsUpDownIcon className="h-4 ml-1" />
         </div>
       )}
       <div
         onClick={disconnect}
-        className="w-full flex items-center pl-6 p-2 hover:cursor-pointer hover:bg-slate-200"
+        className="w-full flex items-center p-2 hover:cursor-pointer hover:bg-slate-200"
       >
         Disconnect <ArrowTopRightOnSquareIcon className="h-4 ml-1" />
       </div>
