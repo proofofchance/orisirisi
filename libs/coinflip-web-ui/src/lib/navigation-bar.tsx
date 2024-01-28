@@ -35,20 +35,26 @@ export function NavigationBar({ className }: PropsWithClassName) {
             </Link>
           </div>
           <div className={`text-white md:flex gap-x-6 items-center`}>
-            <Link href="/games" className="mr-2">
+            <Link
+              href="/games"
+              className="mr-2 hover:underline hidden md:block"
+            >
               Games
             </Link>
             {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
             {isClient && isNotConnected ? (
               <div
-                className="cursor-not-allowed opacity-70"
+                className="cursor-not-allowed opacity-70 hover:underline"
                 data-tooltip-id="create-game-link-tooltip"
                 data-tooltip-content="Connect wallet first →"
               >
                 Create Game
               </div>
             ) : (
-              <Link href="/create-game" className="mr-4">
+              <Link
+                href="/create-game"
+                className="mr-4 hover:underline hidden md:block"
+              >
                 Create Game
               </Link>
             )}
@@ -70,6 +76,37 @@ export function NavigationBar({ className }: PropsWithClassName) {
         </div>
       </BackgroundWrapper>
     </>
+  );
+}
+
+export function MobileAugmentingNavigationBar() {
+  const isClient = useIsClient();
+  const { currentWeb3Account } = useCurrentWeb3Account();
+
+  const isNotConnected = !currentWeb3Account;
+
+  return (
+    <div
+      className={`text-white flex md:hidden gap-x-6 items-center justify-center`}
+    >
+      <Link href="/games" className="mr-2 underline block md:hidden">
+        View Games
+      </Link>
+      {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
+      {isClient && isNotConnected ? (
+        <div
+          className="cursor-not-allowed opacity-70 underline"
+          data-tooltip-id="create-game-link-tooltip"
+          data-tooltip-content="Connect wallet first →"
+        >
+          Create Game
+        </div>
+      ) : (
+        <Link href="/create-game" className="mr-4 underline block md:hidden">
+          Create Game
+        </Link>
+      )}
+    </div>
   );
 }
 
@@ -97,7 +134,7 @@ function UnreadGameActivityCount({ publicAddress }: { publicAddress: string }) {
 
   return (
     <div
-      className="flex justify-center items-center ml-[-8px] pr-4"
+      className="justify-center items-center ml-[-8px] pr-4 hidden md:flex"
       onClick={readUnreadGameActivities}
     >
       <Tooltip id="notification-wip-info" />

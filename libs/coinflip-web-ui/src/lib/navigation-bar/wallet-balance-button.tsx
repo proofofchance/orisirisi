@@ -101,7 +101,7 @@ export function WalletBalanceButton({
   return (
     <div ref={ref} className="flex flex-col">
       <Button
-        className="rounded-[40px] px-7 py-4 cursor-pointer"
+        className="rounded-[40px] px-3 md:px-7 py-2 md:py-4 cursor-pointer"
         onClick={() => setShowMenu((prevShowMenu) => !prevShowMenu)}
       >
         <div className="flex gap-x-2 items-center">

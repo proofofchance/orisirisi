@@ -6,6 +6,7 @@ import {
   Background,
   SocialLinks,
   NavigationBar,
+  MobileAugmentingNavigationBar,
 } from '@orisirisi/coinflip-web-ui';
 import { Toaster } from 'react-hot-toast';
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
@@ -25,6 +26,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
         {isClient && <Toaster />}
         <Background className="px-12 sm:px-20">
           <NavigationBar className="py-4" />
+          <MobileAugmentingNavigationBar />
           <SocialLinks />
           <Component {...pageProps} />
         </Background>
