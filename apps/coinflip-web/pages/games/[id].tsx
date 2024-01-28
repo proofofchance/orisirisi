@@ -86,7 +86,9 @@ export default function GamePage() {
         <ExploreOtherGamesView gameId={game.id} className="mt-28" />
       </div>
 
-      {game.isOngoing() && <CopyGameLinkButton className="fixed bottom-20" />}
+      {game.isAwaitingPlayers() && (
+        <CopyGameLinkButton className="fixed bottom-20" />
+      )}
       <MainControlButtons
         currentWeb3Account={currentWeb3Account}
         game={game}

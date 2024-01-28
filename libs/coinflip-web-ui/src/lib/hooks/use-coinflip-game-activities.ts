@@ -1,12 +1,14 @@
 import {
   CoinflipGameActivity,
+  CoinflipGameStatus,
   CoinflipHTTPService,
   CoinflipHTTPServiceError,
 } from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 
-export function useCoinflipOngoingGameActivities(
+export function useAllCoinflipGameActivities(
   playerAddress: string | null,
+  gameStatus: CoinflipGameStatus,
   interval?: number
 ) {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,10 +20,11 @@ export function useCoinflipOngoingGameActivities(
     if (playerAddress) {
       const fetchController = new AbortController();
 
-      const fetchAndSetOngoingGameActivities = () => {
+      const fetchAndSetGameActivities = () => {
         setIsLoading(true);
-        CoinflipHTTPService.fetchOngoingGameActivities(
+        CoinflipHTTPService.fetchAllGamesActivities(
           playerAddress,
+          gameStatus,
           fetchController.signal
         )
           .then((game) => setGameActivities(game))
@@ -33,17 +36,17 @@ export function useCoinflipOngoingGameActivities(
 
       if (interval) {
         setInterval(() => {
-          fetchAndSetOngoingGameActivities();
+          fetchAndSetGameActivities();
         }, interval);
       } else {
-        fetchAndSetOngoingGameActivities();
+        fetchAndSetGameActivities();
       }
 
       return () => {
-        fetchController.abort('STALE_COINFLIP_ONGOING_GAME_ACTIVITIES_REQUEST');
+        fetchController.abort('STALE_COINFLIP_GAME_ACTIVITIES_REQUEST');
       };
     }
-  }, [playerAddress, interval]);
+  }, [playerAddress, gameStatus, interval]);
 
   return { gameActivities, isLoading, hasLoaded: gameActivities !== null };
 }
@@ -79,7 +82,7 @@ export function useCoinflipGameActivities(
         });
 
       return () => {
-        fetchController.abort('STALE_COINFLIP_ONGOING_GAME_ACTIVITIES_REQUEST');
+        fetchController.abort('STALE_COINFLIP_GAME_ACTIVITIES_REQUEST');
       };
     }
   }, [gameId, chainId]);

@@ -93,7 +93,7 @@ function GameCard({
 
       {false && (
         <div className={cn('flex gap-4 mt-4', game.isCompleted() && 'mt-10')}>
-          {game.isOngoing() && (
+          {game.isAwaitingPlayers() && (
             <button className="bg-[#2969FF] text-white px-4 py-1 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
               Play
             </button>

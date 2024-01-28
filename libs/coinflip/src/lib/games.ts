@@ -3,14 +3,14 @@ import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
 import { CoinSide } from './coin';
 
 export type GameStatus =
-  | 'ongoing'
+  | 'awaiting_players'
   | 'expired'
   | 'awaiting_revealed_chances'
   | 'completed';
 
 export type ConcludedGameStatus = Exclude<
   GameStatus,
-  'ongoing' | 'awaiting_revealed_chances'
+  'awaiting_players' | 'awaiting_revealed_chances'
 >;
 
 export class Game {
@@ -72,8 +72,8 @@ export class Game {
       (gp) => gp.player_address === playerAddress.toLowerCase()
     ) || null;
 
-  isOngoing(): boolean {
-    return this.status === 'ongoing';
+  isAwaitingPlayers(): boolean {
+    return this.status === 'awaiting_players';
   }
   isAwaitingRevealedChances(): boolean {
     return this.status === 'awaiting_revealed_chances';

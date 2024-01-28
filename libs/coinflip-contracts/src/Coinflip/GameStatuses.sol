@@ -24,7 +24,7 @@ contract UsingGameStatuses {
         _;
     }
 
-    function setGameStatusAsOngoing(
+    function setGameStatusAsAwaitingPlayers(
         uint gameID,
         uint expiryTimestamp
     ) internal {

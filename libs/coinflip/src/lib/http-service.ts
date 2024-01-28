@@ -117,12 +117,13 @@ export class HTTPService {
 
     return new Result(true, null);
   }
-  static async fetchOngoingGameActivities(
+  static async fetchAllGamesActivities(
     publicAddress: string,
+    status: GameStatus,
     signal: AbortSignal
   ): Promise<GameActivity[]> {
     const response = await fetch(
-      HTTPService.appendBaseUrl(`/game_activities/ongoing/${publicAddress}`),
+      HTTPService.appendBaseUrl(`/game_activities/${status}/${publicAddress}`),
       {
         signal,
       }

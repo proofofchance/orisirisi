@@ -37,7 +37,7 @@ export function MainControlButtons({
         />
       );
     }
-    if (game.isOngoing() && game.iHaveNotPlayed()) {
+    if (game.isAwaitingPlayers() && game.iHaveNotPlayed()) {
       return (
         <MainButton
           disabled={!currentWeb3Account}

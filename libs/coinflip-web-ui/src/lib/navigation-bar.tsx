@@ -9,7 +9,7 @@ import {
   useCurrentChain,
   useCurrentWeb3Account,
 } from '@orisirisi/orisirisi-web3-ui';
-import { useCoinflipOngoingGameActivities } from './hooks';
+import { useAllCoinflipGameActivities } from './hooks';
 import { BrowserStorage } from '@orisirisi/orisirisi-browser';
 import { Tooltip } from 'react-tooltip';
 import { BellIcon } from '@heroicons/react/24/solid';
@@ -111,15 +111,15 @@ export function MobileAugmentingNavigationBar() {
 }
 
 function UnreadGameActivityCount({ publicAddress }: { publicAddress: string }) {
-  const { gameActivities: ongoingGameActivities, hasLoaded } =
-    useCoinflipOngoingGameActivities(publicAddress);
+  const { gameActivities: awaiting_playersGameActivities, hasLoaded } =
+    useAllCoinflipGameActivities(publicAddress, 'awaiting_players');
 
   if (!hasLoaded) return null;
 
   const lastReadGameActivityBlockTimestamp =
     LastReadGameActivityBlockTimestamp.get();
 
-  const unreadGameActivities = ongoingGameActivities!.filter(
+  const unreadGameActivities = awaiting_playersGameActivities!.filter(
     (gameActivity) =>
       gameActivity.occurred_at > lastReadGameActivityBlockTimestamp
   );

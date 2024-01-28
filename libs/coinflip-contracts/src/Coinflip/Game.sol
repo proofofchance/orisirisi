@@ -5,7 +5,7 @@ import {Coin} from './Coin.sol';
 
 library Game {
     enum Status {
-        Ongoing,
+        AwaitingPlayers,
         Expired,
         AwaitingChancesUpload,
         Concluded

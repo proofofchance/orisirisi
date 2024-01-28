@@ -301,8 +301,11 @@ function GameStatusActivity({
 }) {
   const getReportAndTimestamp = () => {
     switch (status) {
-      case 'ongoing':
-        return ['Awaiting participating players...', formatTime(new Date())];
+      case 'awaiting_players':
+        return [
+          'Awaiting participating players. Play or share this game in your network.',
+          formatTime(new Date()),
+        ];
       case 'expired':
         return ['Game expired!', formatTime(new Date(expiryTimestampMs))];
       case 'awaiting_revealed_chances':

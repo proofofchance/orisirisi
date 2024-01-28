@@ -104,7 +104,7 @@ contract Coinflip is
         createGameWager(newGameID, wager);
         payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
-        setGameStatusAsOngoing(newGameID, expiryTimestamp);
+        setGameStatusAsAwaitingPlayers(newGameID, expiryTimestamp);
         gamesCount++;
 
         emit GameCreated(
@@ -127,7 +127,7 @@ contract Coinflip is
         external
         payable
         mustBeOperational
-        mustMatchGameStatus(gameID, Game.Status.Ongoing)
+        mustMatchGameStatus(gameID, Game.Status.AwaitingPlayers)
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
         mustAvoidPlayingAgain(gameID)
     {

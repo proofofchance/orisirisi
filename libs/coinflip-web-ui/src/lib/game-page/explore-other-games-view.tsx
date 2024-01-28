@@ -9,7 +9,7 @@ export function ExploreOtherGamesView({
   const { hasLoaded, isLoading, games } = useCoinflipGames({
     idToIgnore: gameId,
     pageSize: 10,
-    statusFilter: 'ongoing',
+    statusFilter: 'awaiting_players',
   });
 
   if (!hasLoaded) return null;
