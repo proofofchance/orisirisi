@@ -73,7 +73,10 @@ function GameCard({
           <h4 className="text-xl">{formatUSD(game.max_possible_win_usd)}</h4>
         </div>
         <div className="mt-2">
-          Wager: <h4 className="text-xl">{formatUSD(game.wager_usd)}</h4>
+          Wager:{' '}
+          <h4 className="text-xl">
+            {game.wager} {game.getChain().getCurrency()}
+          </h4>
         </div>
         {showCountdown ? (
           <div className="text-sm mt-4 flex gap-2 items-center">
