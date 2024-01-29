@@ -3,6 +3,7 @@ import { CoinflipGame } from '@orisirisi/coinflip';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { FormSectionShell } from './form-section-shell';
 import { DownArrowButton, UpArrowButton } from './common-buttons';
+import { TipCard } from './tip-card';
 
 export interface NumberOfPlayersForm {
   numberOfPlayers: string;
@@ -21,6 +22,8 @@ export function NumberOfPlayersFormSection() {
 
   return (
     <FormSectionShell title="Set Number of Players">
+      <TipCard tip="The specified number of players here will be required to participate in the game, otherwise, the game expires and your wager gets refunded back to you." />
+
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2 ">
         <TextInput
           disabled

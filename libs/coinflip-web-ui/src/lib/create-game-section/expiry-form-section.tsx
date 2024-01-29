@@ -9,6 +9,7 @@ import {
 } from '@orisirisi/orisirisi-data-utils';
 import { ErrorMessageParagraph } from './error-message-paragraph';
 import { useEffect } from 'react';
+import { TipCard } from './tip-card';
 
 export interface ExpiryForm {
   expiry: string;
@@ -64,6 +65,11 @@ export function ExpiryFormSection({ onSubmit }: { onSubmit?: () => void }) {
 
   return (
     <FormSectionShell title="Set Game Expiry">
+      <TipCard
+        className="md:400px"
+        tip="This game will expire if other players do not participate fully before the time limit specified here. No worries, wagers get refunded automatically."
+      />
+
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <IntegerInput
           className="w-[180px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"

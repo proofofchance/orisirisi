@@ -13,6 +13,7 @@ import { useSetSubmitFormStepHandler } from '../form-steps';
 import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { useEffect } from 'react';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
+import { TipCard } from './tip-card';
 
 export interface ChanceForm {
   chance: string;
@@ -94,17 +95,20 @@ export function ChanceFormSection({
     return true;
   };
   return (
-    <FormSectionShell
-      title="Create your chance"
-      tip={
-        <span>
-          The chance<i>(text)</i> you type here will be mixed with the chances
-          of other players' to determine the outcome so generate and edit until
-          you feel really lucky! Good luck!{' '}
-          <FaceSmileIcon className="h-4 mb-1 inline" />
-        </span>
-      }
-    >
+    <FormSectionShell title="Create your chance">
+      <TipCard
+        className="md:w-[500px]"
+        tip={
+          <span>
+            The chance<i>(lucky word(s))</i> you type here will be mixed with
+            the chances of other players' to determine the coinflip outcome.
+            Basically, if the total number of letters of all chances are even,
+            it is head, tail when odd. Good luck!{' '}
+            <FaceSmileIcon className="h-4 mb-1 inline" />
+          </span>
+        }
+      />
+
       <div className="flex mt-4">
         <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full">
           <TextInput

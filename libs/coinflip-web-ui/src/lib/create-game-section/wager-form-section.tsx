@@ -9,6 +9,7 @@ import { DecimalInput, isValidDecimalInput } from '@orisirisi/orisirisi-web-ui';
 import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-button';
 import { ErrorMessageParagraph } from './error-message-paragraph';
 import { FormSectionShell } from './form-section-shell';
+import { TipCard } from './tip-card';
 
 const isUpToMinimumWager = (wager: number) =>
   wager >= CoinflipGame.getMinWagerEth();
@@ -62,10 +63,14 @@ export function WagerFormSection({ onSubmit }: Props) {
 
   return (
     <FormSectionShell title="How much do you want to stake?">
+      <TipCard
+        className="md:w-[480px]"
+        tip="Other participating players will be required to equally stake the amount specified here."
+      />
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <DecimalInput
           placeholder={`${CoinflipGame.getMinWagerEth()}`}
-          className="w-[180px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
+          className="w-[100px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', {
             validate,
             onChange: () => clearErrors('wager'),
@@ -76,7 +81,6 @@ export function WagerFormSection({ onSubmit }: Props) {
         {chain && <ChainCurrencyButton className="px-4" chain={chain} />}
       </div>
       <ErrorMessageParagraph className="mt-2 text-sm" message={errorMessage} />
-      {/* TODO: Show USD estimation here using Uniswap from Rust API */}
     </FormSectionShell>
   );
 }

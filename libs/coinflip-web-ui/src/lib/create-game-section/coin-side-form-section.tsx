@@ -12,6 +12,7 @@ import {
 import { FormSectionShell } from './form-section-shell';
 import { InsideFormShellButton } from './common-buttons';
 import { ErrorMessageParagraph } from './error-message-paragraph';
+import { TipCard } from './tip-card';
 
 export interface CoinSideForm {
   coinSide: CoinSide;
@@ -41,10 +42,14 @@ export function CoinSideFormSection({
   const isHeadDisabled = disabledCoinSide === CoinSide.Head;
   const isTailDisabled = disabledCoinSide === CoinSide.Tail;
 
-  // TODO: Use round button to represent 'Head' and 'Tail' sides
   return (
     <FormSectionShell title="Pick a Coin Side">
-      <div className="mt-8 flex gap-4 items-center">
+      <TipCard
+        className="md:w-[320px]"
+        tip="This is your prediction of the coinflip outcome. You win if you prediction turns out right."
+      />
+
+      <div className="mt-8 flex gap-8 items-center">
         <InsideFormShellButton
           className="w-28 h-28"
           selected={coinSide === CoinSide.Head}
