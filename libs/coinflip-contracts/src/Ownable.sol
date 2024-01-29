@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.24;
 
 abstract contract Ownable {
     address private _owner;
