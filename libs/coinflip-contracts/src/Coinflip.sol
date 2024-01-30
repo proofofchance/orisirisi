@@ -12,53 +12,48 @@ import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 import {Wallets} from './Wallets.sol';
 import {Payments} from './Payments.sol';
 import {Ownable} from './Ownable.sol';
+import {MaybeOperational} from './MaybeOperational.sol';
+import {UsingServiceProvider} from './ServiceProvider.sol';
 
 contract Coinflip is
     UsingGamePlays,
     UsingGameWagers,
     UsingGameStatuses,
-    Ownable
+    Ownable,
+    MaybeOperational,
+    UsingServiceProvider
 {
-    //////////////////////////
-    ///      COINFLIP     ///
-    ////////////////////////
+    uint public minWager;
+    uint16 public maxNumberOfPlayers;
     mapping(uint => Coin.Side) outcomes;
     uint public gamesCount;
-
     Wallets public wallets;
+
+    event GameCreated(
+        uint indexed gameID,
+        uint16 indexed numberOfPlayers,
+        address indexed creator,
+        uint expiryTimestamp,
+        uint wager
+    );
+    event GamePlayChanceRevealed(
+        uint indexed gameID,
+        uint16 indexed gamePlayID,
+        bytes chanceAndSalt
+    );
+    event GameCompleted(
+        uint indexed gameID,
+        Coin.Side indexed coinSide,
+        uint amountForEachWinner
+    );
+    event ExpiredGameRefunded(
+        uint indexed gameID,
+        uint refundedAmountPerPlayer
+    );
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
     error InvalidProofOfChance();
-
-    event GameCreated(
-        uint gameID,
-        uint16 numberOfPlayers,
-        uint expiryTimestamp,
-        address creator,
-        uint wager
-    );
-    event GamePlayChanceRevealed(
-        uint gameID,
-        uint16 gamePlayID,
-        bytes chanceAndSalt
-    );
-    // Completed means the players completed all the actions
-    // required to deduce the game outcome.
-    // Whereas GameConcluded means it is either completed or expired
-    event GameCompleted(
-        uint gameID,
-        Coin.Side coinSide,
-        uint amountForEachWinner
-    );
-
-    // TODO: Add indexes to events
-    event ExpiredGameRefunded(uint gameID, uint refundedAmountPerPlayer);
-
-    uint public minWager;
-    // Max number of players to avoid completing/refunding games where the gas fee
-    // is more than the provider can handle at that given period
-    uint16 public maxNumberOfPlayers;
     error MaxNumberOfPlayersError();
     error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
 
@@ -72,17 +67,29 @@ contract Coinflip is
         minWager = _minWager;
     }
 
+    /// @notice Coinflip tops up your wallet balance when it receives any ether value
     receive() external payable {
-        Payments.pay(address(wallets), msg.value);
+        topUpWallet();
     }
 
-    function updateWallets(address _wallets) external onlyOwner {
+    /// @notice Allow updating Wallets conrtact in case a PPV is ever discovered
+    function updateWallets(address payable _wallets) external onlyOwner {
         wallets = Wallets(_wallets);
     }
 
-    /// @dev Creates a new game
-    /// @param proofOfChance sha256 hash of `chance + salt` that would
-    /// be later revealed
+    /// @notice Max number of players control to avoid concluding games with very high gas fee
+    function updateMaxNumberOfPlayers(
+        uint16 _maxNumberOfPlayers
+    ) external onlyOwner {
+        maxNumberOfPlayers = _maxNumberOfPlayers;
+    }
+
+    /// @notice Creates a new game
+    /// @param wager ether value required paticipating players to pay before playing
+    /// @param numberOfPlayers number of participating players
+    /// @param expiryTimestamp Expiry timestamp of the game
+    /// @param coinSide predicted coin side by you, the creator
+    /// @param proofOfChance SHA256 hash of your chance (lucky word[s]) and a random salt combined
     function createGame(
         uint wager,
         uint16 numberOfPlayers,
@@ -113,15 +120,18 @@ contract Coinflip is
         emit GameCreated(
             newGameID,
             numberOfPlayers,
-            expiryTimestamp,
             msg.sender,
+            expiryTimestamp,
             wager
         );
 
         createGamePlay(newGameID, coinSide, proofOfChance);
     }
 
-    /// Exposed so that players can play using their wallet instead of paying directly here  */
+    /// @notice Allows playing an already created game
+    /// @param gameID already created game ID
+    /// @param coinSide coin side outcome prediction
+    /// @param proofOfChance SHA256 hash of your chance (lucky word[s]) and a random salt combined
     function playGame(
         uint gameID,
         Coin.Side coinSide,
@@ -141,33 +151,28 @@ contract Coinflip is
         maybeSetGameStatusAsAwaitingChancesUpload(gameID);
     }
 
-    function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
-        uint16 playCount = playCounts[gameID];
-        uint16 numberOfPlayers = numberOfPlayersPerGame[gameID];
-
-        if (playCount == numberOfPlayers) {
-            setGameStatusAsAwaitingChancesUpload(gameID);
-        }
-    }
-
+    /// @notice Reveals the chances (lucky words) of all plays for a given game.
+    /// After, it computes and stores the coinflip outcome for the given game.
+    /// Then, it credits players that predicted the coinflip outcome correctly with the combined
+    /// wager shared equally (after service charge deduction)
+    /// @param gameID already created game ID
+    /// @param chanceAndSalts list of the chance and salts combined in the order of their respecitive play IDs
     function revealChancesAndCreditWinners(
         uint gameID,
-        uint16[] memory gamePlayIDs,
         bytes[] memory chanceAndSalts
     )
         external
         onlyOwner
         mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
-        if (chanceAndSalts.length != numberOfPlayersPerGame[gameID]) {
-            revert IncompleteChanceAndSaltsError(gameID);
-        }
-        require(gamePlayIDs.length == chanceAndSalts.length);
-
+        // Compute flip outcome
         uint8 flipOutcome = 0;
-        for (uint16 i = 0; i < gamePlayIDs.length; i++) {
-            bytes memory chanceAndSalt = chanceAndSalts[i];
-            uint16 gamePlayID = gamePlayIDs[i];
+        for (
+            uint16 gamePlayID = 1;
+            gamePlayID <= playCounts[gameID];
+            gamePlayID++
+        ) {
+            bytes memory chanceAndSalt = chanceAndSalts[gamePlayID];
 
             if (sha256(chanceAndSalt) != proofOfChances[gameID][gamePlayID]) {
                 revert InvalidProofOfChance();
@@ -191,16 +196,17 @@ contract Coinflip is
         }
         Coin.Side outcome = Coin.Side(flipOutcome);
         outcomes[gameID] = outcome;
-        address[] memory winners = players[gameID][outcomes[gameID]];
+        address[] memory winners = players[gameID][outcome];
         uint amountForEachWinner = creditGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
         emit GameCompleted(gameID, outcome, amountForEachWinner);
     }
 
+    /// @notice Batch refunds expired game players
+    /// @param gameIDs game IDs of expired games
     function refundExpiredGamePlayersForAllGames(
         uint[] memory gameIDs
     ) external {
-        console.log('blocktimestamp %s', block.timestamp);
         for (uint8 i = 0; i < gameIDs.length; i++) {
             refundExpiredGamePlayers(gameIDs[i]);
         }
@@ -242,8 +248,6 @@ contract Coinflip is
             winners.length
         );
 
-        console.log('amountForEachWinner %s', amountForEachPlayer);
-
         wallets.creditPlayersAndCreditAppTheRest(
             gameID,
             winners,
@@ -253,16 +257,12 @@ contract Coinflip is
         return amountForEachPlayer;
     }
 
-    function setMaxNumberOfPlayers(
-        uint16 maxNumberOfPlayers_
-    ) external onlyOwner {
-        maxNumberOfPlayers = maxNumberOfPlayers_;
-    }
+    function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
+        uint16 playCount = playCounts[gameID];
+        uint16 numberOfPlayers = numberOfPlayersPerGame[gameID];
 
-    function maybeTopUpWallet() private {
-        if (msg.value > 0) {
-            Payments.pay(address(wallets), msg.value);
-            wallets.creditPlayer(msg.sender, msg.value);
+        if (playCount == numberOfPlayers) {
+            setGameStatusAsAwaitingChancesUpload(gameID);
         }
     }
 
@@ -270,75 +270,13 @@ contract Coinflip is
         wallets.transferToGameWallet(gameID, msg.sender, wager);
     }
 
-    //////////////////////////////////
-    ///      SERVICE PROVIDER     ///
-    ////////////////////////////////
-    // due to charges for the minimum wager allowed
-    // expected to be high due to the gas fee for the minimum wager
-    // initialServiceCharges (at deployment):
-    // If transaction fee is $6
-    uint8 public serviceChargePercent = 8;
-
-    error InvalidServiceChargePercent();
-
-    function setServiceChargePercent(
-        uint8 _serviceChargePercent
-    ) external onlyOwner {
-        if (_serviceChargePercent >= 100) {
-            revert InvalidServiceChargePercent();
+    function maybeTopUpWallet() private {
+        if (msg.value > 0) {
+            topUpWallet();
         }
-
-        serviceChargePercent = _serviceChargePercent;
     }
 
-    /**
-     * @dev Returns the service provider wallet owner
-     */
-    function getServiceProviderWallet() external view returns (address) {
-        return owner();
-    }
-
-    function getServiceCharge(uint amount) external view returns (uint) {
-        return (amount * serviceChargePercent) / 100;
-    }
-
-    function getSplitAmountAfterServiceChargeDeduction(
-        uint amount,
-        uint places
-    ) private view returns (uint) {
-        uint splitAmount = amount / places;
-        splitAmount =
-            splitAmount -
-            ((splitAmount * serviceChargePercent) / 100);
-
-        return splitAmount;
-    }
-
-    //////////////////////////
-    /// MAYBE-OPERATIONAL ///
-    ////////////////////////
-    bool private operational = true;
-
-    error InOperative();
-
-    /**
-     * @dev Modifier that requires the "operational" boolean variable to be "true"
-     *      This is used on all state changing functions to pause the contract in
-     *      the event there is an issue that needs to be fixed
-     */
-    modifier mustBeOperational() {
-        if (!operational) {
-            revert InOperative();
-        }
-        _; // All modifiers require an "_" which indicates where the function body will be added
-    }
-
-    /**
-     * @dev Sets contract operations on/off
-     *
-     * When operational mode is disabled, all write transactions except for this one will fail
-     */
-    function setOperatingStatus(bool mode) external onlyOwner {
-        operational = mode;
+    function topUpWallet() private {
+        wallets.creditPlayer{value: msg.value}(msg.sender);
     }
 }

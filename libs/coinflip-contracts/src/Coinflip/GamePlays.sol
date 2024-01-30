@@ -10,25 +10,22 @@ contract UsingGamePlays {
     mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
     mapping(uint gameID => uint16 playCount) public playCounts;
     mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
-
     mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
     mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
-
     mapping(uint gameID => address[] player) allPlayers;
-
     mapping(uint gameID => mapping(uint16 playID => bytes32 proofOfChance))
         public proofOfChances;
 
-    error AllMatchingPlaysError(uint gameID, Coin.Side availableCoinSide);
-    error AlreadyPlayedError(uint gameID, uint16 playID);
-
     event GamePlayCreated(
-        uint gameID,
-        uint16 gamePlayID,
+        uint indexed gameID,
+        uint16 indexed gamePlayID,
+        address indexed player,
         Coin.Side coinSide,
-        address player,
         bytes32 proofOfChance
     );
+
+    error AllMatchingPlaysError(Coin.Side availableCoinSide);
+    error AlreadyPlayedError(uint16 playID);
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
         uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
@@ -42,7 +39,7 @@ contract UsingGamePlays {
             );
 
             if (coinSide != availableCoinSide) {
-                revert AllMatchingPlaysError(gameID, availableCoinSide);
+                revert AllMatchingPlaysError(availableCoinSide);
             }
         }
 
@@ -53,7 +50,7 @@ contract UsingGamePlays {
         uint16 myPlayID = playRecord[gameID][msg.sender];
 
         if (myPlayID > 0) {
-            revert AlreadyPlayedError(gameID, myPlayID);
+            revert AlreadyPlayedError(myPlayID);
         }
 
         _;
@@ -70,13 +67,13 @@ contract UsingGamePlays {
         players[gameID][coinSide].push(msg.sender);
         allPlayers[gameID].push(msg.sender);
         coinSideCounts[gameID][coinSide]++;
-        incrementPlayCount(gameID);
+        playCounts[gameID]++;
 
         emit GamePlayCreated(
             gameID,
             gamePlayID,
-            coinSide,
             msg.sender,
+            coinSide,
             proofOfChance
         );
     }
@@ -92,12 +89,6 @@ contract UsingGamePlays {
         if (headPlayCount == 0) {
             return Coin.Side.Head;
         }
-
-        assert(tailPlayCount == 0);
         return Coin.Side.Tail;
-    }
-
-    function incrementPlayCount(uint gameID) private {
-        playCounts[gameID]++;
     }
 }

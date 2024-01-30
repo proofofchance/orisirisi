@@ -2,6 +2,8 @@
 pragma solidity ^0.8.24;
 
 library Payments {
+    /// @dev sends ether amount from caller contract to
+    /// the 'to' address
     function pay(address to, uint256 amount) internal {
         (bool sent, ) = to.call{value: amount}('');
         require(sent);
