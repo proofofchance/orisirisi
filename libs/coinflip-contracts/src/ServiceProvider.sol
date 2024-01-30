@@ -13,13 +13,13 @@ contract UsingServiceProvider is Ownable {
     error InvalidServiceChargePercent();
 
     function updateServiceChargePercent(
-        uint8 _serviceChargePercent
+        uint8 serviceChargePercent_
     ) external onlyOwner {
-        if (_serviceChargePercent >= 100) {
+        if (serviceChargePercent_ >= 100) {
             revert InvalidServiceChargePercent();
         }
 
-        serviceChargePercent = _serviceChargePercent;
+        serviceChargePercent = serviceChargePercent_;
     }
 
     /// @dev Returns the service provider wallet owner

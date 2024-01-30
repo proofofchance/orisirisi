@@ -58,13 +58,13 @@ contract Coinflip is
     error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
 
     constructor(
-        address payable _wallets,
-        uint16 _maxNumberOfPlayers,
-        uint _minWager
+        address payable wallets_,
+        uint16 maxNumberOfPlayers_,
+        uint minWager_
     ) {
-        wallets = Wallets(_wallets);
-        maxNumberOfPlayers = _maxNumberOfPlayers;
-        minWager = _minWager;
+        wallets = Wallets(wallets_);
+        maxNumberOfPlayers = maxNumberOfPlayers_;
+        minWager = minWager_;
     }
 
     /// @notice Coinflip tops up your wallet balance when it receives any ether value
@@ -73,15 +73,20 @@ contract Coinflip is
     }
 
     /// @notice Allow updating Wallets conrtact in case a PPV is ever discovered
-    function updateWallets(address payable _wallets) external onlyOwner {
-        wallets = Wallets(_wallets);
+    function updateWallets(address payable wallets_) external onlyOwner {
+        wallets = Wallets(wallets_);
     }
 
-    /// @notice Max number of players control to avoid concluding games with very high gas fee
+    /// @notice Updates max number of players to avoid concluding games with very high gas fee
     function updateMaxNumberOfPlayers(
-        uint16 _maxNumberOfPlayers
+        uint16 maxNumberOfPlayers_
     ) external onlyOwner {
-        maxNumberOfPlayers = _maxNumberOfPlayers;
+        maxNumberOfPlayers = maxNumberOfPlayers_;
+    }
+
+    /// @notice Updates min wager allowed
+    function updateMinWagerOfPlayers(uint16 minWager_) external onlyOwner {
+        minWager = minWager_;
     }
 
     /// @notice Creates a new game
