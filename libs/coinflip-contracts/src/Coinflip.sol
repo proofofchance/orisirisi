@@ -29,6 +29,7 @@ contract Coinflip is
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
+    error InvalidProofOfChance();
 
     event GameCreated(
         uint gameID,
@@ -55,6 +56,8 @@ contract Coinflip is
     event ExpiredGameRefunded(uint gameID, uint refundedAmountPerPlayer);
 
     uint public minWager;
+    // Max number of players to avoid completing/refunding games where the gas fee
+    // is more than the provider can handle at that given period
     uint16 public maxNumberOfPlayers;
     error MaxNumberOfPlayersError();
     error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
@@ -167,7 +170,7 @@ contract Coinflip is
             uint16 gamePlayID = gamePlayIDs[i];
 
             if (sha256(chanceAndSalt) != proofOfChances[gameID][gamePlayID]) {
-                revert InvalidPlayChance();
+                revert InvalidProofOfChance();
             }
 
             (bytes16 chance, ) = abi.decode(chanceAndSalt, (bytes16, bytes8));
