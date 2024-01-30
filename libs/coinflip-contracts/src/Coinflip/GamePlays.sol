@@ -8,18 +8,17 @@ import {Game} from './Game.sol';
 
 contract UsingGamePlays {
     mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
+    mapping(uint gameID => uint16 playCount) public playCounts;
+    mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
+
+    mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
+    mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
+
+    mapping(uint gameID => address[] player) allPlayers;
 
     mapping(uint gameID => mapping(uint16 playID => bytes32 proofOfChance))
         public proofOfChances;
 
-    mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
-    mapping(uint gameID => address[] player) allPlayers;
-    mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
-
-    mapping(uint gameID => uint16 playCount) public playCounts;
-    mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
-
-    error InvalidPlayChance();
     error AllMatchingPlaysError(uint gameID, Coin.Side availableCoinSide);
     error AlreadyPlayedError(uint gameID, uint16 playID);
 
@@ -82,6 +81,10 @@ contract UsingGamePlays {
         );
     }
 
+    function setNumberOfPlayers(uint gameID, uint16 numberOfPlayers) internal {
+        numberOfPlayersPerGame[gameID] = numberOfPlayers;
+    }
+
     function getAvailableCoinSide(
         uint16 headPlayCount,
         uint16 tailPlayCount
@@ -96,9 +99,5 @@ contract UsingGamePlays {
 
     function incrementPlayCount(uint gameID) private {
         playCounts[gameID]++;
-    }
-
-    function setNumberOfPlayers(uint gameID, uint16 numberOfPlayers) internal {
-        numberOfPlayersPerGame[gameID] = numberOfPlayers;
     }
 }
