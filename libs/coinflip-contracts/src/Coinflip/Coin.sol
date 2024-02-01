@@ -8,8 +8,4 @@ library Coin {
     }
 
     uint8 public constant TOTAL_SIDES_COUNT = 2;
-
-    function flip(uint16 entropy) internal pure returns (Side) {
-        return Side(entropy % (TOTAL_SIDES_COUNT - 1));
-    }
 }
