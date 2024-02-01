@@ -157,14 +157,10 @@ describe('revealChancesAndCreditWinners', () => {
         );
 
       await expect(
-        coinflipContract.revealChancesAndCreditWinners(
-          gameId,
-          [1, 2],
-          [
-            firstPlayerPOC.getChanceAndSalt(),
-            secondPlayerPOC.getChanceAndSalt(),
-          ]
-        )
+        coinflipContract.revealChancesAndCreditWinners(gameId, [
+          firstPlayerPOC.getChanceAndSalt(),
+          secondPlayerPOC.getChanceAndSalt(),
+        ])
       )
         .to.emit(coinflipContract, 'GamePlayChanceRevealed')
         .withArgs(1, 1, firstPlayerPOC.getChanceAndSalt())
@@ -211,14 +207,10 @@ describe('revealChancesAndCreditWinners', () => {
         (firstChance.length + secondChance.length) % 2;
 
       await expect(
-        coinflipContract.revealChancesAndCreditWinners(
-          gameId,
-          [1, 2],
-          [
-            firstPlayerPOC.getChanceAndSalt(),
-            secondPlayerPOC.getChanceAndSalt(),
-          ]
-        )
+        coinflipContract.revealChancesAndCreditWinners(gameId, [
+          firstPlayerPOC.getChanceAndSalt(),
+          secondPlayerPOC.getChanceAndSalt(),
+        ])
       )
         .to.emit(coinflipContract, 'GameCompleted')
         .withArgs(1, expectedOutcome, anyValue);

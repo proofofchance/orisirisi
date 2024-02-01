@@ -174,12 +174,10 @@ contract Coinflip is
     {
         // Compute flip outcome
         uint8 flipOutcome = 0;
-        for (
-            uint16 gamePlayID = 1;
-            gamePlayID <= playCounts[gameID];
-            gamePlayID++
-        ) {
-            bytes memory chanceAndSalt = chanceAndSalts[gamePlayID];
+        for (uint16 i = 0; i < playCounts[gameID]; i++) {
+            bytes memory chanceAndSalt = chanceAndSalts[i];
+
+            uint16 gamePlayID = i + 1;
 
             if (sha256(chanceAndSalt) != proofOfChances[gameID][gamePlayID]) {
                 revert InvalidProofOfChance();

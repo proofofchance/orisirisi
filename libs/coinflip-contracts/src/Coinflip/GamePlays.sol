@@ -25,7 +25,7 @@ contract UsingGamePlays {
     );
 
     error AllMatchingPlaysError(Coin.Side availableCoinSide);
-    error AlreadyPlayedError(uint16 playID);
+    error AlreadyPlayedError();
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
         uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
@@ -33,10 +33,12 @@ contract UsingGamePlays {
         uint16 tailPlayCount = coinSideCounts[gameID][Coin.Side.Tail];
 
         if (playsLeft == 1 && (headPlayCount == 0 || tailPlayCount == 0)) {
-            Coin.Side availableCoinSide = getAvailableCoinSide(
-                headPlayCount,
-                tailPlayCount
-            );
+            Coin.Side availableCoinSide;
+            if (headPlayCount == 0) {
+                availableCoinSide = Coin.Side.Head;
+            } else {
+                availableCoinSide = Coin.Side.Tail;
+            }
 
             if (coinSide != availableCoinSide) {
                 revert AllMatchingPlaysError(availableCoinSide);
@@ -48,7 +50,7 @@ contract UsingGamePlays {
 
     modifier mustAvoidPlayingAgain(uint gameID) {
         if (playRecord[gameID][msg.sender]) {
-            revert AlreadyPlayedError(myPlayID);
+            revert AlreadyPlayedError();
         }
 
         _;
@@ -78,15 +80,5 @@ contract UsingGamePlays {
 
     function setNumberOfPlayers(uint gameID, uint16 numberOfPlayers) internal {
         numberOfPlayersPerGame[gameID] = numberOfPlayers;
-    }
-
-    function getAvailableCoinSide(
-        uint16 headPlayCount,
-        uint16 tailPlayCount
-    ) private pure returns (Coin.Side) {
-        if (headPlayCount == 0) {
-            return Coin.Side.Head;
-        }
-        return Coin.Side.Tail;
     }
 }
