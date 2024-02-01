@@ -120,7 +120,11 @@ contract Coinflip is
         payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
         setGameStatusAsAwaitingPlayers(newGameID, expiryTimestamp);
-        gamesCount++;
+        createGamePlay(newGameID, coinSide, proofOfChance);
+
+        unchecked {
+            gamesCount++;
+        }
 
         emit GameCreated(
             newGameID,
@@ -129,8 +133,6 @@ contract Coinflip is
             expiryTimestamp,
             wager
         );
-
-        createGamePlay(newGameID, coinSide, proofOfChance);
     }
 
     /// @notice Allows playing an already created game
@@ -191,9 +193,11 @@ contract Coinflip is
                     break;
                 }
 
-                flipOutcome++;
-                if (flipOutcome == 2) {
-                    flipOutcome = 0;
+                unchecked {
+                    flipOutcome++;
+                    if (flipOutcome == 2) {
+                        flipOutcome = 0;
+                    }
                 }
             }
 
