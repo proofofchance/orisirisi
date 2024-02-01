@@ -25,7 +25,6 @@ contract Coinflip is
 {
     uint public minWager;
     uint16 public maxNumberOfPlayers;
-    mapping(uint => Coin.Side) outcomes;
     uint public gamesCount;
     Wallets public wallets;
 
@@ -172,8 +171,7 @@ contract Coinflip is
         onlyOwner
         mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
-        // Compute flip outcome
-        uint8 flipOutcome = 0;
+        Coin.Side flipOutcome;
         for (uint16 i = 0; i < playCounts[gameID]; i++) {
             bytes memory chanceAndSalt = chanceAndSalts[i];
 
@@ -192,21 +190,19 @@ contract Coinflip is
                 }
 
                 unchecked {
-                    flipOutcome++;
-                    if (flipOutcome == 2) {
-                        flipOutcome = 0;
+                    if (flipOutcome == Coin.Side.Head) {
+                        flipOutcome = Coin.Side.Tail;
+                    } else {
+                        flipOutcome = Coin.Side.Head;
                     }
                 }
             }
-
             emit GamePlayChanceRevealed(gameID, gamePlayID, chanceAndSalt);
         }
-        Coin.Side outcome = Coin.Side(flipOutcome);
-        outcomes[gameID] = outcome;
-        address[] memory winners = players[gameID][outcome];
+        address[] memory winners = players[gameID][flipOutcome];
         uint amountForEachWinner = creditGameWinners(gameID, winners);
         setGameStatusAsConcluded(gameID);
-        emit GameCompleted(gameID, outcome, amountForEachWinner);
+        emit GameCompleted(gameID, flipOutcome, amountForEachWinner);
     }
 
     /// @notice Batch refunds expired game players
