@@ -10,7 +10,6 @@ import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {Wallets} from './Wallets.sol';
-import {Payments} from './Payments.sol';
 import {Ownable} from './Ownable.sol';
 import {MaybeOperational} from './MaybeOperational.sol';
 import {UsingServiceProvider} from './ServiceProvider.sol';
@@ -270,7 +269,7 @@ contract Coinflip is
     }
 
     function payGameWager(uint gameID, uint wager) private {
-        wallets.transferToGameWallet(gameID, msg.sender, wager);
+        wallets.debitForGame(gameID, msg.sender, wager);
     }
 
     function maybeTopUpWallet() private {
