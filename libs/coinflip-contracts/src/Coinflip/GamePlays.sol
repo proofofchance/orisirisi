@@ -7,7 +7,7 @@ import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
 
 contract UsingGamePlays {
-    mapping(uint gameID => mapping(address player => bool hasPlayed)) playRecord;
+    mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
     mapping(uint gameID => uint16 playCount) public playCounts;
     mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
     mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
@@ -25,7 +25,7 @@ contract UsingGamePlays {
     );
 
     error AllMatchingPlaysError(Coin.Side availableCoinSide);
-    error AlreadyPlayedError();
+    error AlreadyPlayedError(uint16 playID);
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
         uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
@@ -49,8 +49,10 @@ contract UsingGamePlays {
     }
 
     modifier mustAvoidPlayingAgain(uint gameID) {
-        if (playRecord[gameID][msg.sender]) {
-            revert AlreadyPlayedError();
+        uint16 myPlayID = playRecord[gameID][msg.sender];
+
+        if (myPlayID > 0) {
+            revert AlreadyPlayedError(myPlayID);
         }
 
         _;
@@ -62,7 +64,7 @@ contract UsingGamePlays {
         bytes32 proofOfChance
     ) internal {
         uint16 gamePlayID = playCounts[gameID] + 1;
-        playRecord[gameID][msg.sender] = true;
+        playRecord[gameID][msg.sender] = gamePlayID;
         proofOfChances[gameID][gamePlayID] = proofOfChance;
         players[gameID][coinSide].push(msg.sender);
         allPlayers[gameID].push(msg.sender);
