@@ -3,7 +3,6 @@ pragma solidity ^0.8.24;
 
 import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
-import {Payments} from './Payments.sol';
 
 /// TODO: Move to orisirisi-contracts when more games are introduced
 /// TODO: Consider renaming to GameWallets
@@ -44,11 +43,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         _;
     }
 
-    function transferToGameWallet(
+    function debitForGame(
         uint gameID,
         address player,
         uint amount
-    ) external nonReentrant onlyApp {
+    ) external onlyApp {
         if (nonGameBalances[player] < amount) {
             revert InsufficientFunds();
         }
@@ -62,25 +61,20 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     /// @dev Credits player as though player manually credits themselves. A convenient function
     /// for cases where players send their ether to one of ProofOfChances' apps instead of the
     /// wallet. Those apps, will act as a proxy to then manually top up the player's wallet balance
-    function creditPlayer(
-        address player
-    ) external payable nonReentrant onlyApp {
+    function creditPlayer(address player) external payable onlyApp {
         uint amount = msg.value;
         nonGameBalances[player] += amount;
         emit Credit(player, amount);
     }
 
-    function credit() external payable nonReentrant {
+    function credit() external payable {
         address player = msg.sender;
         uint amount = msg.value;
         nonGameBalances[player] += amount;
         emit Credit(player, amount);
     }
 
-    // Do we need Re-entrant guard?
-    function creditPlayers(
-        address[] memory players
-    ) external payable nonReentrant {
+    function creditPlayers(address[] memory players) external payable {
         require(msg.value % players.length == 0);
         uint amountForEachPlayer = msg.value / players.length;
         for (uint i = 0; i < players.length; i++) {
@@ -88,7 +82,6 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         }
     }
 
-    // Do we need Re-entrant guard?
     function creditPlayersAndCreditAppTheRest(
         uint gameID,
         address[] memory players,
@@ -122,14 +115,29 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         emit CreditFromGame(app, gameID, appOwner, restAmount);
     }
 
+    function withdraw(uint amount) external nonReentrant {
+        address owner = msg.sender;
+        uint balance = nonGameBalances[owner];
+        if (balance < amount) {
+            revert InsufficientFunds();
+        }
+        nonGameBalances[owner] -= amount;
+
+        pay(owner, amount);
+
+        emit Debit(owner, amount);
+    }
+
     function withdrawAll() external nonReentrant {
         address owner = msg.sender;
         uint balance = nonGameBalances[owner];
         if (balance == 0) {
             revert InsufficientFunds();
         }
-        nonGameBalances[msg.sender] = 0;
-        Payments.pay(payable(msg.sender), balance);
+        nonGameBalances[owner] = 0;
+
+        pay(owner, balance);
+
         emit Debit(owner, balance);
     }
 
@@ -146,5 +154,10 @@ contract Wallets is UsingReentrancyGuard, Ownable {
 
     function getTotalBalance() external view returns (uint) {
         return address(this).balance;
+    }
+
+    function pay(address to, uint256 amount) private {
+        (bool sent, ) = to.call{value: amount}('');
+        require(sent);
     }
 }
