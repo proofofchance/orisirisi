@@ -161,7 +161,17 @@ export class HTTPService {
       signal,
     });
 
-    return this.maybeReturnHTTPServiceError(response, GameWallet.fromJSON);
+    if (response.ok) {
+      const json = await response.json();
+
+      return new Result(GameWallet.fromJSON(json), null);
+    }
+
+    if (response.status === 404) {
+      return new Result(GameWallet.newEmpty(owner_address), null);
+    }
+
+    throw new Error(await response.text());
   }
 
   private static maybeReturnHTTPServiceError = async <Resource>(

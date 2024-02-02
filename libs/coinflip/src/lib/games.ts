@@ -217,4 +217,7 @@ export class GameWallet {
     // @ts-ignore
     return Object.assign(new GameWallet(), json);
   }
+  static newEmpty(owner_address: string): GameWallet {
+    return new GameWallet(owner_address, '0.00', '0.00');
+  }
 }
