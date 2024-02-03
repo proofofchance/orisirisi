@@ -16,10 +16,20 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     mapping(address app => mapping(uint gameID => uint balance)) gameBalances;
     mapping(address owner => uint amount) nonGameBalances;
 
-    event Credit(address owner, uint amount);
-    event Debit(address owner, uint amount);
-    event CreditFromGame(address app, uint gameID, address owner, uint amount);
-    event DebitForGame(address app, uint gameID, address owner, uint amount);
+    event Credit(address indexed owner, uint amount);
+    event Debit(address indexed owner, uint amount);
+    event CreditFromGame(
+        address indexed app,
+        uint indexed gameID,
+        address indexed owner,
+        uint amount
+    );
+    event DebitForGame(
+        address indexed app,
+        uint indexed gameID,
+        address indexed owner,
+        uint amount
+    );
 
     error InsufficientFunds();
     error UnAuthorizedApp();

@@ -29,8 +29,8 @@ contract Coinflip is
 
     event GameCreated(
         uint indexed gameID,
-        uint16 indexed numberOfPlayers,
         address indexed creator,
+        uint16 numberOfPlayers,
         uint expiryTimestamp,
         uint wager
     );
@@ -41,7 +41,7 @@ contract Coinflip is
     );
     event GameCompleted(
         uint indexed gameID,
-        Coin.Side indexed coinSide,
+        Coin.Side coinSide,
         uint amountForEachWinner
     );
     event ExpiredGameRefunded(
@@ -118,7 +118,6 @@ contract Coinflip is
         payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
         setGameStatusAsAwaitingPlayers(newGameID, expiryTimestamp);
-        createGamePlay(newGameID, coinSide, proofOfChance);
 
         unchecked {
             gamesCount++;
@@ -126,11 +125,13 @@ contract Coinflip is
 
         emit GameCreated(
             newGameID,
-            numberOfPlayers,
             msg.sender,
+            numberOfPlayers,
             expiryTimestamp,
             wager
         );
+
+        createGamePlay(newGameID, coinSide, proofOfChance);
     }
 
     /// @notice Allows playing an already created game
