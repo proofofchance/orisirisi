@@ -7,6 +7,7 @@ export interface FetchGamesParams {
   status?: GameStatus;
   id_to_ignore?: number;
   page_size?: number;
+  chain_id_to_ignore?: number;
 }
 
 export interface FetchGameParams {

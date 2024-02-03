@@ -6,6 +6,8 @@ import {
   FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
+import { FeatureFlags } from '@orisirisi/orisirisi';
+import { ChainID } from '@orisirisi/orisirisi-web3-chains';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useEffect, useState } from 'react';
 
@@ -34,9 +36,14 @@ export function useCoinflipGames({
 
   useEffect(() => {
     const buildParams = (): FetchCoinflipGamesParams => {
+      const chainIdToIgnore = FeatureFlags.showTestnets()
+        ? undefined
+        : ChainID.SepoliaTestNet;
+
       const params: FetchCoinflipGamesParams = {
         id_to_ignore: idToIgnore,
         page_size: pageSize,
+        chain_id_to_ignore: chainIdToIgnore,
       };
 
       if (forFilter === 'my_games') {
