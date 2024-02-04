@@ -16,7 +16,7 @@ export const parseInteger = (value: string | number) =>
   value ? parseInt(`${value}`, 10) : null;
 
 export function getRandomInteger(max: number, minimum = 0) {
-  return minimum + Math.round(Math.random() * max);
+  return minimum + Math.floor(Math.random() * (max - minimum + 1));
 }
 
 export function getDivisionAndRemainder(
