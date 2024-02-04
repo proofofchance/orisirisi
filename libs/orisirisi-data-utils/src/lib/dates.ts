@@ -47,6 +47,7 @@ export const timeAgo = (time: number | string | Date) => {
     format;
   /* eslint-disable no-cond-assign */
   while ((format = time_formats[i++]))
+    /* @ts-ignore */
     if (seconds < format[0]) {
       if (typeof format[2] == 'string') return format[list_choice];
       else

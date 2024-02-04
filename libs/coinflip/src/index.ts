@@ -12,21 +12,21 @@ export {
   Game as CoinflipGame,
   GameActivity as CoinflipGameActivity,
   formatUSD,
-  GameStatus as CoinflipGameStatus,
-  ConcludedGameStatus as CoinflipConcludedGameStatus,
+  type GameStatus as CoinflipGameStatus,
+  type ConcludedGameStatus as CoinflipConcludedGameStatus,
   GamePlay as CoinflipGamePlay,
-  GamePlayStatus as CoinflipGamePlayStatus,
+  type GamePlayStatus as CoinflipGamePlayStatus,
   GameWallet as CoinflipGameWallet,
 } from './lib/games';
 
 export {
   HTTPService as CoinflipHTTPService,
   HTTPServiceError as CoinflipHTTPServiceError,
-  HTTPServiceErrorType as CoinflipHTTPServiceErrorType,
-  FetchGamesParams as FetchCoinflipGamesParams,
-  FetchGameParams as FetchCoinflipGameParams,
-  FetchGameWalletParams as FetchCoinflipGameWalletParams,
-  UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
+  type HTTPServiceErrorType as CoinflipHTTPServiceErrorType,
+  type FetchGamesParams as FetchCoinflipGamesParams,
+  type FetchGameParams as FetchCoinflipGameParams,
+  type FetchGameWalletParams as FetchCoinflipGameWalletParams,
+  type UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
 } from './lib/http-service';
 
 export const COINFLIP_INDEX_GRACE_PERIOD = 8000;

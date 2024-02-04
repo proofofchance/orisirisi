@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { coinSideToString } from '@orisirisi/coinflip';
 import { CoinSideForm } from './coin-side-form-section';
 import { ExpiryForm } from './expiry-form-section';
@@ -22,7 +23,7 @@ export function ConfirmGameDetailsFormSection({
 }: ConfirmGameDetailsFormSectionProps) {
   const { wager, numberOfPlayers, expiry, coinSide } = getGameDetails();
 
-  const row = (title: string, value: string | number, step: number) => (
+  const row = (title: string, value: ReactNode, step: number) => (
     <div
       className="flex justify-between hover:text-lg cursor-pointer"
       onClick={() => goToStep(step)}

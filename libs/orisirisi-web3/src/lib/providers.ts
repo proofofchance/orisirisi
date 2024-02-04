@@ -9,8 +9,8 @@
 export { MetaMask, MetaMaskError } from './providers/meta-mask';
 export { Web3ProviderType } from './providers/web3-provider-type';
 export {
-  CoinbaseWalletProvider,
-  MetaMaskProvider,
+  type CoinbaseWalletProvider,
+  type MetaMaskProvider,
 } from './providers/window-ethereum-providers';
 export {
   Web3Provider,

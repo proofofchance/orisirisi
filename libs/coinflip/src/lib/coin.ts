@@ -15,8 +15,12 @@ export function oppositeCoinSide(coinSide: CoinSide): CoinSide {
   }
 }
 
-export function coinSideToString(coinSide: CoinSide | null): string | null {
-  switch (coinSide) {
+export function coinSideToString(
+  coinSide: CoinSide | null | number
+): string | null {
+  const _coinSide = coinSide === null ? null : (coinSide as CoinSide);
+
+  switch (_coinSide) {
     case null:
       return null;
 
