@@ -7,7 +7,6 @@ import {
   getRandomCoinSide,
   oppositeCoinSide,
 } from '@orisirisi/coinflip';
-import { WalletsContract } from '../src';
 import { Coinflip } from '../typechain-types';
 import { getRandomInteger, pickRandom } from '@orisirisi/orisirisi-data-utils';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
@@ -269,11 +268,7 @@ export async function deployCoinflipContracts() {
     deployer
   );
 
-  const wallets = WalletsContract.fromSignerAndAddress(
-    deployer,
-    walletsAddress
-  );
-  await wallets.addApp(coinflipContract.getAddress());
+  await walletsContract.addApp(coinflipContract.getAddress());
 
   return {
     creator: deployer,
