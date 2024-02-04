@@ -14,7 +14,7 @@ import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 contract Wallets is UsingReentrancyGuard, Ownable {
     mapping(address => bool) apps;
     mapping(address app => mapping(uint gameID => uint balance)) gameBalances;
-    mapping(address owner => uint amount) nonGameBalances;
+    mapping(address owner => uint amount) balances;
 
     event Credit(address indexed owner, uint amount);
     event Debit(address indexed owner, uint amount);
@@ -58,10 +58,10 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         address player,
         uint amount
     ) external onlyApp {
-        if (nonGameBalances[player] < amount) {
+        if (balances[player] < amount) {
             revert InsufficientFunds();
         }
-        nonGameBalances[player] -= amount;
+        balances[player] -= amount;
         address app = msg.sender;
         gameBalances[app][gameID] += amount;
 
@@ -71,7 +71,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     /// @dev Credits player as though player manually credits themselves.
     function creditPlayer(address player) external payable {
         uint amount = msg.value;
-        nonGameBalances[player] += amount;
+        balances[player] += amount;
         emit Credit(player, amount);
     }
 
@@ -86,7 +86,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         require(amount % playersSize == 0);
         uint amountForEachPlayer = amount / playersSize;
         for (uint i = 0; i < playersSize; i++) {
-            nonGameBalances[players[i]] += amountForEachPlayer;
+            balances[players[i]] += amountForEachPlayer;
         }
     }
 
@@ -104,11 +104,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     /// @notice Allows you to withdraw a specified amount of your wallet balance
     function withdraw(uint amount) external nonReentrant {
         address owner = msg.sender;
-        uint balance = nonGameBalances[owner];
+        uint balance = balances[owner];
         if (balance < amount) {
             revert InsufficientFunds();
         }
-        nonGameBalances[owner] -= amount;
+        balances[owner] -= amount;
 
         pay(owner, amount);
 
@@ -118,11 +118,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     /// @notice Allows you to withdraw all your wallet balance
     function withdrawAll() external nonReentrant {
         address owner = msg.sender;
-        uint balance = nonGameBalances[owner];
+        uint balance = balances[owner];
         if (balance == 0) {
             revert InsufficientFunds();
         }
-        nonGameBalances[owner] = 0;
+        balances[owner] = 0;
 
         pay(owner, balance);
 
@@ -140,14 +140,14 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     function _credit() private {
         address player = msg.sender;
         uint amount = msg.value;
-        nonGameBalances[player] += amount;
+        balances[player] += amount;
         emit Credit(player, amount);
     }
 
-    /// @notice returns the non game balance of a wallet owner
+    /// @notice returns the balance of a wallet owner
     /// it does not include the balances deposited in games
     function getBalance(address owner) external view returns (uint) {
-        return nonGameBalances[owner];
+        return balances[owner];
     }
 
     /// @notice returns the ether balance of this wallet contract
@@ -169,7 +169,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         for (uint i = 0; i < players.length; i++) {
             address player = players[i];
             gameBalances[app][gameID] -= amount;
-            nonGameBalances[player] += amount;
+            balances[player] += amount;
             emit CreditFromGame(app, gameID, player, amount);
         }
     }
@@ -178,7 +178,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         uint restAmount = gameBalances[app][gameID];
         // Currently, all apps have one owner, who happens to own this wallet contract too
         address appOwner = owner();
-        nonGameBalances[appOwner] = restAmount;
+        balances[appOwner] = restAmount;
         gameBalances[app][gameID] = 0;
         emit CreditFromGame(app, gameID, appOwner, restAmount);
     }

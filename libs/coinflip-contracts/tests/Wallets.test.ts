@@ -4,7 +4,7 @@ import { parseEther } from 'ethers';
 
 describe('receive', () => {
   context('when I send ether', () => {
-    it('adds the ether amount sent to my non game balance', async () => {
+    it('adds the ether amount sent to my balance', async () => {
       const { creator, walletsContract } = await deployWalletContract();
 
       const amount = parseEther('2');
@@ -98,7 +98,7 @@ describe('debitForGame', () => {
 });
 
 describe('creditPlayer', () => {
-  it('adds to non game balance for the specified player', async () => {
+  it('adds to the wallet balance for the specified player', async () => {
     const { otherOwners: otherPlayers, walletsContract } =
       await deployWalletContract();
     const anotherPlayer = otherPlayers[0];
