@@ -19,7 +19,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to coinflip-web!</title>
+        <title>Proof of Chance - Coinflip</title>
       </Head>
 
       <main className="app">
