@@ -4,9 +4,9 @@ pragma solidity ^0.8.24;
 import {Ownable} from './Ownable.sol';
 
 contract MaybeOperational is Ownable {
-    bool private operational = true;
+    bool private isOperational = true;
 
-    error InOperative();
+    error InOperational();
 
     /**
      * @dev Modifier that requires the "operational" boolean variable to be "true"
@@ -14,18 +14,18 @@ contract MaybeOperational is Ownable {
      *      the event there is an issue that needs to be fixed
      */
     modifier mustBeOperational() {
-        if (!operational) {
-            revert InOperative();
+        if (!isOperational) {
+            revert InOperational();
         }
-        _; // All modifiers require an "_" which indicates where the function body will be added
+        _;
     }
 
     /**
      * @dev Sets contract operations on/off
      *
-     * When operational mode is disabled, all write transactions except for this one will fail
+     * When isOperational is false, all affected write transactions except for this one will fail
      */
-    function setOperatingStatus(bool mode) external onlyOwner {
-        operational = mode;
+    function setIsOperational(bool isOperational_) external onlyOwner {
+        isOperational = isOperational_;
     }
 }
