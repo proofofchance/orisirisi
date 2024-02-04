@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build:contracts": "cd libs/coinflip-contracts && pnpm build",
-    "build:web": "nx build --project coinflip-web",
+    "build:contracts": "cd libs/coinflip-contracts && pnpm build && cd ../../",
+    "build:web": "pnpm build:contracts && nx build --project coinflip-web",
     "dev:web": "nx serve coinflip-web --port 2000",
     "dev:start-web3-provider": "cd libs/coinflip-contracts && pnpm dev:start-web3-provider",
     "dev:deploy-contracts": "cd libs/coinflip-contracts && pnpm dev:deploy",
