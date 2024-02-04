@@ -228,7 +228,7 @@ contract Coinflip is
             allPlayersSize
         );
 
-        wallets.creditPlayersAndCreditAppTheRest(
+        wallets.creditPlayersAndCreditAppOwnerTheRest(
             gameID,
             allPlayers,
             refundAmountPerPlayer
@@ -251,7 +251,7 @@ contract Coinflip is
             winners.length
         );
 
-        wallets.creditPlayersAndCreditAppTheRest(
+        wallets.creditPlayersAndCreditAppOwnerTheRest(
             gameID,
             winners,
             amountForEachPlayer

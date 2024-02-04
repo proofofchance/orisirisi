@@ -90,7 +90,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         }
     }
 
-    function creditPlayersAndCreditAppTheRest(
+    function creditPlayersAndCreditAppOwnerTheRest(
         uint gameID,
         address[] memory players,
         uint amount
@@ -98,7 +98,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         address app = msg.sender;
         require(gameBalances[app][gameID] > players.length * amount);
         creditPlayers(app, gameID, players, amount);
-        creditAppTheRest(app, gameID);
+        creditAppOwnerTheRest(app, gameID);
     }
 
     /// @notice Allows you to withdraw a specified amount of your wallet balance
@@ -174,8 +174,9 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         }
     }
 
-    function creditAppTheRest(address app, uint gameID) private {
+    function creditAppOwnerTheRest(address app, uint gameID) private {
         uint restAmount = gameBalances[app][gameID];
+        // Currently, all apps have one owner, who happens to own this wallet contract too
         address appOwner = owner();
         nonGameBalances[appOwner] = restAmount;
         gameBalances[app][gameID] = 0;
