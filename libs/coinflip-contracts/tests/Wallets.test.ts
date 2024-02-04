@@ -137,6 +137,108 @@ describe('creditPlayers', () => {
   });
 });
 
+describe('withdraw', () => {
+  it('removes amount from your balance', async () => {
+    const { creator, walletsContract } = await deployWalletContract();
+
+    const amount = parseEther('2');
+    await walletsContract.credit({ value: amount });
+
+    expect(await walletsContract.getBalance(creator)).to.equal(amount);
+
+    const amountWithdrawn = parseEther('1');
+
+    await walletsContract.withdraw(amountWithdrawn);
+
+    expect(await walletsContract.getBalance(creator)).to.equal(
+      amount - amountWithdrawn
+    );
+  });
+
+  it('transfers the removed amount to your ether balance', async () => {
+    const { creator, walletsContract } = await deployWalletContract();
+
+    const initialBalance = await ethers.provider.getBalance(creator);
+
+    const amount = parseEther('2');
+    await walletsContract.credit({ value: amount });
+
+    const balanceAfterCreditingWallet = await ethers.provider.getBalance(
+      creator
+    );
+
+    expect(initialBalance - balanceAfterCreditingWallet).to.be.greaterThan(
+      amount
+    );
+
+    const amountWithdrawn = parseEther('1');
+
+    await walletsContract.withdraw(amountWithdrawn);
+
+    const balanceAfterWithdrawal = await ethers.provider.getBalance(creator);
+
+    expect(balanceAfterWithdrawal).to.be.greaterThan(
+      balanceAfterCreditingWallet
+    );
+  });
+
+  it('reverts if amount is more than your balance', async () => {
+    const { walletsContract } = await deployWalletContract();
+
+    const amount = parseEther('2');
+    await walletsContract.credit({ value: amount });
+
+    const amountWithdrawn = amount + parseEther('1');
+
+    await expect(
+      walletsContract.withdraw(amountWithdrawn)
+    ).to.be.revertedWithCustomError(walletsContract, 'InsufficientFunds');
+  });
+});
+
+describe('withdrawAll', () => {
+  it('removes all amount from your balance', async () => {
+    const { creator, walletsContract } = await deployWalletContract();
+
+    const amount = parseEther('2');
+    await walletsContract.credit({ value: amount });
+
+    expect(await walletsContract.getBalance(creator)).to.equal(amount);
+
+    await walletsContract.withdrawAll();
+
+    expect(await walletsContract.getBalance(creator)).to.equal(0);
+  });
+
+  it('transfers the removed amount to your ether balance', async () => {
+    const { creator, walletsContract } = await deployWalletContract();
+
+    const amount = parseEther('2');
+    await walletsContract.credit({ value: amount });
+
+    const balanceAfterCreditingWallet = await ethers.provider.getBalance(
+      creator
+    );
+
+    await walletsContract.withdrawAll();
+
+    const balanceAfterWithdrawal = await ethers.provider.getBalance(creator);
+
+    expect(balanceAfterWithdrawal).to.be.greaterThan(
+      balanceAfterCreditingWallet
+    );
+  });
+
+  it('reverts if balance is zero', async () => {
+    const { walletsContract } = await deployWalletContract();
+
+    await expect(walletsContract.withdrawAll()).to.be.revertedWithCustomError(
+      walletsContract,
+      'InsufficientFunds'
+    );
+  });
+});
+
 export async function deployWalletContract() {
   const [deployer, ...otherOwners] = await ethers.getSigners();
 
