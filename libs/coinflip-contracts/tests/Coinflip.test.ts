@@ -65,12 +65,9 @@ describe('createGame', () => {
 
         expect(await walletsContract.getBalance(creator)).to.equal(0);
 
-        expect(
+        await expect(
           coinflipContract.createGame(...createGameParams.toArgs())
-        ).to.be.revertedWithCustomError(
-          coinflipContract,
-          'InsufficientWalletBalance'
-        );
+        ).to.be.revertedWithCustomError(walletsContract, 'InsufficientFunds');
       });
     });
 
