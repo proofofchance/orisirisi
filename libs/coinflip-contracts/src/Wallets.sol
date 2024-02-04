@@ -35,7 +35,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     error UnAuthorizedApp();
 
     receive() external payable {
-        nonGameBalances[msg.sender] += msg.value;
+        _credit();
     }
 
     function addApp(address app) external onlyOwner {
@@ -68,26 +68,24 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         emit DebitForGame(app, gameID, player, amount);
     }
 
-    /// @dev Credits player as though player manually credits themselves. A convenient function
-    /// for cases where players send their ether to one of ProofOfChances' apps instead of the
-    /// wallet. Those apps, will act as a proxy to then manually top up the player's wallet balance
-    function creditPlayer(address player) external payable onlyApp {
+    /// @dev Credits player as though player manually credits themselves.
+    function creditPlayer(address player) external payable {
         uint amount = msg.value;
         nonGameBalances[player] += amount;
         emit Credit(player, amount);
     }
 
     function credit() external payable {
-        address player = msg.sender;
-        uint amount = msg.value;
-        nonGameBalances[player] += amount;
-        emit Credit(player, amount);
+        _credit();
     }
 
+    /// @dev Credits player as though player manually credits themselves.
     function creditPlayers(address[] memory players) external payable {
-        require(msg.value % players.length == 0);
-        uint amountForEachPlayer = msg.value / players.length;
-        for (uint i = 0; i < players.length; i++) {
+        uint amount = msg.value;
+        uint playersSize = players.length;
+        require(amount % playersSize == 0);
+        uint amountForEachPlayer = amount / playersSize;
+        for (uint i = 0; i < playersSize; i++) {
             nonGameBalances[players[i]] += amountForEachPlayer;
         }
     }
@@ -101,6 +99,65 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         require(gameBalances[app][gameID] > players.length * amount);
         creditPlayers(app, gameID, players, amount);
         creditAppTheRest(app, gameID);
+    }
+
+    /// @notice Allows you to withdraw a specified amount of your wallet balance
+    function withdraw(uint amount) external nonReentrant {
+        address owner = msg.sender;
+        uint balance = nonGameBalances[owner];
+        if (balance < amount) {
+            revert InsufficientFunds();
+        }
+        nonGameBalances[owner] -= amount;
+
+        pay(owner, amount);
+
+        emit Debit(owner, amount);
+    }
+
+    /// @notice Allows you to withdraw all your wallet balance
+    function withdrawAll() external nonReentrant {
+        address owner = msg.sender;
+        uint balance = nonGameBalances[owner];
+        if (balance == 0) {
+            revert InsufficientFunds();
+        }
+        nonGameBalances[owner] = 0;
+
+        pay(owner, balance);
+
+        emit Debit(owner, balance);
+    }
+
+    /// @notice Returns the wallet balance of an app's game
+    function getGameBalance(
+        address app,
+        uint gameID
+    ) external view returns (uint) {
+        return gameBalances[app][gameID];
+    }
+
+    function _credit() private {
+        address player = msg.sender;
+        uint amount = msg.value;
+        nonGameBalances[player] += amount;
+        emit Credit(player, amount);
+    }
+
+    /// @notice returns the non game balance of a wallet owner
+    /// it does not include the balances deposited in games
+    function getBalance(address owner) external view returns (uint) {
+        return nonGameBalances[owner];
+    }
+
+    /// @notice returns the ether balance of this wallet contract
+    function getTotalBalance() external view returns (uint) {
+        return address(this).balance;
+    }
+
+    function pay(address to, uint256 amount) private {
+        (bool sent, ) = to.call{value: amount}('');
+        require(sent);
     }
 
     function creditPlayers(
@@ -123,51 +180,5 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         nonGameBalances[appOwner] = restAmount;
         gameBalances[app][gameID] = 0;
         emit CreditFromGame(app, gameID, appOwner, restAmount);
-    }
-
-    function withdraw(uint amount) external nonReentrant {
-        address owner = msg.sender;
-        uint balance = nonGameBalances[owner];
-        if (balance < amount) {
-            revert InsufficientFunds();
-        }
-        nonGameBalances[owner] -= amount;
-
-        pay(owner, amount);
-
-        emit Debit(owner, amount);
-    }
-
-    function withdrawAll() external nonReentrant {
-        address owner = msg.sender;
-        uint balance = nonGameBalances[owner];
-        if (balance == 0) {
-            revert InsufficientFunds();
-        }
-        nonGameBalances[owner] = 0;
-
-        pay(owner, balance);
-
-        emit Debit(owner, balance);
-    }
-
-    function getGameBalance(
-        address app,
-        uint gameID
-    ) external view returns (uint) {
-        return gameBalances[app][gameID];
-    }
-
-    function getBalance(address owner) external view returns (uint) {
-        return nonGameBalances[owner];
-    }
-
-    function getTotalBalance() external view returns (uint) {
-        return address(this).balance;
-    }
-
-    function pay(address to, uint256 amount) private {
-        (bool sent, ) = to.call{value: amount}('');
-        require(sent);
     }
 }
