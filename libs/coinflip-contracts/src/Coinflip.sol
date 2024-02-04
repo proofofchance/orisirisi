@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.20;
 
-import 'hardhat/console.sol';
-
 import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
 import {UsingGamePlays} from './Coinflip/GamePlays.sol';
@@ -100,13 +98,9 @@ contract Coinflip is
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) external payable mustBeOperational {
-        console.log('Wager %s', wager);
-
         if (numberOfPlayers < Coin.TOTAL_SIDES_COUNT) {
             revert MinimumPlayCountError();
         }
-
-        console.log('numberOfPlayers %s', numberOfPlayers);
 
         if (numberOfPlayers > maxNumberOfPlayers) {
             revert MaxNumberOfPlayersError();
