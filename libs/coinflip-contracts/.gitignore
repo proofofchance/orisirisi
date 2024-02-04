@@ -4,4 +4,4 @@ cache
 node_modules
 .next
 typechain-types
-deployments/localhost
+deployments/localhost/solcinputs
