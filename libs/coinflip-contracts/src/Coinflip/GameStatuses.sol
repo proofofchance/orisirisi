@@ -24,10 +24,7 @@ contract UsingGameStatuses {
         _;
     }
 
-    function setGameStatusAsAwaitingPlayers(
-        uint gameID,
-        uint expiryTimestamp
-    ) internal {
+    function setGameExpiry(uint gameID, uint expiryTimestamp) internal {
         if (expiryTimestamp <= block.timestamp) {
             revert InvalidExpiryTimestamp();
         }

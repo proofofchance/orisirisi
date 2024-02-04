@@ -111,7 +111,7 @@ contract Coinflip is
         createGameWager(newGameID, wager);
         payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
-        setGameStatusAsAwaitingPlayers(newGameID, expiryTimestamp);
+        setGameExpiry(newGameID, expiryTimestamp);
 
         unchecked {
             gamesCount++;
@@ -206,6 +206,24 @@ contract Coinflip is
     ) external {
         for (uint8 i = 0; i < gameIDs.length; i++) {
             refundExpiredGamePlayers(gameIDs[i]);
+        }
+    }
+
+    /// @notice extends expiry timestamp for a game
+    function extendExpiryForGame(
+        uint gameID,
+        uint newExpiryTimestamp
+    ) external onlyOwner {
+        setGameExpiry(gameID, newExpiryTimestamp);
+    }
+
+    /// @notice Batch extend expiry timestamps for games
+    function extendExpiryForGames(
+        uint[] memory gameIDs,
+        uint newExpiryTimestamp
+    ) external onlyOwner {
+        for (uint8 i = 0; i < gameIDs.length; i++) {
+            setGameExpiry(gameIDs[i], newExpiryTimestamp);
         }
     }
 
