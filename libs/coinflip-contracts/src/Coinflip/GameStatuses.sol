@@ -4,8 +4,8 @@ pragma solidity ^0.8.24;
 import {Game} from './Game.sol';
 
 contract UsingGameStatuses {
-    mapping(uint => Game.Status) statuses;
-    mapping(uint => uint) expiryTimestamps;
+    mapping(uint gameID => Game.Status) statuses;
+    mapping(uint gameID => uint expiryTimestamp) expiryTimestamps;
 
     error InvalidGameStatus(uint, Game.Status expected, Game.Status actual);
     error InvalidExpiryTimestamp();
