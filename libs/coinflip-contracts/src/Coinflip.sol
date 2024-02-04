@@ -46,6 +46,7 @@ contract Coinflip is
         uint indexed gameID,
         uint refundedAmountPerPlayer
     );
+    event GameExpiryAdjusted(uint indexed gameID, uint expiryTimestamp);
 
     error InsufficientWalletBalance();
     error MinimumPlayCountError();
@@ -209,21 +210,23 @@ contract Coinflip is
         }
     }
 
-    /// @notice extends expiry timestamp for a game
-    function extendExpiryForGame(
+    function adjustExpiryForGame(
         uint gameID,
         uint newExpiryTimestamp
     ) external onlyOwner {
         setGameExpiry(gameID, newExpiryTimestamp);
+        emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
     }
 
-    /// @notice Batch extend expiry timestamps for games
-    function extendExpiryForGames(
+    function adjustExpiryForGames(
         uint[] memory gameIDs,
         uint newExpiryTimestamp
     ) external onlyOwner {
         for (uint8 i = 0; i < gameIDs.length; i++) {
-            setGameExpiry(gameIDs[i], newExpiryTimestamp);
+            uint gameID = gameIDs[i];
+
+            setGameExpiry(gameID, newExpiryTimestamp);
+            emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
         }
     }
 
