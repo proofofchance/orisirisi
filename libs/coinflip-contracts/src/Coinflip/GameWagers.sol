@@ -6,16 +6,6 @@ import {Game} from './Game.sol';
 contract UsingGameWagers {
     mapping(uint gameID => uint wager) wagers;
 
-    error InvalidWager();
-
-    modifier mustBeValidWager() {
-        if (msg.value <= 0) {
-            revert InvalidWager();
-        }
-
-        _;
-    }
-
     function createGameWager(uint gameID, uint wager) internal {
         wagers[gameID] = wager;
     }
