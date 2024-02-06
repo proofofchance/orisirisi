@@ -6,7 +6,8 @@
     "clean": "hardhat clean",
     "test": "hardhat test --parallel",
     "dev:start-web3-provider": "hardhat node",
-    "dev:deploy": "hardhat run --network localhost scripts/deploy.ts && hardhat run --network localhost scripts/deployPostOperations.ts"
+    "dev:deploy": "hardhat run --network localhost scripts/deploy.ts && hardhat run --network localhost scripts/deployPostOperations.ts",
+    "sepolia:deploy": "hardhat run --network sepolia scripts/deploy.ts && hardhat run --network sepolia scripts/deployPostOperations.ts"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
@@ -20,6 +21,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.17.13",
     "chai": "^4.3.8",
+    "dotenv": "^16.4.1",
     "ethers": "^6.10.0",
     "hardhat": "^2.18.3",
     "hardhat-deploy": "^0.11.37"
