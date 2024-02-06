@@ -5,7 +5,6 @@ export class Result<V, E> {
     mustBeMutuallyExclusive(ok, error);
   }
 
-  isWithoutError = () => !this.hasError();
+  isOk = () => !this.hasError();
   hasError = () => !!this.error;
-  isEmpty = () => this.ok === null;
 }
