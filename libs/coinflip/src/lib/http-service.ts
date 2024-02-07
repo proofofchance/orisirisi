@@ -46,10 +46,10 @@ export class HTTPServiceError extends Error {
 
 export class HTTPService {
   private static baseHost = () => {
-    if (Environments.getCurrent() === 'local') {
-      return 'http://127.0.0.1:4446';
-    } else {
+    if (Environments.getCurrent() === 'production') {
       return 'https://ark-3fwh.onrender.com';
+    } else {
+      return 'http://127.0.0.1:4446';
     }
   };
   private static baseUrl = `${HTTPService.baseHost()}/coinflip`;
