@@ -1,13 +1,9 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
 
 export enum ChainID {
-  // Arbitrum = 42161,
-  // Avalanche = 43114,
-  BNB = 56,
-  // Ethereum = 1,
+  Ethereum = 1,
   Local = 31337,
   LocalAlt = 1337,
-  // Optimism = 10,
   Polygon = 137,
   SepoliaTestNet = 11155111,
 }
@@ -20,19 +16,11 @@ export class Chain {
 
   getCurrency = () => {
     switch (this.id) {
-      // case ChainID.Arbitrum:
-      //   return 'ARB';
-      // case ChainID.Avalanche:
-      //   return 'AVAX';
-      case ChainID.BNB:
-        return 'BNB';
-      // case ChainID.Ethereum:
-      // return 'ETH';
+      case ChainID.Ethereum:
+        return 'ETH';
       case ChainID.Local:
       case ChainID.LocalAlt:
         return 'LocalETH';
-      // case ChainID.Optimism:
-      //   return 'OP';
       case ChainID.Polygon:
         return 'MATIC';
       case ChainID.SepoliaTestNet:
@@ -50,14 +38,14 @@ export class Chain {
 
   static shortNameFromChainId = (chainId: number) => {
     switch (chainId) {
-      case 56:
-        return 'binance';
-      case 1337:
-        return 'local';
+      case 1:
+        return 'ethereum';
       case 137:
         return 'polygon';
       case 11155111:
         return 'sepolia';
+      case 1337:
+        return 'local';
     }
 
     throw new Error('Invalid Chain Id');
@@ -67,15 +55,16 @@ export class Chain {
     if (!shortName) return new Result(null, null);
 
     switch (shortName.toLowerCase()) {
-      case 'binance':
-        return new Result(new Chain(56), null);
-      case 'local':
-      case 'localalt':
-        return new Result(new Chain(1337), null);
+      case 'ethereum':
+        return new Result(new Chain(1), null);
       case 'polygon':
         return new Result(new Chain(137), null);
       case 'sepolia':
         return new Result(new Chain(11155111), null);
+      case 'local':
+      case 'localalt':
+        return new Result(new Chain(1337), null);
+
       default:
         return new Result(null, 'invalid_short_name' as const);
     }
