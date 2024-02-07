@@ -1,6 +1,7 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
 import { Game, GameActivity, GameStatus, GameWallet } from './games';
+import { Environments } from '@orisirisi/orisirisi';
 
 export interface FetchGamesParams {
   player_address?: string;
@@ -45,8 +46,7 @@ export class HTTPServiceError extends Error {
 
 export class HTTPService {
   private static baseHost = () => {
-    // TODO: use env variables here
-    if (window.location.hostname === 'localhost') {
+    if (Environments.getCurrent() === 'local') {
       return 'http://127.0.0.1:4446';
     } else {
       return 'https://ark-3fwh.onrender.com';
