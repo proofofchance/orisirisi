@@ -27,8 +27,6 @@ const nonEmptyNetworks = Object.keys(networks).reduce(
   {} as NetworksUserConfig
 );
 
-console.log({ nonEmptyNetworks });
-
 const config: HardhatUserConfig = {
   solidity: '0.8.20',
   networks: nonEmptyNetworks,
