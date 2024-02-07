@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "build": "hardhat compile && hardhat typechain",
+    "build:types": "hardhat typechain",
     "clean": "hardhat clean",
     "test": "hardhat test --parallel",
     "dev:start-web3-provider": "hardhat node",
