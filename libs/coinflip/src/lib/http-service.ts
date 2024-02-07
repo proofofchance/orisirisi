@@ -45,19 +45,11 @@ export class HTTPServiceError extends Error {
 }
 
 export class HTTPService {
-  private static baseHost = () => {
-    console.log({ currentEnv: Environments.getCurrent() });
-    console.log({ currentEnv: Environments.getCurrent() });
-    console.log({ currentEnv: Environments.getCurrent() });
-    console.log({ currentEnv: Environments.getCurrent() });
-    console.log({ currentEnv: Environments.getCurrent() });
-    if (Environments.getCurrent() === 'production') {
-      return 'https://ark-3fwh.onrender.com';
-    } else {
-      return 'http://127.0.0.1:4446';
-    }
-  };
-  private static baseUrl = `${HTTPService.baseHost()}/coinflip`;
+  private static baseHost =
+    Environments.getCurrent() === 'production'
+      ? 'https://ark-3fwh.onrender.com'
+      : 'http://127.0.0.1:4446';
+  private static baseUrl = `${HTTPService.baseHost}/coinflip`;
 
   static async fetchGames(
     params: FetchGamesParams,
@@ -168,7 +160,7 @@ export class HTTPService {
     { owner_address, chain_id }: FetchGameWalletParams,
     signal: AbortSignal
   ) {
-    const endpointPath = `${HTTPService.baseHost()}/wallets/${owner_address}/${chain_id}`;
+    const endpointPath = `${HTTPService.baseHost}/wallets/${owner_address}/${chain_id}`;
 
     const response = await fetch(endpointPath, {
       signal,
