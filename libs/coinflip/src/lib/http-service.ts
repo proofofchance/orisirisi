@@ -1,7 +1,7 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
 import { Game, GameActivity, GameStatus, GameWallet } from './games';
-import { Environments } from '@orisirisi/orisirisi';
+import { NextEnvironments } from '@orisirisi/orisirisi';
 
 export interface FetchGamesParams {
   player_address?: string;
@@ -46,7 +46,7 @@ export class HTTPServiceError extends Error {
 
 export class HTTPService {
   private static baseHost =
-    Environments.getCurrent() === 'production'
+    NextEnvironments.getCurrent() === 'production'
       ? 'https://ark-3fwh.onrender.com'
       : 'http://127.0.0.1:4446';
   private static baseUrl = `${HTTPService.baseHost}/coinflip`;
