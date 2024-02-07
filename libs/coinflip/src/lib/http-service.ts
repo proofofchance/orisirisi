@@ -44,8 +44,15 @@ export class HTTPServiceError extends Error {
 }
 
 export class HTTPService {
-  private static baseHost = 'http://127.0.0.1:4446';
-  private static baseUrl = `${HTTPService.baseHost}/coinflip`;
+  private static baseHost = () => {
+    // TODO: use env variables here
+    if (window.location.hostname === 'localhost') {
+      return 'http://127.0.0.1:4446';
+    } else {
+      return 'https://ark-3fwh.onrender.com';
+    }
+  };
+  private static baseUrl = `${HTTPService.baseHost()}/coinflip`;
 
   static async fetchGames(
     params: FetchGamesParams,
@@ -156,7 +163,7 @@ export class HTTPService {
     { owner_address, chain_id }: FetchGameWalletParams,
     signal: AbortSignal
   ) {
-    const endpointPath = `${HTTPService.baseHost}/wallets/${owner_address}/${chain_id}`;
+    const endpointPath = `${HTTPService.baseHost()}/wallets/${owner_address}/${chain_id}`;
 
     const response = await fetch(endpointPath, {
       signal,
