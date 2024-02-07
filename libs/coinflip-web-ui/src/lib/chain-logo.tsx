@@ -1,5 +1,5 @@
 import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
-import { BNBLogo, EthereumLogo, PolygonLogo } from './chain-logo/logos';
+import { EthereumLogo, PolygonLogo } from './chain-logo/logos';
 
 export function ChainLogo({ chain }: { chain: Chain }) {
   switch (chain.id) {
@@ -7,8 +7,8 @@ export function ChainLogo({ chain }: { chain: Chain }) {
     // return <ArbitrumLogo />;
     // case ChainID.Avalanche:
     //   return <AvalancheLogo />;
-    case ChainID.BNB:
-      return <BNBLogo />;
+    // case ChainID.BNB:
+    //   return <BNBLogo />;
     // case ChainID.Ethereum:
     case ChainID.Local:
     case ChainID.LocalAlt:
