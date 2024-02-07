@@ -10,8 +10,8 @@ const config: HardhatUserConfig = {
   solidity: '0.8.20',
   networks: {
     sepolia: {
-      url: process.env['SEPOLIA_JSON_RPC_URL'],
-      accounts: [process.env['SEPOLIA_PRIVATE_KEY']!],
+      url: process.env['SEPOLIA_JSON_RPC_URL'] || '',
+      accounts: [process.env['SEPOLIA_PRIVATE_KEY']! || ''],
     },
   },
   paths: {
