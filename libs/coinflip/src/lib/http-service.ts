@@ -46,6 +46,11 @@ export class HTTPServiceError extends Error {
 
 export class HTTPService {
   private static baseHost = () => {
+    console.log({ currentEnv: Environments.getCurrent() });
+    console.log({ currentEnv: Environments.getCurrent() });
+    console.log({ currentEnv: Environments.getCurrent() });
+    console.log({ currentEnv: Environments.getCurrent() });
+    console.log({ currentEnv: Environments.getCurrent() });
     if (Environments.getCurrent() === 'production') {
       return 'https://ark-3fwh.onrender.com';
     } else {
