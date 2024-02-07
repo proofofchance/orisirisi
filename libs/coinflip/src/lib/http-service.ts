@@ -56,8 +56,6 @@ export class HTTPService {
     signal: AbortSignal
   ): Promise<Game[]> {
     const queryString = buildQueryString(params as Record<string, string>);
-    console.log({ baseUrl: HTTPService.baseUrl });
-    console.log({ baseHost: HTTPService.baseHost });
     const response = await fetch(
       HTTPService.appendBaseUrl(`/games${queryString}`),
       {

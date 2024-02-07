@@ -1,5 +1,6 @@
-export type Environment = 'local' | 'production';
+export type NextEnvironment = 'local' | 'production';
 
-export class Environments {
-  static getCurrent = () => process.env['ORISIRISI_ENV'] as Environment;
+export class NextEnvironments {
+  static getCurrent = () =>
+    process.env['NEXT_PUBLIC_ORISIRISI_ENV'] as NextEnvironment;
 }
