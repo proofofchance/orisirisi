@@ -15,6 +15,23 @@ import { time } from '@nomicfoundation/hardhat-network-helpers';
 
 describe('createGame', () => {
   context('When using valid parameters', () => {
+    context('Number of players', () => {
+      it('requires at least number of coin sides', async () => {
+        const { coinflipContract } = await deployCoinflipContracts();
+
+        const createGameParams = await CreateGameParams.new(coinflipContract);
+
+        await expect(
+          coinflipContract.createGame(
+            ...createGameParams.withNumberOfPlayers(1).toArgs(),
+            {
+              value: createGameParams.wager,
+            }
+          )
+        ).to.be.reverted;
+      });
+    });
+
     context('Game Wager', () => {
       it("credits game's wallet with the sent game wager value", async () => {
         const { creator, coinflipContract, walletsContract } =
@@ -67,6 +84,19 @@ describe('createGame', () => {
         await expect(
           coinflipContract.createGame(...createGameParams.toArgs())
         ).to.be.revertedWithCustomError(walletsContract, 'InsufficientFunds');
+      });
+
+      it('reverts with MinimumWagerNotMet error with wagers less than minWager', async () => {
+        const { coinflipContract } = await deployCoinflipContracts();
+
+        const createGameParams = await CreateGameParams.new(coinflipContract);
+
+        const lessThanMinWager = CoinflipGame.getMinWagerEth() - 0.001;
+        await expect(
+          coinflipContract.createGame(
+            ...createGameParams.withWager(lessThanMinWager).toArgs()
+          )
+        ).to.be.revertedWithCustomError(coinflipContract, 'MinimumWagerNotMet');
       });
     });
 
@@ -299,6 +329,10 @@ class CreateGameParams {
   }
   withProofOfChance(proofOfChance: BytesLike) {
     this.proofOfChance = proofOfChance.toString();
+    return this;
+  }
+  withWager(wager: number) {
+    this.wager = parseEther(wager.toString());
     return this;
   }
   withNumberOfPlayers(numberOfPlayers: number) {

@@ -49,7 +49,7 @@ contract Coinflip is
     event GameExpiryAdjusted(uint indexed gameID, uint expiryTimestamp);
 
     error InsufficientWalletBalance();
-    error MinimumPlayCountError();
+    error MinimumWagerNotMet();
     error InvalidProofOfChance();
     error MaxNumberOfPlayersError();
     error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
@@ -99,9 +99,11 @@ contract Coinflip is
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) external payable mustBeOperational {
-        if (numberOfPlayers < Coin.TOTAL_SIDES_COUNT) {
-            revert MinimumPlayCountError();
+        if (wager < minWager) {
+            revert MinimumWagerNotMet();
         }
+
+        assert(numberOfPlayers >= Coin.TOTAL_SIDES_COUNT);
 
         if (numberOfPlayers > maxNumberOfPlayers) {
             revert MaxNumberOfPlayersError();
