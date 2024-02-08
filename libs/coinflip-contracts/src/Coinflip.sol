@@ -48,11 +48,9 @@ contract Coinflip is
     );
     event GameExpiryAdjusted(uint indexed gameID, uint expiryTimestamp);
 
-    error InsufficientWalletBalance();
     error MinimumWagerNotMet();
     error InvalidProofOfChance();
     error MaxNumberOfPlayersError();
-    error IncompleteChanceAndSaltsError(uint expectedChanceAndSaltSize);
 
     constructor(
         address payable wallets_,
