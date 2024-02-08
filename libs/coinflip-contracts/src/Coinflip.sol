@@ -80,7 +80,7 @@ contract Coinflip is
     }
 
     /// @notice Updates min wager allowed
-    function updateMinWagerOfPlayers(uint16 minWager_) external onlyOwner {
+    function updateMinWagerOfPlayers(uint minWager_) external onlyOwner {
         minWager = minWager_;
     }
 
