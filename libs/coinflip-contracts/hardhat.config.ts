@@ -34,6 +34,9 @@ const config: HardhatUserConfig = {
     sources: './src',
     tests: './tests',
   },
+  etherscan: {
+    apiKey: process.env['ETHERSCAN_API_KEY'] ?? undefined,
+  },
 };
 
 export default config;
