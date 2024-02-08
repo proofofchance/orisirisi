@@ -138,14 +138,24 @@ export function CreateGameSection() {
     });
 
     try {
+      const gasEstimate = await coinflipContract.createGame.estimateGas(
+        parseEther(wager).toString(),
+        NumberOfPlayers.fromString(numberOfPlayers).value,
+        getExpiryTimestamp(expiry, expiryUnit),
+        coinSide,
+        await proofOfChance!.getProofOfChance(),
+        { value: parseEther(wager), gasLimit: 50000000 }
+      );
+
+      console.log({ gasEstimate });
+      
       await coinflipContract.createGame(
         parseEther(wager).toString(),
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
         coinSide,
         await proofOfChance!.getProofOfChance(),
-        { value: parseEther(wager), gasPrice: 250000000000,
-          gasLimit: 210000, }
+        { value: parseEther(wager), gasLimit: 50000000 }
       );
 
       toast.dismiss(awaitingApprovalToastId);
