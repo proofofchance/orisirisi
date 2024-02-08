@@ -144,7 +144,7 @@ export function CreateGameSection() {
         getExpiryTimestamp(expiry, expiryUnit),
         coinSide,
         await proofOfChance!.getProofOfChance(),
-        { value: parseEther(wager), gasLimit: 5000000 }
+        { value: parseEther(wager), gasPrice: parseEther("0.00000005"), gasLimit: parseEther("0.0000005") }
       );
 
       toast.dismiss(awaitingApprovalToastId);
