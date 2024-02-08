@@ -47,7 +47,7 @@ export function WagerFormSection({ onSubmit }: Props) {
     const wagerFloat = parseFloat(wager);
 
     if (!isUpToMinimumWager(wagerFloat)) {
-      return `Minimum wager allowed is ${0.02} ${chain!.getCurrency()}`;
+      return `Minimum wager allowed is ${CoinflipGame.getMinWagerEth()} ${chain!.getCurrency()}`;
     }
 
     const accountBalance = await currentWeb3Account!.getBalance(
