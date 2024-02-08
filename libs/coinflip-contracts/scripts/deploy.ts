@@ -1,8 +1,9 @@
-import { ethers, deployments } from 'hardhat';
-import { parseEther } from 'ethers';
 import { CoinflipGame } from '@orisirisi/coinflip';
+import { ethers, deployments, run } from 'hardhat';
+import { parseEther } from 'ethers';
 
-// TODO: Deploy per chain
+const NODE_INDEXING_GRACE_PERIOD_MS = 1 * 60 * 1000;
+
 async function main() {
   const { walletsAddress, coinflipAddress } = await deployCoinflipContracts();
 
@@ -27,14 +28,34 @@ export async function deployCoinflipContracts() {
     deployOptions
   );
 
+  const coinflipArgs = [
+    walletsAddress,
+    CoinflipGame.maxNumberOfPlayers,
+    parseEther(CoinflipGame.getMinWagerEth().toString()),
+  ];
+
   const { address: coinflipAddress } = await deployments.deploy('Coinflip', {
     ...deployOptions,
-    args: [
-      walletsAddress,
-      CoinflipGame.maxNumberOfPlayers,
-      parseEther(CoinflipGame.getMinWagerEth().toString()),
-    ],
+    args: coinflipArgs,
   });
+
+  
+  if (process.env["DEPLOY_MODE"] === "ON") {
+    await delay(NODE_INDEXING_GRACE_PERIOD_MS);
+
+    await run("verify:verify", {
+      address: walletsAddress,
+    });
+  }
+
+  if (process.env["DEPLOY_MODE"] === "ON") {
+    await delay(NODE_INDEXING_GRACE_PERIOD_MS);
+
+    await run("verify:verify", {
+      address: coinflipAddress,
+      constructorArguments: coinflipArgs,
+    });
+  }
 
   return {
     walletsAddress,
@@ -54,3 +75,7 @@ async function getDeployer() {
   );
   return deployer;
 }
+
+
+const delay = (ms: number) =>
+  new Promise(resolve => setTimeout(resolve, ms));
