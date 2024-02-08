@@ -12,6 +12,7 @@ const networks: NetworksUserConfig = {
   sepolia: {
     url: process.env['SEPOLIA_JSON_RPC_URL'],
     accounts: [process.env['SEPOLIA_PRIVATE_KEY']!],
+    gasPrice: 50000000000
   },
 };
 const nonEmptyNetworks = Object.keys(networks).reduce(
@@ -37,6 +38,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env['ETHERSCAN_API_KEY'] ?? undefined,
   },
+  
 };
 
 export default config;
