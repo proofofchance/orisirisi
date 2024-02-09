@@ -60,14 +60,14 @@ export function WalletBalanceButton({
 
       toast.dismiss(awaitingApprovalToastId);
 
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
-
-      toast.loading('Withdrawing balance', {
+      const loadingToastId = toast.loading('Withdrawing balance', {
         position: 'bottom-right',
-        duration: COINFLIP_INDEX_GRACE_PERIOD,
       });
 
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
+
       setTimeout(() => {
+        toast.dismiss(loadingToastId);
         toast.success('Game wallet balance withdrawn successfully!', {
           position: 'bottom-right',
         });

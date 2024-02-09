@@ -150,14 +150,13 @@ export function CreateGameSection() {
 
       toast.dismiss(awaitingApprovalToastId);
 
+      const loadingToastId = toast.loading('Creating Game', {
+        position: 'bottom-right',
+      });
       await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
-      toast.loading('Creating Game', {
-        position: 'bottom-right',
-        duration: COINFLIP_INDEX_GRACE_PERIOD,
-      });
-
       setTimeout(() => {
+        toast.dismiss(loadingToastId);
         toast.success('Successfully created!', { position: 'bottom-right' });
         push('/games?for=my_games');
       }, COINFLIP_INDEX_GRACE_PERIOD);

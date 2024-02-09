@@ -113,14 +113,14 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
 
       toast.dismiss(awaitingApprovalToastId);
 
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
-
-      toast.loading('Creating your Game Play', {
+      const loadingToastId = toast.loading('Creating your Game Play', {
         position: 'bottom-right',
-        duration: COINFLIP_INDEX_GRACE_PERIOD,
       });
 
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
+
       setTimeout(() => {
+        toast.dismiss(loadingToastId);
         toast.success('Game play successfully created!', {
           position: 'bottom-right',
         });
