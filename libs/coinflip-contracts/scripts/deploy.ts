@@ -1,5 +1,5 @@
 import { CoinflipGame } from '@orisirisi/coinflip';
-import { ethers, deployments, run } from 'hardhat';
+import { ethers, deployments, run, network } from 'hardhat';
 import { parseEther } from 'ethers';
 
 const NODE_INDEXING_GRACE_PERIOD_MS = 1 * 60 * 1000;
@@ -39,19 +39,20 @@ export async function deployCoinflipContracts() {
     args: coinflipArgs,
   });
 
-  
-  if (process.env["DEPLOY_MODE"] === "ON") {
+  const isLocalDeployment = network.name === 'localhost';
+
+  if (!isLocalDeployment) {
     await delay(NODE_INDEXING_GRACE_PERIOD_MS);
 
-    await run("verify:verify", {
+    await run('verify:verify', {
       address: walletsAddress,
     });
   }
 
-  if (process.env["DEPLOY_MODE"] === "ON") {
+  if (!isLocalDeployment) {
     await delay(NODE_INDEXING_GRACE_PERIOD_MS);
 
-    await run("verify:verify", {
+    await run('verify:verify', {
       address: coinflipAddress,
       constructorArguments: coinflipArgs,
     });
@@ -76,6 +77,4 @@ async function getDeployer() {
   return deployer;
 }
 
-
-const delay = (ms: number) =>
-  new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
