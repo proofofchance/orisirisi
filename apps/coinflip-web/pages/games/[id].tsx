@@ -30,8 +30,8 @@ export default function GamePage() {
   const id = parseInteger(query.id as string);
   useWindowTitle(`Coinflip - Game #${id}`);
 
-  const chainShortName = query.chain as string | null;
-  const chain = Chain.fromShortName(chainShortName);
+  const chainName = query.chain as string | null;
+  const chain = Chain.fromName(chainName);
 
   if (isClient && id && !chain.ok) {
     dispatchErrorToastRequest('Chain needs to specified!');

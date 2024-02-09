@@ -4,7 +4,7 @@ import { CoinflipContract, WalletsContract } from '../src';
 
 async function main() {
   console.log('Adding Coinflip app to Wallets...');
-  const chain = Chain.fromChainID(network.config.chainId);
+  const chain = Chain.fromName(network.name).ok!;
   const wallets = WalletsContract.fromSignerAndChain(
     (await ethers.getSigners())[0],
     chain.id

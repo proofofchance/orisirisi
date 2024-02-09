@@ -59,7 +59,7 @@ export function MainControlButtons({
             }
 
             return push(
-              `/games/${game.id}/play?chain=${game.getChain().getShortName()}`
+              `/games/${game.id}/play?chain=${game.getChain().getName()}`
             );
           }}
           icon={<PlayIcon className="h-8" />}
@@ -73,7 +73,7 @@ export function MainControlButtons({
     // (
     //   <MainButton
     //     onClick={() =>
-    //       push(`/games/${game.id}/prove?chain=${game.getChain().getShortName()}`)
+    //       push(`/games/${game.id}/prove?chain=${game.getChain().getName()}`)
     //     }
     //     icon={<ShieldCheckIcon className="h-8" />}
     //     label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}

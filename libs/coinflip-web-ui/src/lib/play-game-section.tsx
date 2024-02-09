@@ -121,7 +121,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         toast.success('Game play successfully created!', {
           position: 'bottom-right',
         });
-        push(`/games/${game!.id}?chain=${game!.getChain().getShortName()}`);
+        push(`/games/${game!.id}?chain=${game!.getChain().getName()}`);
       }, COINFLIP_INDEX_GRACE_PERIOD);
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {

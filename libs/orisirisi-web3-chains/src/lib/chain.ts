@@ -34,9 +34,9 @@ export class Chain {
     return new Chain(chainId);
   }
 
-  getShortName = () => Chain.shortNameFromChainId(this.id);
+  getName = () => Chain.nameFromChainId(this.id);
 
-  static shortNameFromChainId = (chainId: number) => {
+  static nameFromChainId = (chainId: number) => {
     switch (chainId) {
       case 1:
         return 'ethereum';
@@ -51,10 +51,10 @@ export class Chain {
     throw new Error('Invalid Chain Id');
   };
 
-  static fromShortName = (shortName: string | undefined | null) => {
-    if (!shortName) return new Result(null, null);
+  static fromName = (name: string | undefined | null) => {
+    if (!name) return new Result(null, null);
 
-    switch (shortName.toLowerCase()) {
+    switch (name.toLowerCase()) {
       case 'ethereum':
         return new Result(new Chain(1), null);
       case 'polygon':
@@ -62,11 +62,12 @@ export class Chain {
       case 'sepolia':
         return new Result(new Chain(11155111), null);
       case 'local':
+      case 'localhost':
       case 'localalt':
         return new Result(new Chain(1337), null);
 
       default:
-        return new Result(null, 'invalid_short_name' as const);
+        return new Result(null, 'invalid_name' as const);
     }
   };
 

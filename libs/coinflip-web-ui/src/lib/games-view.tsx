@@ -19,7 +19,7 @@ export function GamesView({
   const { push } = useRouter();
 
   const goToGamePage = (id: number, chain_id: number) =>
-    push(`/games/${id}?chain=${Chain.shortNameFromChainId(chain_id)}`);
+    push(`/games/${id}?chain=${Chain.nameFromChainId(chain_id)}`);
 
   if (!isLoading && games.length === 0) return <GamesEmptyView />;
 
@@ -56,7 +56,7 @@ function GameCard({
     game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished();
   return (
     <Link
-      href={`/games/${game.id}?chain=${game.getChain().getShortName()}`}
+      href={`/games/${game.id}?chain=${game.getChain().getName()}`}
       className="rounded-lg bg-[rgba(0,0,0,0.25)] hover:bg-[rgba(0,0,0,0.5)] cursor-pointer p-4 hover:p-5 transition-all"
     >
       <div className="flex justify-between">

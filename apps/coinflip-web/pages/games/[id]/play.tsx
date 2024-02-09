@@ -21,8 +21,8 @@ export function PlayGame() {
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
   const id = parseInteger(query.id as string);
-  const chainShortName = query.chain as string | null;
-  const chain = Chain.fromShortName(chainShortName);
+  const chainName = query.chain as string | null;
+  const chain = Chain.fromName(chainName);
 
   if (isClient && id && !chain.ok) {
     dispatchErrorToastRequest('ChainID needs to specified!');
@@ -45,7 +45,7 @@ export function PlayGame() {
   const { game } = useCoinflipGame(fetchGameParams);
 
   const gamePath =
-    game && `/games/${game.id}?chain=${game.getChain().getShortName()}`;
+    game && `/games/${game.id}?chain=${game.getChain().getName()}`;
 
   game &&
     currentWeb3Provider &&
