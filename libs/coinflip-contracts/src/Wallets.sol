@@ -85,8 +85,11 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         uint playersSize = players.length;
         require(amount % playersSize == 0);
         uint amountForEachPlayer = amount / playersSize;
-        for (uint i = 0; i < playersSize; i++) {
+        for (uint i; i < playersSize; ) {
             balances[players[i]] += amountForEachPlayer;
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -166,11 +169,14 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         address[] memory players,
         uint amount
     ) private {
-        for (uint i = 0; i < players.length; i++) {
+        for (uint i; i < players.length; ) {
             address player = players[i];
             gameBalances[app][gameID] -= amount;
             balances[player] += amount;
             emit CreditFromGame(app, gameID, player, amount);
+            unchecked {
+                ++i;
+            }
         }
     }
 

@@ -167,7 +167,7 @@ contract Coinflip is
         mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
         Coin.Side flipOutcome;
-        for (uint16 i = 0; i < playCounts[gameID]; i++) {
+        for (uint16 i; i < playCounts[gameID]; ) {
             bytes memory chanceAndSalt = chanceAndSalts[i];
 
             uint16 gamePlayID = i + 1;
@@ -178,7 +178,7 @@ contract Coinflip is
 
             (bytes16 chance, ) = abi.decode(chanceAndSalt, (bytes16, bytes8));
 
-            for (uint8 j = 0; j < 16; j++) {
+            for (uint8 j; j < 16; ) {
                 bytes1 chance_character = chance[j];
                 if (chance_character == 0) {
                     break;
@@ -191,8 +191,14 @@ contract Coinflip is
                         flipOutcome = Coin.Side.Head;
                     }
                 }
+                unchecked {
+                    ++j;
+                }
             }
             emit GamePlayChanceRevealed(gameID, gamePlayID, chanceAndSalt);
+            unchecked {
+                ++i;
+            }
         }
         address[] memory winners = players[gameID][flipOutcome];
         uint amountForEachWinner = creditGameWinners(gameID, winners);
@@ -205,8 +211,11 @@ contract Coinflip is
     function refundExpiredGamePlayersForAllGames(
         uint[] memory gameIDs
     ) external {
-        for (uint8 i = 0; i < gameIDs.length; i++) {
+        for (uint8 i; i < gameIDs.length; ) {
             refundExpiredGamePlayers(gameIDs[i]);
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -222,11 +231,14 @@ contract Coinflip is
         uint[] memory gameIDs,
         uint newExpiryTimestamp
     ) external onlyOwner {
-        for (uint8 i = 0; i < gameIDs.length; i++) {
+        for (uint8 i; i < gameIDs.length; ) {
             uint gameID = gameIDs[i];
 
             setGameExpiry(gameID, newExpiryTimestamp);
             emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
+            unchecked {
+                ++i;
+            }
         }
     }
 
