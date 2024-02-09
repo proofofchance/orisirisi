@@ -110,9 +110,10 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(game!.wager.toString()) }
       );
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.dismiss(awaitingApprovalToastId);
+
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.loading('Creating your Game Play', {
         position: 'bottom-right',

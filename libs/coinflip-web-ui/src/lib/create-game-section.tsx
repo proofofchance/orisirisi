@@ -147,9 +147,10 @@ export function CreateGameSection() {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(wager), gasLimit: 400_000 }
       );
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.dismiss(awaitingApprovalToastId);
+
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.loading('Creating Game', {
         position: 'bottom-right',
