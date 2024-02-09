@@ -32,6 +32,7 @@ import {
 } from '@orisirisi/orisirisi-web3-ui';
 import { parseEther } from 'ethers';
 import {
+  Transaction,
   Web3ProviderError,
   Web3ProviderErrorCode,
 } from '@orisirisi/orisirisi-web3';
@@ -146,7 +147,7 @@ export function CreateGameSection() {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(wager), gasLimit: 400_000 }
       );
-      await transaction.wait(1);
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.dismiss(awaitingApprovalToastId);
 

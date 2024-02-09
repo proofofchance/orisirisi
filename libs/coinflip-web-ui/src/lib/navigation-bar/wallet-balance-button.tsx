@@ -11,6 +11,7 @@ import { ChainLogo } from '../chain-logo';
 import { useCoinflipGameWallet } from '../hooks';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import {
+  Transaction,
   Web3Account,
   Web3ProviderError,
   Web3ProviderErrorCode,
@@ -56,7 +57,7 @@ export function WalletBalanceButton({
     });
     try {
       const transaction = await walletsContract.withdrawAll();
-      await transaction.wait(1);
+      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
       toast.dismiss(awaitingApprovalToastId);
 
