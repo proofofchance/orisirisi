@@ -103,12 +103,13 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     });
 
     try {
-      await coinflipContract.playGame(
+      const transaction = await coinflipContract.playGame(
         game!.id,
         coinSide,
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(game!.wager.toString()) }
       );
+      await transaction.wait(1);
 
       toast.dismiss(awaitingApprovalToastId);
 

@@ -55,7 +55,8 @@ export function WalletBalanceButton({
       position: 'bottom-right',
     });
     try {
-      await walletsContract.withdrawAll();
+      const transaction = await walletsContract.withdrawAll();
+      await transaction.wait(1);
 
       toast.dismiss(awaitingApprovalToastId);
 

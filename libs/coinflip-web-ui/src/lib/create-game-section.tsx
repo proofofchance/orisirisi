@@ -138,7 +138,7 @@ export function CreateGameSection() {
     });
 
     try {
-      await coinflipContract.createGame(
+      const transaction = await coinflipContract.createGame(
         parseEther(wager).toString(),
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
@@ -146,6 +146,7 @@ export function CreateGameSection() {
         await proofOfChance!.getProofOfChance(),
         { value: parseEther(wager), gasLimit: 400_000 }
       );
+      await transaction.wait(1);
 
       toast.dismiss(awaitingApprovalToastId);
 
