@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
   },
   gasReporter: {
     enabled: process.env['GAS_REPORT_MODE'] === 'ON',
-    outputFile: 'GAS_REPORT.md',
+    outputFile: 'GAS_REPORT',
     noColors: true,
   },
 };
