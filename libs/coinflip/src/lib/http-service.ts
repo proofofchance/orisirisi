@@ -47,7 +47,7 @@ export class HTTPServiceError extends Error {
 export class HTTPService {
   private static baseHost =
     NextEnvironments.getCurrent() === 'production'
-      ? 'https://ark-3fwh.onrender.com'
+      ? 'https://ark.proofofchance.com'
       : 'http://127.0.0.1:4446';
   private static baseUrl = `${HTTPService.baseHost}/coinflip`;
 
