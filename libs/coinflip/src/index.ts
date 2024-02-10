@@ -21,4 +21,4 @@ export {
   type UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
 } from './lib/http-service';
 
-export const COINFLIP_INDEX_GRACE_PERIOD = 8000;
+export const COINFLIP_INDEX_GRACE_PERIOD = 15_000;
