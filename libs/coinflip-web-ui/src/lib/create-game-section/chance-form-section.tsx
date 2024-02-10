@@ -143,7 +143,6 @@ export function ChanceFormSection({
               Browser.downloadFile(
                 await proofOfChance!.toFileContent(),
                 `coinflip-${new Date().toISOString()}-poc`,
-                // .txt instead of .poc to allow users easily open it after downloading
                 ProofOfChance.FILE_EXTENSION
               );
               setValue('isProofOfChanceDownloaded', true);
