@@ -1,5 +1,9 @@
 import Link from 'next/link';
-import { PropsWithClassName, useIsClient } from '@orisirisi/orisirisi-web-ui';
+import {
+  PropsWithClassName,
+  cn,
+  useIsClient,
+} from '@orisirisi/orisirisi-web-ui';
 import { BackgroundWrapper } from './background';
 import {
   ConnectWalletButton,
@@ -44,7 +48,7 @@ export function NavigationBar({ className }: PropsWithClassName) {
             {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
             {isClient && isNotConnected ? (
               <div
-                className="cursor-not-allowed opacity-70 hover:underline"
+                className="cursor-not-allowed opacity-70 hover:underline hidden md:block"
                 data-tooltip-id="create-game-link-tooltip"
                 data-tooltip-content="Connect wallet first →"
               >
@@ -79,7 +83,9 @@ export function NavigationBar({ className }: PropsWithClassName) {
   );
 }
 
-export function MobileAugmentingNavigationBar() {
+export function MobileAugmentingNavigationBar({
+  className,
+}: PropsWithClassName) {
   const isClient = useIsClient();
   const { currentWeb3Account } = useCurrentWeb3Account();
 
@@ -87,7 +93,10 @@ export function MobileAugmentingNavigationBar() {
 
   return (
     <div
-      className={`text-white flex md:hidden gap-x-6 items-center justify-center`}
+      className={cn(
+        `text-white flex md:hidden gap-x-6 items-center justify-center`,
+        className
+      )}
     >
       <Link href="/games" className="mr-2 underline block md:hidden">
         View Games

@@ -26,7 +26,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
         {isClient && <Toaster />}
         <Background className="px-12 sm:px-20">
           <NavigationBar className="py-4" />
-          <MobileAugmentingNavigationBar />
+          <MobileAugmentingNavigationBar className="mt-2" />
           <SocialLinks />
           <Component {...pageProps} />
         </Background>
