@@ -158,24 +158,6 @@ function WonOrLostCard({
   numberOfPlayers: number;
 }) {
   const getWonOrLostContent = () => {
-    if (gamePlayStatus === null) {
-      return (
-        <span>
-          <span role="img" aria-label="congrats-text">
-            🎉
-          </span>{' '}
-          Participating players that predicted {coinSideToString(outcome)}{' '}
-          shared ~{' '}
-          <b className="tracking-wide">
-            {formatUSD(amountForEachWinnerUsd * numberOfPlayers, 0)}
-          </b>{' '}
-          from this game{' '}
-          <span role="img" aria-label="congrats-text">
-            🎉
-          </span>
-        </span>
-      );
-    }
     if (gamePlayStatus === 'won') {
       return (
         <>
@@ -192,13 +174,28 @@ function WonOrLostCard({
           </span>
         </>
       );
-    } else {
+    } else if (gamePlayStatus === 'lost') {
       return (
         <span className="text-lg" role="img" aria-label="lost-text">
           Oh no! 😔 You lost this game. Better luck next time!
         </span>
       );
     }
+
+    return (
+      <span>
+        <span role="img" aria-label="congrats-text">
+          🎉
+        </span>{' '}
+        <b className="tracking-wide">
+          {formatUSD(amountForEachWinnerUsd * numberOfPlayers, 0)}
+        </b>{' '}
+        was given to players that predicted {coinSideToString(outcome)}{' '}
+        <span role="img" aria-label="congrats-text">
+          🎉
+        </span>
+      </span>
+    );
   };
 
   return (
