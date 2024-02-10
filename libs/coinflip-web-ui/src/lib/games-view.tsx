@@ -87,11 +87,11 @@ function GameCard({
               <GameExpiryCountdown countdown={gameExpiryCountdown} />
             </span>
           </div>
-        ) : (
+        ) : game.isExpired() || game.isCompleted() ? (
           <div className="flex mt-4">
             <GameStatusBadge gameStatus={game.status} />
           </div>
-        )}
+        ) : null}
       </div>
 
       {false && (
