@@ -80,7 +80,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     }
 
     /// @dev Credits player as though player manually credits themselves.
-    function creditPlayers(address[] memory players) external payable {
+    function creditPlayers(address[] calldata players) external payable {
         uint amount = msg.value;
         uint playersSize = players.length;
         require(amount % playersSize == 0);
@@ -95,7 +95,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
 
     function creditPlayersAndCreditAppOwnerTheRest(
         uint gameID,
-        address[] memory players,
+        address[] calldata players,
         uint amount
     ) external onlyApp {
         address app = msg.sender;
@@ -166,7 +166,7 @@ contract Wallets is UsingReentrancyGuard, Ownable {
     function creditPlayers(
         address app,
         uint gameID,
-        address[] memory players,
+        address[] calldata players,
         uint amount
     ) private {
         for (uint i; i < players.length; ) {

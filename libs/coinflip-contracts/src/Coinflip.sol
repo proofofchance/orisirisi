@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
 import {UsingGamePlays} from './Coinflip/GamePlays.sol';
-import {UsingGameWagers} from './Coinflip/GameWagers.sol';
 import {UsingGameStatuses} from './Coinflip/GameStatuses.sol';
 
 import {Wallets} from './Wallets.sol';
@@ -14,13 +13,13 @@ import {UsingServiceProvider} from './ServiceProvider.sol';
 
 contract Coinflip is
     UsingGamePlays,
-    UsingGameWagers,
     UsingGameStatuses,
     Ownable,
     MaybeOperational,
     UsingServiceProvider
 {
     uint public minWager;
+    mapping(uint gameID => uint wager) wagers;
     uint16 public maxNumberOfPlayers;
     uint public gamesCount;
     Wallets public wallets;
@@ -101,22 +100,18 @@ contract Coinflip is
             revert MinimumWagerNotMet();
         }
 
-        assert(numberOfPlayers >= Coin.TOTAL_SIDES_COUNT);
+        require(numberOfPlayers >= Coin.TOTAL_SIDES_COUNT);
 
         if (numberOfPlayers > maxNumberOfPlayers) {
             revert MaxNumberOfPlayersError();
         }
 
-        uint newGameID = gamesCount + 1;
+        uint newGameID = ++gamesCount;
         maybeTopUpWallet();
-        createGameWager(newGameID, wager);
+        wagers[newGameID] = wager;
         payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
-        setGameExpiry(newGameID, expiryTimestamp);
-
-        unchecked {
-            gamesCount++;
-        }
+        setGameExpiry(newGameID, expiryTimestamp); 
 
         emit GameCreated(
             newGameID,
@@ -146,7 +141,7 @@ contract Coinflip is
         mustAvoidPlayingAgain(gameID)
     {
         maybeTopUpWallet();
-        uint wager = getGameWager(gameID);
+        uint wager = wagers[gameID];
         payGameWager(gameID, wager);
         createGamePlay(gameID, coinSide, proofOfChance);
         maybeSetGameStatusAsAwaitingChancesUpload(gameID);
@@ -160,7 +155,7 @@ contract Coinflip is
     /// @param chanceAndSalts list of the chance and salts combined in the order of their respecitive play IDs
     function revealChancesAndCreditWinners(
         uint gameID,
-        bytes[] memory chanceAndSalts
+        bytes[] calldata chanceAndSalts
     )
         external
         onlyOwner
@@ -168,7 +163,7 @@ contract Coinflip is
     {
         Coin.Side flipOutcome;
         for (uint16 i; i < playCounts[gameID]; ) {
-            bytes memory chanceAndSalt = chanceAndSalts[i];
+            bytes calldata chanceAndSalt = chanceAndSalts[i];
 
             uint16 gamePlayID = i + 1;
 
@@ -209,7 +204,7 @@ contract Coinflip is
     /// @notice Batch refunds expired game players
     /// @param gameIDs game IDs of expired games
     function refundExpiredGamePlayersForAllGames(
-        uint[] memory gameIDs
+        uint[] calldata gameIDs
     ) external {
         for (uint8 i; i < gameIDs.length; ) {
             refundExpiredGamePlayers(gameIDs[i]);
@@ -228,7 +223,7 @@ contract Coinflip is
     }
 
     function adjustExpiryForGames(
-        uint[] memory gameIDs,
+        uint[] calldata gameIDs,
         uint newExpiryTimestamp
     ) external onlyOwner {
         for (uint8 i; i < gameIDs.length; ) {
@@ -248,7 +243,7 @@ contract Coinflip is
         address[] memory allPlayers = allPlayers[gameID];
         uint16 allPlayersSize = uint16(allPlayers.length);
 
-        uint totalWager = getGameWager(gameID) * allPlayersSize;
+        uint totalWager =  wagers[gameID] * allPlayersSize;
 
         uint refundAmountPerPlayer = getSplitAmountAfterServiceChargeDeduction(
             totalWager,
@@ -270,7 +265,7 @@ contract Coinflip is
         uint gameID,
         address[] memory winners
     ) private returns (uint amountForEachWinner) {
-        uint gameWager = getGameWager(gameID);
+        uint gameWager = wagers[gameID];
         uint totalWager = gameWager * playCounts[gameID];
 
         uint amountForEachPlayer = getSplitAmountAfterServiceChargeDeduction(
