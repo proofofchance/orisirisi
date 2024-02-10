@@ -11,14 +11,14 @@ import { ChainLogo } from '../chain-logo';
 import { useCoinflipGameWallet } from '../hooks';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import {
-  Transaction,
   Web3Account,
   Web3ProviderError,
   Web3ProviderErrorCode,
 } from '@orisirisi/orisirisi-web3';
 import { WalletsContract } from '@orisirisi/coinflip-contracts';
 import toast from 'react-hot-toast';
-import { COINFLIP_INDEX_GRACE_PERIOD } from '@orisirisi/coinflip';
+import { COINFLIP_INDEXING_RATE_MS } from '@orisirisi/coinflip';
+import { sleep } from '@orisirisi/orisirisi-data-utils';
 
 interface WalletBalanceButtonProps {
   currentWeb3Account: Web3Account;
@@ -56,7 +56,7 @@ export function WalletBalanceButton({
       position: 'bottom-right',
     });
     try {
-      const transaction = await walletsContract.withdrawAll();
+      await walletsContract.withdrawAll();
 
       toast.dismiss(awaitingApprovalToastId);
 
@@ -64,15 +64,13 @@ export function WalletBalanceButton({
         position: 'bottom-right',
       });
 
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
+      await sleep(COINFLIP_INDEXING_RATE_MS);
 
-      setTimeout(() => {
-        toast.dismiss(loadingToastId);
-        toast.success('Game wallet balance withdrawn successfully!', {
-          position: 'bottom-right',
-        });
-        refreshWallet();
-      }, COINFLIP_INDEX_GRACE_PERIOD);
+      toast.dismiss(loadingToastId);
+      toast.success('Game wallet balance withdrawn successfully!', {
+        position: 'bottom-right',
+      });
+      refreshWallet();
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:

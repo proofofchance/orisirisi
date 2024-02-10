@@ -32,15 +32,15 @@ import {
 } from '@orisirisi/orisirisi-web3-ui';
 import { parseEther } from 'ethers';
 import {
-  Transaction,
   Web3ProviderError,
   Web3ProviderErrorCode,
 } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { COINFLIP_INDEX_GRACE_PERIOD } from '@orisirisi/coinflip';
+import { COINFLIP_INDEXING_RATE_MS } from '@orisirisi/coinflip';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
+import { sleep } from '@orisirisi/orisirisi-data-utils';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -139,7 +139,7 @@ export function CreateGameSection() {
     });
 
     try {
-      const transaction = await coinflipContract.createGame(
+      await coinflipContract.createGame(
         parseEther(wager).toString(),
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
@@ -153,13 +153,12 @@ export function CreateGameSection() {
       const loadingToastId = toast.loading('Creating Game', {
         position: 'bottom-right',
       });
-      await transaction.wait(Transaction.STANDARD_CONFIRMATION_COUNT);
 
-      setTimeout(() => {
-        toast.dismiss(loadingToastId);
-        toast.success('Successfully created!', { position: 'bottom-right' });
-        push('/games?for=my_games');
-      }, COINFLIP_INDEX_GRACE_PERIOD);
+      await sleep(COINFLIP_INDEXING_RATE_MS);
+
+      toast.dismiss(loadingToastId);
+      toast.success('Successfully created!', { position: 'bottom-right' });
+      push('/games?for=my_games');
     } catch (e) {
       switch (Web3ProviderError.from(e).code) {
         case Web3ProviderErrorCode.UserRejected:

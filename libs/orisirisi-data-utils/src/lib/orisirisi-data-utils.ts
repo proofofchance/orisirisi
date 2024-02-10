@@ -120,3 +120,7 @@ export const pickRandom = <T>(values: T[]) => {
   const randomIndex = getRandomInteger(values.length - 1);
   return values[randomIndex];
 };
+
+// Promises
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

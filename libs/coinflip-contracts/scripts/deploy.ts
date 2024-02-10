@@ -1,4 +1,5 @@
 import { CoinflipGame } from '@orisirisi/coinflip';
+import { sleep } from '@orisirisi/orisirisi-data-utils';
 import { ethers, deployments, run, network } from 'hardhat';
 import { parseEther } from 'ethers';
 
@@ -42,7 +43,7 @@ export async function deployCoinflipContracts() {
   const isLocalDeployment = network.name === 'localhost';
 
   if (!isLocalDeployment) {
-    await delay(NODE_INDEXING_GRACE_PERIOD_MS);
+    await sleep(NODE_INDEXING_GRACE_PERIOD_MS);
 
     await run('verify:verify', {
       address: walletsAddress,
@@ -50,7 +51,7 @@ export async function deployCoinflipContracts() {
   }
 
   if (!isLocalDeployment) {
-    await delay(NODE_INDEXING_GRACE_PERIOD_MS);
+    await sleep(NODE_INDEXING_GRACE_PERIOD_MS);
 
     await run('verify:verify', {
       address: coinflipAddress,
@@ -76,5 +77,3 @@ async function getDeployer() {
   );
   return deployer;
 }
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
