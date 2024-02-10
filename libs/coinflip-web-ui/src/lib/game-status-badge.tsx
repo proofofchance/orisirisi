@@ -25,6 +25,6 @@ export function GameStatusBadge({
         </div>
       );
     default:
-      throw new Error('Invalid game status for badge display');
+      throw new Error(`Invalid game status for badge display: ${gameStatus}`);
   }
 }
