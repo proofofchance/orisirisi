@@ -12,7 +12,7 @@ const networks: NetworksUserConfig = {
   sepolia: {
     url: process.env['SEPOLIA_JSON_RPC_URL'],
     accounts: [process.env['SEPOLIA_PRIVATE_KEY']!],
-    gasPrice: 50000000000,
+    gasPrice: 50_000_000_000,
   },
 };
 const nonEmptyNetworks = Object.keys(networks).reduce(
@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
+        runs: 1_000,
       },
     },
   },
