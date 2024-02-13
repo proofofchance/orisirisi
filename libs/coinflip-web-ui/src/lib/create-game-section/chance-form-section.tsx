@@ -21,6 +21,7 @@ export interface ChanceForm {
 }
 
 interface ChanceFormSectionProps {
+  proofOfChanceFileName: string;
   stepCount: number;
   onSubmit?: () => void;
   proofOfChance: ProofOfChance | null;
@@ -28,6 +29,7 @@ interface ChanceFormSectionProps {
 }
 
 export function ChanceFormSection({
+  proofOfChanceFileName,
   stepCount,
   onSubmit,
   proofOfChance,
@@ -142,7 +144,7 @@ export function ChanceFormSection({
             onClick={async () => {
               Browser.downloadFile(
                 await proofOfChance!.toFileContent(),
-                `coinflip-${new Date().toISOString()}-poc`,
+                proofOfChanceFileName,
                 ProofOfChance.FILE_EXTENSION
               );
               setValue('isProofOfChanceDownloaded', true);

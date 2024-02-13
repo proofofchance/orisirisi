@@ -57,7 +57,7 @@ export class PublicProofOfChance {
 }
 
 export class ProofOfChance {
-  static FILE_EXTENSION = '.txt';
+  static FILE_EXTENSION = '.txt' as const;
   static CHANCE_MAX_LENGTH = 16;
   private constructor(
     public readonly chance: string,

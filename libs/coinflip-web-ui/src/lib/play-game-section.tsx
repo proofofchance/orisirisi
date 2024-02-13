@@ -29,7 +29,7 @@ import { sleep } from '@orisirisi/orisirisi-data-utils';
 
 type PlayGameForm = CoinSideForm & ChanceForm;
 
-export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
+export function PlayGameSection({ game }: { game: CoinflipGame }) {
   const formMethods = useForm<PlayGameForm>();
   const { formState, getValues, trigger: triggerValidation } = formMethods;
   const [proofOfChance, setProofOfChance] = useState<ProofOfChance | null>(
@@ -49,6 +49,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
     .addStep(
       ['chance'],
       <ChanceFormSection
+        proofOfChanceFileName={`coinflip-game-${game.id}`}
         stepCount={stepCount}
         proofOfChance={proofOfChance}
         setProofOfChance={setProofOfChance}
@@ -105,10 +106,10 @@ export function PlayGameSection({ game }: { game: CoinflipGame | null }) {
 
     try {
       await coinflipContract.playGame(
-        game!.id,
+        game.id,
         coinSide,
         await proofOfChance!.getProofOfChance(),
-        { value: parseEther(game!.wager.toString()) }
+        { value: parseEther(game.wager.toString()) }
       );
 
       toast.dismiss(awaitingApprovalToastId);

@@ -75,6 +75,7 @@ export function CreateGameSection() {
     .addStep(
       ['chance'],
       <ChanceFormSection
+        proofOfChanceFileName={`coinflip-game-you-created${new Date().toISOString()}`}
         stepCount={stepCount}
         proofOfChance={proofOfChance}
         setProofOfChance={setProofOfChance}

@@ -65,7 +65,7 @@ export function PlayGame() {
     replace(gamePath!);
   }
 
-  return <>{isClient && <PlayGameSection game={game} />}</>;
+  return <>{isClient && game && <PlayGameSection game={game} />}</>;
 }
 
 export default PlayGame;
