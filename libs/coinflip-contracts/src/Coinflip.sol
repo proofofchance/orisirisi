@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.20;
+pragma solidity 0.8.24;
 
 import {Coin} from './Coinflip/Coin.sol';
 import {Game} from './Coinflip/Game.sol';
@@ -241,13 +241,13 @@ contract Coinflip is
         uint gameID
     ) private onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
         address[] memory allPlayers = allPlayers[gameID];
-        uint16 allPlayersSize = uint16(allPlayers.length);
+        uint16 allPlayersLength = uint16(allPlayers.length);
 
-        uint totalWager =  wagers[gameID] * allPlayersSize;
+        uint totalWager =  wagers[gameID] * allPlayersLength;
 
         uint refundAmountPerPlayer = getSplitAmountAfterServiceChargeDeduction(
             totalWager,
-            allPlayersSize
+            allPlayersLength
         );
 
         wallets.creditPlayersAndCreditAppOwnerTheRest(
