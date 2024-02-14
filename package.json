@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build:contracts": "cd libs/coinflip-contracts && pnpm build && cd ../../",
+    "reset-build": "nx reset",
     "build:web": "pnpm build:contracts && nx build --project coinflip-web",
     "dev:web": "nx serve coinflip-web --port 2000",
     "dev:start-web3-provider": "cd libs/coinflip-contracts && pnpm dev:start-web3-provider",
