@@ -49,6 +49,10 @@ type CreateGameForm = WagerForm &
   ChanceForm;
 
 export function CreateGameSection() {
+  const { push } = useRouter();
+  const { currentWeb3Account } = useCurrentWeb3Account();
+  const currentChain = useCurrentChain();
+
   const formMethods = useForm<CreateGameForm>();
   const { formState, trigger: triggerValidation, getValues } = formMethods;
   const [proofOfChance, setProofOfChance] = useState<ProofOfChance | null>(
@@ -75,7 +79,7 @@ export function CreateGameSection() {
     .addStep(
       ['chance'],
       <ChanceFormSection
-        proofOfChanceFileName={`coinflip-game-you-created${new Date().toISOString()}`}
+        proofOfChanceFileName={`coinflip-game-you-created-on-${currentChain!.getName()}`}
         stepCount={stepCount}
         proofOfChance={proofOfChance}
         setProofOfChance={setProofOfChance}
@@ -114,11 +118,6 @@ export function CreateGameSection() {
       currentFields.map(async (field) => await triggerValidation(field))
     );
   };
-
-  const { currentWeb3Account } = useCurrentWeb3Account();
-  const currentChain = useCurrentChain();
-
-  const { push } = useRouter();
 
   const createGame = async ({
     wager,
