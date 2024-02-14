@@ -79,3 +79,22 @@ export class Chain {
 
   static defaultChain = () => new Chain(ChainID.Local);
 }
+
+export class ChainExplorer {
+  private static ETHERSCAN_BASE_URL = 'https://etherscan.io';
+  private static SEPOLIA_ETHERSCAN_BASE_URL = 'https://sepolia.etherscan.io';
+  private static POLYGONSCAN_BASE_URL = 'https://polygonscan.com';
+
+  public static getTransactionLink(chainId: ChainID, transactionHash: string) {
+    switch (chainId) {
+      case ChainID.Local:
+      case ChainID.LocalAlt:
+      case ChainID.Ethereum:
+        return `${ChainExplorer.ETHERSCAN_BASE_URL}/tx/${transactionHash}`;
+      case ChainID.SepoliaTestNet:
+        return `${ChainExplorer.SEPOLIA_ETHERSCAN_BASE_URL}/tx/${transactionHash}`;
+      case ChainID.Polygon:
+        return `${ChainExplorer.POLYGONSCAN_BASE_URL}/tx/${transactionHash}`;
+    }
+  }
+}

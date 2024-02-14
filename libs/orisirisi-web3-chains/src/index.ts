@@ -1,1 +1,1 @@
-export { Chain, ChainID } from './lib/chain';
+export { Chain, ChainID, ChainExplorer } from './lib/chain';
