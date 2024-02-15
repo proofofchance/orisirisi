@@ -29,13 +29,12 @@ export function WalletBalanceButton({
   currentWeb3Account,
   currentChain,
 }: WalletBalanceButtonProps) {
-  const publicAddress = currentWeb3Account.address;
   const params = useMemo(
     () => ({
       chain_id: currentChain!.id,
-      owner_address: publicAddress,
+      owner_address: currentWeb3Account.address,
     }),
-    [currentChain, publicAddress]
+    [currentChain, currentWeb3Account]
   );
   const { wallet, refresh: refreshWallet } = useCoinflipGameWallet(params);
 
