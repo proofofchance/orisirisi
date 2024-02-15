@@ -70,7 +70,7 @@ function GameCard({
       <div className="flex flex-col justify-center h-40">
         <div>
           Potential Win:{' '}
-          <h4 className="text-xl">{formatUSD(game.max_possible_win_usd)}</h4>
+          <h4 className="text-xl">~{formatUSD(game.max_possible_win_usd)}</h4>
         </div>
         <div className="mt-2">
           Wager:{' '}
