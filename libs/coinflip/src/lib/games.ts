@@ -147,11 +147,12 @@ export class GameActivity {
   constructor(
     public id: number,
     public game_id: number,
+    public chain_id: number,
     public trigger_public_address: string,
     public data: GamePlayCreatedActivityData | Record<string, never>,
     public kind: GameActivityKind,
     public occurred_at: number,
-    public transaction_hash: string
+    public transaction_hash: string | null
   ) {}
 
   isGameCreatedKind = () => this.kind === 'game_created';

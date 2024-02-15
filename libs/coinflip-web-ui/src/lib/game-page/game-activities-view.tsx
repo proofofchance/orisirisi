@@ -20,7 +20,7 @@ import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { Chain, ChainExplorer } from '@orisirisi/orisirisi-web3-chains';
 import { timeAgo } from '@orisirisi/orisirisi-data-utils';
 
 export function GameActivitiesView({
@@ -388,7 +388,26 @@ function GameActivity({
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all my-2">
       <p className="pb-4">{getReport()}</p>
       {children}
-      <span className="mt-2 text-xs self-end">{activityReadableTimestamp}</span>
+      {gameActivity.transaction_hash ? (
+        <div className="flex mt-2 justify-between">
+          <a
+            href={ChainExplorer.getTransactionLink(
+              gameActivity.chain_id,
+              gameActivity.transaction_hash
+            )}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs underline"
+          >
+            View transaction
+          </a>
+          <span className="text-xs">{activityReadableTimestamp}</span>
+        </div>
+      ) : (
+        <span className="text-xs mt-2 self-end">
+          {activityReadableTimestamp}
+        </span>
+      )}
     </div>
   );
 }
