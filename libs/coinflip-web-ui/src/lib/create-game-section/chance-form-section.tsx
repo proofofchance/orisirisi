@@ -102,6 +102,8 @@ export function ChanceFormSection({
         className="md:w-[500px]"
         tip={
           <span>
+            Please do not DELETE the downloaded file carefully, as it will be
+            required to finalize the game once every player has played. <br />
             The chance<i>(lucky word(s))</i> you type here will be mixed with
             the chances of other players' to determine the coinflip outcome.
             Basically, if the total number of letters of all chances is even,
