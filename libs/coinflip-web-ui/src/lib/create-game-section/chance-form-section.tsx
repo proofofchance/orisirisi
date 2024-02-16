@@ -152,7 +152,7 @@ export function ChanceFormSection({
               clearErrors('isProofOfChanceDownloaded');
               toast.success(
                 `Downloaded successfully! It will be required to finalize the game once every player has played. DO NOT DELETE.`,
-                { position: 'bottom-right' }
+                { position: 'bottom-right', duration: 20_000 }
               );
             }}
           />
