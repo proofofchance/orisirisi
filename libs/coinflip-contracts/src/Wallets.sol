@@ -4,153 +4,101 @@ pragma solidity 0.8.24;
 import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 
-/// TODO: Move to orisirisi-contracts when more games are introduced
-/// TODO: Consider renaming to GameWallets
+/// TODO: Move to orisirisi-contracts since it could be globally scoped
+contract Wallets is UsingReentrancyGuard {
+    mapping(address account => uint amount) balances;
 
-/// @dev ProofOfChance Wallets supports only coinflip at the time of deployment
-/// It acts as a regular wallet that can be 'Credited' and 'Debited'
-/// More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in
-/// the context of a given game
-contract Wallets is UsingReentrancyGuard, Ownable {
-    mapping(address => bool) apps;
-    mapping(address app => mapping(uint gameID => uint balance)) gameBalances;
-    mapping(address owner => uint amount) balances;
-
-    event Credit(address indexed owner, uint amount);
-    event Debit(address indexed owner, uint amount);
-    event CreditFromGame(
-        address indexed app,
-        uint indexed gameID,
-        address indexed owner,
-        uint amount
-    );
-    event DebitForGame(
-        address indexed app,
-        uint indexed gameID,
-        address indexed owner,
-        uint amount
-    );
+    event Credit(address indexed account, uint amount);
+    event Debit(address indexed account, uint amount);
 
     error InsufficientFunds();
-    error UnAuthorizedApp();
 
     receive() external payable {
-        _credit();
+        _credit(msg.sender, msg.value);
     }
 
-    function addApp(address app) external onlyOwner {
-        apps[app] = true;
-    }
-
-    function removeApp(address app) external onlyOwner {
-        apps[app] = false;
-    }
-
-    modifier onlyApp() {
-        if (!apps[msg.sender]) {
-            revert UnAuthorizedApp();
-        }
-        _;
-    }
-
-    function debitForGame(
-        uint gameID,
-        address player,
-        uint amount
-    ) external onlyApp {
-        if (balances[player] < amount) {
-            revert InsufficientFunds();
-        }
-        balances[player] -= amount;
-        address app = msg.sender;
-        gameBalances[app][gameID] += amount;
-
-        emit DebitForGame(app, gameID, player, amount);
-    }
-
-    /// @dev Credits player as though player manually credits themselves.
-    function creditPlayer(address player) external payable {
-        uint amount = msg.value;
-        balances[player] += amount;
-        emit Credit(player, amount);
+    /// @dev Credits account. You could credit yourself or someone using this.
+    function creditAccount(address account) external payable {
+        _credit(account, msg.value);
     }
 
     function credit() external payable {
-        _credit();
+        _credit(msg.sender, msg.value);
     }
 
     /// @dev Credits player as though player manually credits themselves.
-    function creditPlayers(address[] calldata players) external payable {
+    function creditAccounts(address[] calldata accounts) external payable {
         uint amount = msg.value;
-        uint playersSize = players.length;
-        require(amount % playersSize == 0);
-        uint amountForEachPlayer = amount / playersSize;
-        for (uint i; i < playersSize; ) {
-            balances[players[i]] += amountForEachPlayer;
+        uint accountsLength = accounts.length;
+        require(amount % accountsLength == 0);
+        uint amountForEachAccount = amount / accountsLength;
+        for (uint i; i < accountsLength; ) {
+            _credit(accounts[i], amountForEachAccount);
             unchecked {
                 ++i;
             }
         }
     }
 
-    function creditPlayersAndCreditAppOwnerTheRest(
-        uint gameID,
-        address[] calldata players,
-        uint amount
-    ) external onlyApp {
-        address app = msg.sender;
-        require(gameBalances[app][gameID] > players.length * amount);
-        creditPlayers(app, gameID, players, amount);
-        creditAppOwnerTheRest(app, gameID);
+    function creditManyAndOne(
+        address[] calldata manyAccounts,
+        uint amountForEachManyAccount,
+        address oneAccount,
+        uint amountForOneAccount
+    ) external payable {
+        uint16 manyAccountsLength = uint16(manyAccounts.length);
+        require(
+            (amountForEachManyAccount * manyAccountsLength) +
+                amountForOneAccount ==
+                msg.value
+        );
+
+        for (uint16 i; i < manyAccountsLength; ) {
+            _credit(manyAccounts[i], amountForEachManyAccount);
+            unchecked {
+                ++i;
+            }
+        }
+
+        _credit(oneAccount, amountForOneAccount);
     }
 
     /// @notice Allows you to withdraw a specified amount of your wallet balance
     function withdraw(uint amount) external nonReentrant {
-        address owner = msg.sender;
-        uint balance = balances[owner];
+        address account = msg.sender;
+        uint balance = balances[account];
         if (balance < amount) {
             revert InsufficientFunds();
         }
-        balances[owner] -= amount;
+        balances[account] -= amount;
 
-        pay(owner, amount);
+        _pay(account, amount);
 
-        emit Debit(owner, amount);
+        emit Debit(account, amount);
     }
 
     /// @notice Allows you to withdraw all your wallet balance
     function withdrawAll() external nonReentrant {
-        address owner = msg.sender;
-        uint balance = balances[owner];
+        address account = msg.sender;
+        uint balance = balances[account];
         if (balance == 0) {
             revert InsufficientFunds();
         }
-        balances[owner] = 0;
+        balances[account] = 0;
 
-        pay(owner, balance);
+        _pay(account, balance);
 
-        emit Debit(owner, balance);
+        emit Debit(account, balance);
     }
 
-    /// @notice Returns the wallet balance of an app's game
-    function getGameBalance(
-        address app,
-        uint gameID
-    ) external view returns (uint) {
-        return gameBalances[app][gameID];
+    function _credit(address account, uint amount) private {
+        balances[account] += amount;
+        emit Credit(account, amount);
     }
 
-    function _credit() private {
-        address player = msg.sender;
-        uint amount = msg.value;
-        balances[player] += amount;
-        emit Credit(player, amount);
-    }
-
-    /// @notice returns the balance of a wallet owner
-    /// it does not include the balances deposited in games
-    function getBalance(address owner) external view returns (uint) {
-        return balances[owner];
+    /// @notice returns the balance of a wallet account
+    function getBalance(address account) external view returns (uint) {
+        return balances[account];
     }
 
     /// @notice returns the ether balance of this wallet contract
@@ -158,34 +106,8 @@ contract Wallets is UsingReentrancyGuard, Ownable {
         return address(this).balance;
     }
 
-    function pay(address to, uint256 amount) private {
+    function _pay(address to, uint256 amount) private {
         (bool sent, ) = to.call{value: amount}('');
         require(sent);
-    }
-
-    function creditPlayers(
-        address app,
-        uint gameID,
-        address[] calldata players,
-        uint amount
-    ) private {
-        for (uint i; i < players.length; ) {
-            address player = players[i];
-            gameBalances[app][gameID] -= amount;
-            balances[player] += amount;
-            emit CreditFromGame(app, gameID, player, amount);
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    function creditAppOwnerTheRest(address app, uint gameID) private {
-        uint restAmount = gameBalances[app][gameID];
-        // Currently, all apps have one owner, who happens to own this wallet contract too
-        address appOwner = owner();
-        balances[appOwner] = restAmount;
-        gameBalances[app][gameID] = 0;
-        emit CreditFromGame(app, gameID, appOwner, restAmount);
     }
 }
