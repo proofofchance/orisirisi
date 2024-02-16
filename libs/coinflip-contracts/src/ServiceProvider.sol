@@ -31,15 +31,17 @@ contract UsingServiceProvider is Ownable {
         return (amount * serviceChargePercent) / 100;
     }
 
-    function getSplitAmountAfterServiceChargeDeduction(
-        uint amount,
+    function getSplitAndServiceChargeAmounts(
+        uint totalAmount,
         uint places
-    ) internal view returns (uint) {
-        uint splitAmount = amount / places;
+    ) internal view returns (uint, uint) {
+        uint splitAmount = totalAmount / places;
         splitAmount =
             splitAmount -
             ((splitAmount * serviceChargePercent) / 100);
 
-        return splitAmount;
+        uint serviceChargeAmount = totalAmount - (splitAmount * places);
+
+        return (splitAmount, serviceChargeAmount);
     }
 }

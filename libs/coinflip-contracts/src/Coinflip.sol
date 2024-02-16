@@ -47,6 +47,7 @@ contract Coinflip is
     );
     event GameExpiryAdjusted(uint indexed gameID, uint expiryTimestamp);
 
+    error IncorrectGameWager();
     error MinimumWagerNotMet();
     error InvalidProofOfChance();
     error MaxNumberOfPlayersError();
@@ -63,7 +64,7 @@ contract Coinflip is
 
     /// @notice Coinflip tops up your wallet balance when it receives any ether value
     receive() external payable {
-        topUpWallet();
+        wallets.creditAccount{value: msg.value}(msg.sender);
     }
 
     /// @notice Allow updating Wallets conrtact in case a PPV is ever discovered
@@ -84,18 +85,17 @@ contract Coinflip is
     }
 
     /// @notice Creates a new game
-    /// @param wager ether value required paticipating players to pay before playing
     /// @param numberOfPlayers number of participating players
     /// @param expiryTimestamp Expiry timestamp of the game
     /// @param coinSide predicted coin side by you, the creator
     /// @param proofOfChance SHA256 hash of your chance (lucky word[s]) and a random salt combined
     function createGame(
-        uint wager,
         uint16 numberOfPlayers,
         uint expiryTimestamp,
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) external payable mustBeOperational {
+        uint wager = msg.value;
         if (wager < minWager) {
             revert MinimumWagerNotMet();
         }
@@ -107,21 +107,19 @@ contract Coinflip is
         }
 
         uint newGameID = ++gamesCount;
-        maybeTopUpWallet();
         wagers[newGameID] = wager;
-        payGameWager(newGameID, wager);
         setNumberOfPlayers(newGameID, numberOfPlayers);
-        setGameExpiry(newGameID, expiryTimestamp); 
+        setGameExpiry(newGameID, expiryTimestamp);
 
+        address player = msg.sender;
         emit GameCreated(
             newGameID,
-            msg.sender,
+            player,
             numberOfPlayers,
             expiryTimestamp,
             wager
         );
-
-        createGamePlay(newGameID, coinSide, proofOfChance);
+        createGamePlay(player, newGameID, coinSide, proofOfChance);
     }
 
     /// @notice Allows playing an already created game
@@ -140,10 +138,11 @@ contract Coinflip is
         mustAvoidAllGamePlaysMatching(gameID, coinSide)
         mustAvoidPlayingAgain(gameID)
     {
-        maybeTopUpWallet();
         uint wager = wagers[gameID];
-        payGameWager(gameID, wager);
-        createGamePlay(gameID, coinSide, proofOfChance);
+        if (msg.value != wager) {
+            revert IncorrectGameWager();
+        }
+        createGamePlay(msg.sender, gameID, coinSide, proofOfChance);
         maybeSetGameStatusAsAwaitingChancesUpload(gameID);
     }
 
@@ -195,9 +194,10 @@ contract Coinflip is
                 ++i;
             }
         }
+
         address[] memory winners = players[gameID][flipOutcome];
         uint amountForEachWinner = creditGameWinners(gameID, winners);
-        setGameStatusAsConcluded(gameID);
+        setGameStatus(gameID, Game.Status.Concluded);
         emit GameCompleted(gameID, flipOutcome, amountForEachWinner);
     }
 
@@ -237,27 +237,28 @@ contract Coinflip is
         }
     }
 
+    /// @notice returns the ether balance of this contract i.e. total wagers staked
+    function getTotalBalance() external view returns (uint) {
+        return address(this).balance;
+    }
+
     function refundExpiredGamePlayers(
         uint gameID
     ) private onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
         address[] memory allPlayers = allPlayers[gameID];
         uint16 allPlayersLength = uint16(allPlayers.length);
-
-        uint totalWager =  wagers[gameID] * allPlayersLength;
-
-        uint refundAmountPerPlayer = getSplitAmountAfterServiceChargeDeduction(
-            totalWager,
-            allPlayersLength
-        );
-
-        wallets.creditPlayersAndCreditAppOwnerTheRest(
-            gameID,
+        uint totalWager = wagers[gameID] * allPlayersLength;
+        (
+            uint refundAmountPerPlayer,
+            uint serviceChargeAmount
+        ) = getSplitAndServiceChargeAmounts(totalWager, allPlayersLength);
+        wallets.creditManyAndOne{value: totalWager}(
             allPlayers,
-            refundAmountPerPlayer
+            refundAmountPerPlayer,
+            owner(),
+            serviceChargeAmount
         );
-
-        setGameStatusAsConcluded(gameID);
-
+        setGameStatus(gameID, Game.Status.Concluded);
         emit ExpiredGameRefunded(gameID, refundAmountPerPlayer);
     }
 
@@ -267,18 +268,16 @@ contract Coinflip is
     ) private returns (uint amountForEachWinner) {
         uint gameWager = wagers[gameID];
         uint totalWager = gameWager * playCounts[gameID];
-
-        uint amountForEachPlayer = getSplitAmountAfterServiceChargeDeduction(
-            totalWager,
-            winners.length
-        );
-
-        wallets.creditPlayersAndCreditAppOwnerTheRest(
-            gameID,
+        (
+            uint amountForEachPlayer,
+            uint serviceChargeAmount
+        ) = getSplitAndServiceChargeAmounts(totalWager, winners.length);
+        wallets.creditManyAndOne{value: totalWager}(
             winners,
-            amountForEachPlayer
+            amountForEachPlayer,
+            owner(),
+            serviceChargeAmount
         );
-
         return amountForEachPlayer;
     }
 
@@ -287,21 +286,7 @@ contract Coinflip is
         uint16 numberOfPlayers = numberOfPlayersPerGame[gameID];
 
         if (playCount == numberOfPlayers) {
-            setGameStatusAsAwaitingChancesUpload(gameID);
+            setGameStatus(gameID, Game.Status.AwaitingChancesUpload);
         }
-    }
-
-    function payGameWager(uint gameID, uint wager) private {
-        wallets.debitForGame(gameID, msg.sender, wager);
-    }
-
-    function maybeTopUpWallet() private {
-        if (msg.value > 0) {
-            topUpWallet();
-        }
-    }
-
-    function topUpWallet() private {
-        wallets.creditPlayer{value: msg.value}(msg.sender);
     }
 }

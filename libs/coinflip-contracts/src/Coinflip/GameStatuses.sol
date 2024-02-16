@@ -31,12 +31,8 @@ contract UsingGameStatuses {
         expiryTimestamps[gameID] = expiryTimestamp;
     }
 
-    function setGameStatusAsAwaitingChancesUpload(uint gameID) internal {
-        statuses[gameID] = Game.Status.AwaitingChancesUpload;
-    }
-
-    function setGameStatusAsConcluded(uint gameID) internal {
-        statuses[gameID] = Game.Status.Concluded;
+    function setGameStatus(uint gameID, Game.Status status) internal {
+        statuses[gameID] = status;
     }
 
     function getGameStatus(uint gameID) internal view returns (Game.Status) {

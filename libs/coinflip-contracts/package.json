@@ -6,8 +6,8 @@
     "clean": "hardhat clean",
     "test": "hardhat test",
     "dev:start-web3-provider": "hardhat node",
-    "dev:deploy": "hardhat run --network localhost scripts/deploy.ts && hardhat run --network localhost scripts/deployPostOperations.ts",
-    "sepolia:deploy": "hardhat run --network sepolia scripts/deploy.ts && hardhat run --network sepolia scripts/deployPostOperations.ts"
+    "dev:deploy": "hardhat run --network localhost scripts/deploy.ts",
+    "sepolia:deploy": "hardhat run --network sepolia scripts/deploy.ts"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

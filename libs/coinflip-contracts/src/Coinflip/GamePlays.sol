@@ -57,22 +57,23 @@ contract UsingGamePlays {
     }
 
     function createGamePlay(
+        address player,
         uint gameID,
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) internal {
         uint16 gamePlayID = playCounts[gameID] + 1;
-        playRecord[gameID][msg.sender] = gamePlayID;
+        playRecord[gameID][player] = gamePlayID;
         proofOfChances[gameID][gamePlayID] = proofOfChance;
-        players[gameID][coinSide].push(msg.sender);
-        allPlayers[gameID].push(msg.sender);
+        players[gameID][coinSide].push(player);
+        allPlayers[gameID].push(player);
         coinSideCounts[gameID][coinSide]++;
         playCounts[gameID]++;
 
         emit GamePlayCreated(
             gameID,
             gamePlayID,
-            msg.sender,
+            player,
             coinSide,
             proofOfChance
         );
