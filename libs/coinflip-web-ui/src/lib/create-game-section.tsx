@@ -140,7 +140,6 @@ export function CreateGameSection() {
 
     try {
       await coinflipContract.createGame(
-        parseEther(wager).toString(),
         NumberOfPlayers.fromString(numberOfPlayers).value,
         getExpiryTimestamp(expiry, expiryUnit),
         coinSide,
