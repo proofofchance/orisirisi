@@ -14,6 +14,8 @@ import { TextInput } from '@orisirisi/orisirisi-web-ui';
 import { useEffect } from 'react';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { TipCard } from './tip-card';
+import toast from 'react-hot-toast';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 export interface ChanceForm {
   chance: string;
@@ -102,8 +104,6 @@ export function ChanceFormSection({
         className="md:w-[500px]"
         tip={
           <span>
-            Please do not DELETE the downloaded file carefully, as it will be
-            required to finalize the game once every player has played. <br />
             The chance<i>(lucky word(s))</i> you type here will be mixed with
             the chances of other players' to determine the coinflip outcome.
             Basically, if the total number of letters of all chances is even,
@@ -151,6 +151,10 @@ export function ChanceFormSection({
               );
               setValue('isProofOfChanceDownloaded', true);
               clearErrors('isProofOfChanceDownloaded');
+              toast.custom(
+                `Please do not DELETE. It will be required to finalize the game once every player has played.`,
+                { icon: <ExclamationTriangleIcon className="h-4 w-4" /> }
+              );
             }}
           />
         </div>
