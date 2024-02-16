@@ -14,7 +14,10 @@ import {
   useCoinflipGameActivities,
   useDispatchErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
-import { parseInteger } from '@orisirisi/orisirisi-data-utils';
+import {
+  capitalizeFirstLetter,
+  parseInteger,
+} from '@orisirisi/orisirisi-data-utils';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { useIsClient, useWindowTitle } from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
@@ -27,11 +30,13 @@ export default function GamePage() {
   useAuthErrorToastRequest();
   const dispatchErrorToastRequest = useDispatchErrorToastRequest();
 
-  const id = parseInteger(query.id as string);
-  useWindowTitle(`Coinflip - Game #${id}`);
-
   const chainName = query.chain as string | null;
   const chain = Chain.fromName(chainName);
+
+  const id = parseInteger(query.id as string);
+  useWindowTitle(
+    `Coinflip - Game #${id} on ${capitalizeFirstLetter(chainName)}`
+  );
 
   if (isClient && id && !chain.ok) {
     dispatchErrorToastRequest('Chain needs to specified!');

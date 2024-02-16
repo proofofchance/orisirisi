@@ -36,6 +36,8 @@ const isWhiteSpace = (value: string) => whiteSpaceRegex.test(value);
 const isNotWhiteSpace = (value: string) => !isWhiteSpace(value);
 const asciiStringRegex = /^[ -~]+$/;
 export const isAsciiString = (value: string) => asciiStringRegex.test(value);
+export const capitalizeFirstLetter = (value: string | null) =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
 
 const extractWordsAsArray = (value: string) =>
   value.split(whiteSpaceRegex).filter(isNotWhiteSpace);
