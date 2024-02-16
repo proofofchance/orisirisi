@@ -15,7 +15,6 @@ import { useEffect } from 'react';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { TipCard } from './tip-card';
 import toast from 'react-hot-toast';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 export interface ChanceForm {
   chance: string;
@@ -151,9 +150,9 @@ export function ChanceFormSection({
               );
               setValue('isProofOfChanceDownloaded', true);
               clearErrors('isProofOfChanceDownloaded');
-              toast.custom(
-                `Please do not DELETE. It will be required to finalize the game once every player has played.`,
-                { icon: <ExclamationTriangleIcon className="h-4 w-4" /> }
+              toast.success(
+                `Downloaded successfully! It will be required to finalize the game once every player has played. DO NOT DELETE.`,
+                { position: 'bottom-right' }
               );
             }}
           />
