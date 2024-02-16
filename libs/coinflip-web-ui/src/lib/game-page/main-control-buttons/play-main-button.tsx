@@ -26,7 +26,7 @@ export function PlayMainButton({
 
   const useDisabled = (): [boolean, string] => {
     if (!currentWeb3Account) return [true, 'Connect wallet first ↑'];
-    if (game.getChain() !== currentChain)
+    if (currentChain && !game.getChain().equals(currentChain))
       return [
         true,
         `You have to be on ${capitalizeFirstLetter(

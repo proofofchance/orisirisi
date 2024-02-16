@@ -36,6 +36,8 @@ export class Chain {
 
   getName = () => Chain.nameFromChainId(this.id);
 
+  equals = (chain: Chain) => this.id == chain.id;
+
   static nameFromChainId = (chainId: number) => {
     switch (chainId) {
       case 1:

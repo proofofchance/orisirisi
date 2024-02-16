@@ -71,7 +71,7 @@ export function PlayGame() {
 
   const currentChain = useCurrentChain();
 
-  if (game && game.getChain() !== currentChain) {
+  if (game && currentChain && !game.getChain().equals(currentChain)) {
     toast.error(
       `Invalid Network! Sorry, you have to be on ${capitalizeFirstLetter(
         game.getChain().getName()
