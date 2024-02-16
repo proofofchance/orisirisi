@@ -7,35 +7,8 @@
       "type": "error"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnableInvalidOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "OwnableUnauthorizedAccount",
-      "type": "error"
-    },
-    {
       "inputs": [],
       "name": "ReentrancyGuardReentrantCall",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "UnAuthorizedApp",
       "type": "error"
     },
     {
@@ -44,7 +17,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "owner",
+          "name": "account",
           "type": "address"
         },
         {
@@ -63,38 +36,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "app",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "gameID",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "CreditFromGame",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
+          "name": "account",
           "type": "address"
         },
         {
@@ -108,69 +50,6 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "app",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "gameID",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "DebitForGame",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "app",
-          "type": "address"
-        }
-      ],
-      "name": "addApp",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "credit",
       "outputs": [],
@@ -181,11 +60,11 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "player",
+          "name": "account",
           "type": "address"
         }
       ],
-      "name": "creditPlayer",
+      "name": "creditAccount",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -194,11 +73,11 @@
       "inputs": [
         {
           "internalType": "address[]",
-          "name": "players",
+          "name": "accounts",
           "type": "address[]"
         }
       ],
-      "name": "creditPlayers",
+      "name": "creditAccounts",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -206,82 +85,40 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "gameID",
-          "type": "uint256"
-        },
-        {
           "internalType": "address[]",
-          "name": "players",
+          "name": "manyAccounts",
           "type": "address[]"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "creditPlayersAndCreditAppOwnerTheRest",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "gameID",
+          "name": "amountForEachManyAccount",
           "type": "uint256"
         },
         {
           "internalType": "address",
-          "name": "player",
+          "name": "oneAccount",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "amountForOneAccount",
           "type": "uint256"
         }
       ],
-      "name": "debitForGame",
+      "name": "creditManyAndOne",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "account",
           "type": "address"
         }
       ],
       "name": "getBalance",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "app",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "gameID",
-          "type": "uint256"
-        }
-      ],
-      "name": "getGameBalance",
       "outputs": [
         {
           "internalType": "uint256",
@@ -303,45 +140,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "app",
-          "type": "address"
-        }
-      ],
-      "name": "removeApp",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -369,51 +167,30 @@
       "type": "receive"
     }
   ],
-  "transactionHash": "0xfe22a542498ad690fa08fc12dccdd77e172c6e50a930b0968654727699349def",
+  "transactionHash": "0xcfd08e7bcc583fe63d3c3e7361a818e9bb76b938143aa961743c556f5cec1be8",
   "receipt": {
     "to": null,
     "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
     "transactionIndex": 0,
-    "gasUsed": "814306",
-    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000040020000000000000100000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000040000000200000000000000000000000002000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0x4bdaba01d544ffa3b2f1a3ea3e3bcd670751e210b13f514ad2be55a5614c2d86",
-    "transactionHash": "0xfe22a542498ad690fa08fc12dccdd77e172c6e50a930b0968654727699349def",
-    "logs": [
-      {
-        "transactionIndex": 0,
-        "blockNumber": 1,
-        "transactionHash": "0xfe22a542498ad690fa08fc12dccdd77e172c6e50a930b0968654727699349def",
-        "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-        "topics": [
-          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-          "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "0x000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266"
-        ],
-        "data": "0x",
-        "logIndex": 0,
-        "blockHash": "0x4bdaba01d544ffa3b2f1a3ea3e3bcd670751e210b13f514ad2be55a5614c2d86"
-      }
-    ],
+    "gasUsed": "467113",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x7b76e7045f453d45718be8b9d6bacc4ced02ac238ab9855efc93625c3002ad21",
+    "transactionHash": "0xcfd08e7bcc583fe63d3c3e7361a818e9bb76b938143aa961743c556f5cec1be8",
+    "logs": [],
     "blockNumber": 1,
-    "cumulativeGasUsed": "814306",
+    "cumulativeGasUsed": "467113",
     "status": 1,
     "byzantium": true
   },
   "args": [],
   "numDeployments": 1,
-  "solcInputHash": "9cec4d80754ed2fd1cd0494a8e7eea1c",
-  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"InsufficientFunds\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UnAuthorizedApp\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Credit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"app\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"gameID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"CreditFromGame\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Debit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"app\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"gameID\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"DebitForGame\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"app\",\"type\":\"address\"}],\"name\":\"addApp\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"credit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"}],\"name\":\"creditPlayer\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"players\",\"type\":\"address[]\"}],\"name\":\"creditPlayers\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"gameID\",\"type\":\"uint256\"},{\"internalType\":\"address[]\",\"name\":\"players\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"creditPlayersAndCreditAppOwnerTheRest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"gameID\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"debitForGame\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"app\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"gameID\",\"type\":\"uint256\"}],\"name\":\"getGameBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"app\",\"type\":\"address\"}],\"name\":\"removeApp\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"withdrawAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"details\":\"ProofOfChance Wallets supports only coinflip at the time of deployment It acts as a regular wallet that can be 'Credited' and 'Debited' More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in the context of a given game\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"kind\":\"dev\",\"methods\":{\"creditPlayer(address)\":{\"details\":\"Credits player as though player manually credits themselves.\"},\"creditPlayers(address[])\":{\"details\":\"Credits player as though player manually credits themselves.\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"errors\":{\"OwnableUnauthorizedAccount(address)\":[{\"notice\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"user\",\"methods\":{\"getBalance(address)\":{\"notice\":\"returns the balance of a wallet owner it does not include the balances deposited in games\"},\"getGameBalance(address,uint256)\":{\"notice\":\"Returns the wallet balance of an app's game\"},\"getTotalBalance()\":{\"notice\":\"returns the ether balance of this wallet contract\"},\"withdraw(uint256)\":{\"notice\":\"Allows you to withdraw a specified amount of your wallet balance\"},\"withdrawAll()\":{\"notice\":\"Allows you to withdraw all your wallet balance\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Wallets.sol\":\"Wallets\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"src/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nabstract contract Ownable {\\n    address private _owner;\\n\\n    /// The caller account is not authorized to perform an operation.\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    event OwnershipTransferred(\\n        address indexed previousOwner,\\n        address indexed newOwner\\n    );\\n\\n    /// @dev The owner is not a valid owner account.\\n    error OwnableInvalidOwner(address owner);\\n\\n    constructor() {\\n        _transferOwnership(msg.sender);\\n    }\\n\\n    /// @dev Throws if called by any account other than the owner.\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /// @dev Returns the address of the current owner.\\n    function owner() public view returns (address) {\\n        return _owner;\\n    }\\n\\n    /// @dev Throws if the sender is not the owner.\\n    function _checkOwner() internal view {\\n        if (owner() != msg.sender) {\\n            revert OwnableUnauthorizedAccount(msg.sender);\\n        }\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Can only be called by the current owner.\\n    function transferOwnership(address newOwner) public onlyOwner {\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Internal function without access restriction.\\n    function _transferOwnership(address newOwner) internal {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x032ee2938cbee6e55ca02fc17a15aaf59f652cd8755c78c5a7ab8fcb0196dd16\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nimport {Ownable} from './Ownable.sol';\\nimport {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';\\n\\n/// TODO: Move to orisirisi-contracts when more games are introduced\\n/// TODO: Consider renaming to GameWallets\\n\\n/// @dev ProofOfChance Wallets supports only coinflip at the time of deployment\\n/// It acts as a regular wallet that can be 'Credited' and 'Debited'\\n/// More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in\\n/// the context of a given game\\ncontract Wallets is UsingReentrancyGuard, Ownable {\\n    mapping(address => bool) apps;\\n    mapping(address app => mapping(uint gameID => uint balance)) gameBalances;\\n    mapping(address owner => uint amount) balances;\\n\\n    event Credit(address indexed owner, uint amount);\\n    event Debit(address indexed owner, uint amount);\\n    event CreditFromGame(\\n        address indexed app,\\n        uint indexed gameID,\\n        address indexed owner,\\n        uint amount\\n    );\\n    event DebitForGame(\\n        address indexed app,\\n        uint indexed gameID,\\n        address indexed owner,\\n        uint amount\\n    );\\n\\n    error InsufficientFunds();\\n    error UnAuthorizedApp();\\n\\n    receive() external payable {\\n        _credit();\\n    }\\n\\n    function addApp(address app) external onlyOwner {\\n        apps[app] = true;\\n    }\\n\\n    function removeApp(address app) external onlyOwner {\\n        apps[app] = false;\\n    }\\n\\n    modifier onlyApp() {\\n        if (!apps[msg.sender]) {\\n            revert UnAuthorizedApp();\\n        }\\n        _;\\n    }\\n\\n    function debitForGame(\\n        uint gameID,\\n        address player,\\n        uint amount\\n    ) external onlyApp {\\n        if (balances[player] < amount) {\\n            revert InsufficientFunds();\\n        }\\n        balances[player] -= amount;\\n        address app = msg.sender;\\n        gameBalances[app][gameID] += amount;\\n\\n        emit DebitForGame(app, gameID, player, amount);\\n    }\\n\\n    /// @dev Credits player as though player manually credits themselves.\\n    function creditPlayer(address player) external payable {\\n        uint amount = msg.value;\\n        balances[player] += amount;\\n        emit Credit(player, amount);\\n    }\\n\\n    function credit() external payable {\\n        _credit();\\n    }\\n\\n    /// @dev Credits player as though player manually credits themselves.\\n    function creditPlayers(address[] calldata players) external payable {\\n        uint amount = msg.value;\\n        uint playersSize = players.length;\\n        require(amount % playersSize == 0);\\n        uint amountForEachPlayer = amount / playersSize;\\n        for (uint i; i < playersSize; ) {\\n            balances[players[i]] += amountForEachPlayer;\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    function creditPlayersAndCreditAppOwnerTheRest(\\n        uint gameID,\\n        address[] calldata players,\\n        uint amount\\n    ) external onlyApp {\\n        address app = msg.sender;\\n        require(gameBalances[app][gameID] > players.length * amount);\\n        creditPlayers(app, gameID, players, amount);\\n        creditAppOwnerTheRest(app, gameID);\\n    }\\n\\n    /// @notice Allows you to withdraw a specified amount of your wallet balance\\n    function withdraw(uint amount) external nonReentrant {\\n        address owner = msg.sender;\\n        uint balance = balances[owner];\\n        if (balance < amount) {\\n            revert InsufficientFunds();\\n        }\\n        balances[owner] -= amount;\\n\\n        pay(owner, amount);\\n\\n        emit Debit(owner, amount);\\n    }\\n\\n    /// @notice Allows you to withdraw all your wallet balance\\n    function withdrawAll() external nonReentrant {\\n        address owner = msg.sender;\\n        uint balance = balances[owner];\\n        if (balance == 0) {\\n            revert InsufficientFunds();\\n        }\\n        balances[owner] = 0;\\n\\n        pay(owner, balance);\\n\\n        emit Debit(owner, balance);\\n    }\\n\\n    /// @notice Returns the wallet balance of an app's game\\n    function getGameBalance(\\n        address app,\\n        uint gameID\\n    ) external view returns (uint) {\\n        return gameBalances[app][gameID];\\n    }\\n\\n    function _credit() private {\\n        address player = msg.sender;\\n        uint amount = msg.value;\\n        balances[player] += amount;\\n        emit Credit(player, amount);\\n    }\\n\\n    /// @notice returns the balance of a wallet owner\\n    /// it does not include the balances deposited in games\\n    function getBalance(address owner) external view returns (uint) {\\n        return balances[owner];\\n    }\\n\\n    /// @notice returns the ether balance of this wallet contract\\n    function getTotalBalance() external view returns (uint) {\\n        return address(this).balance;\\n    }\\n\\n    function pay(address to, uint256 amount) private {\\n        (bool sent, ) = to.call{value: amount}('');\\n        require(sent);\\n    }\\n\\n    function creditPlayers(\\n        address app,\\n        uint gameID,\\n        address[] calldata players,\\n        uint amount\\n    ) private {\\n        for (uint i; i < players.length; ) {\\n            address player = players[i];\\n            gameBalances[app][gameID] -= amount;\\n            balances[player] += amount;\\n            emit CreditFromGame(app, gameID, player, amount);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    function creditAppOwnerTheRest(address app, uint gameID) private {\\n        uint restAmount = gameBalances[app][gameID];\\n        // Currently, all apps have one owner, who happens to own this wallet contract too\\n        address appOwner = owner();\\n        balances[appOwner] = restAmount;\\n        gameBalances[app][gameID] = 0;\\n        emit CreditFromGame(app, gameID, appOwner, restAmount);\\n    }\\n}\\n\",\"keccak256\":\"0x5353eb3d672c18bedac2208d7dddcfefb2eb48d0cfc391a5b12dffe2723d05ed\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (security/ReentrancyGuard.sol)\\n\\npragma solidity 0.8.24;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract UsingReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant _NOT_ENTERED = 1;\\n    uint256 private constant _ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be _NOT_ENTERED\\n        if (_status == _ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = _ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == _ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x6b9570fca9d462b08d83a60fe56279e845a700799f2b354fa60df7a9f21ed2a5\",\"license\":\"MIT\"}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b50600160005561001f33610024565b610076565b600180546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b610ced806100856000396000f3fe6080604052600436106100e15760003560e01c806393ac9b161161007f578063c288e40411610059578063c288e40414610202578063d0c6fdb714610222578063f2fde38b14610242578063f8b2cb4f1461026257600080fd5b806393ac9b16146101c7578063a06d083c146101e7578063b820af4c146101ef57600080fd5b80632e1a7d4d116100bb5780632e1a7d4d1461014a57806356ceece21461016a578063853828b61461018a5780638da5cb5b1461019f57600080fd5b8063037e34e5146100f557806312314e971461011557806312b583491461012857600080fd5b366100f0576100ee610298565b005b600080fd5b34801561010157600080fd5b506100ee610110366004610a95565b610300565b6100ee610123366004610aca565b61041b565b34801561013457600080fd5b50475b6040519081526020015b60405180910390f35b34801561015657600080fd5b506100ee610165366004610aec565b610445565b34801561017657600080fd5b50610137610185366004610b05565b610508565b34801561019657600080fd5b506100ee610533565b3480156101ab57600080fd5b506001546040516001600160a01b039091168152602001610141565b3480156101d357600080fd5b506100ee6101e2366004610aca565b6105e0565b6100ee61060c565b6100ee6101fd366004610b7b565b610614565b34801561020e57600080fd5b506100ee61021d366004610bbd565b6106b3565b34801561022e57600080fd5b506100ee61023d366004610aca565b61073a565b34801561024e57600080fd5b506100ee61025d366004610aca565b610763565b34801561026e57600080fd5b5061013761027d366004610aca565b6001600160a01b031660009081526004602052604090205490565b336000818152600460205260408120805434928392916102b9908490610c26565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b3360009081526002602052604090205460ff1661033057604051630f78199760e11b815260040160405180910390fd5b6001600160a01b0382166000908152600460205260409020548111156103695760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526004602052604081208054839290610391908490610c39565b9091555050336000818152600360209081526040808320878452909152812080548492906103c0908490610c26565b92505081905550826001600160a01b031684826001600160a01b03167f41a1d93164b85ee22290546a8988d6cea30a2fce0a7d4ac0694467f73cba35b18560405161040d91815260200190565b60405180910390a450505050565b6001600160a01b0381166000908152600460205260408120805434928392916102b9908490610c26565b61044d610774565b336000818152600460205260409020548281101561047e5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b038216600090815260046020526040812080548592906104a6908490610c39565b909155506104b6905082846107b7565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc6046846040516104f191815260200190565b60405180910390a250506105056001600055565b50565b6001600160a01b03821660009081526003602090815260408083208484529091529020545b92915050565b61053b610774565b336000818152600460205260408120549081900361056c5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526004602052604081205561058f82826107b7565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc6046826040516105ca91815260200190565b60405180910390a250506105de6001600055565b565b6105e861081c565b6001600160a01b03166000908152600260205260409020805460ff19166001179055565b6105de610298565b34816106208183610c62565b1561062a57600080fd5b60006106368284610c76565b905060005b828110156106ab57816004600088888581811061065a5761065a610c8a565b905060200201602081019061066f9190610aca565b6001600160a01b03166001600160a01b03168152602001908152602001600020600082825461069e9190610c26565b909155505060010161063b565b505050505050565b3360009081526002602052604090205460ff166106e357604051630f78199760e11b815260040160405180910390fd5b336106ee8284610ca0565b6001600160a01b03821660009081526003602090815260408083208984529091529020541161071c57600080fd5b6107298186868686610875565b610733818661096c565b5050505050565b61074261081c565b6001600160a01b03166000908152600260205260409020805460ff19169055565b61076b61081c565b61050581610a0f565b6002600054036107b0576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d8060008114610804576040519150601f19603f3d011682016040523d82523d6000602084013e610809565b606091505b505090508061081757600080fd5b505050565b3361082f6001546001600160a01b031690565b6001600160a01b0316146105de576040517f118cdaa700000000000000000000000000000000000000000000000000000000815233600482015260240160405180910390fd5b60005b828110156106ab57600084848381811061089457610894610c8a565b90506020020160208101906108a99190610aca565b6001600160a01b03881660009081526003602090815260408083208a84529091528120805492935085929091906108e1908490610c39565b90915550506001600160a01b0381166000908152600460205260408120805485929061090e908490610c26565b92505081905550806001600160a01b031686886001600160a01b03167f66146bebca25df9b39213211f3772ec0db2654a806515a04a19a5494cbd3e2cc8660405161095b91815260200190565b60405180910390a450600101610878565b6001600160a01b0382166000908152600360209081526040808320848452909152812054906109a36001546001600160a01b031690565b6001600160a01b038181166000818152600460209081526040808320889055938916808352600382528483208984528252848320929092559251868152939450909286927f66146bebca25df9b39213211f3772ec0db2654a806515a04a19a5494cbd3e2cc910161040d565b600180546001600160a01b038381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b80356001600160a01b0381168114610a9057600080fd5b919050565b600080600060608486031215610aaa57600080fd5b83359250610aba60208501610a79565b9150604084013590509250925092565b600060208284031215610adc57600080fd5b610ae582610a79565b9392505050565b600060208284031215610afe57600080fd5b5035919050565b60008060408385031215610b1857600080fd5b610b2183610a79565b946020939093013593505050565b60008083601f840112610b4157600080fd5b50813567ffffffffffffffff811115610b5957600080fd5b6020830191508360208260051b8501011115610b7457600080fd5b9250929050565b60008060208385031215610b8e57600080fd5b823567ffffffffffffffff811115610ba557600080fd5b610bb185828601610b2f565b90969095509350505050565b60008060008060608587031215610bd357600080fd5b84359350602085013567ffffffffffffffff811115610bf157600080fd5b610bfd87828801610b2f565b9598909750949560400135949350505050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561052d5761052d610c10565b8181038181111561052d5761052d610c10565b634e487b7160e01b600052601260045260246000fd5b600082610c7157610c71610c4c565b500690565b600082610c8557610c85610c4c565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761052d5761052d610c1056fea26469706673582212200f0b1b67a5a855ec61fc14d45278f2ae634e41b01ba343f8ed8d3bdafc92424a64736f6c63430008180033",
-  "deployedBytecode": "0x6080604052600436106100e15760003560e01c806393ac9b161161007f578063c288e40411610059578063c288e40414610202578063d0c6fdb714610222578063f2fde38b14610242578063f8b2cb4f1461026257600080fd5b806393ac9b16146101c7578063a06d083c146101e7578063b820af4c146101ef57600080fd5b80632e1a7d4d116100bb5780632e1a7d4d1461014a57806356ceece21461016a578063853828b61461018a5780638da5cb5b1461019f57600080fd5b8063037e34e5146100f557806312314e971461011557806312b583491461012857600080fd5b366100f0576100ee610298565b005b600080fd5b34801561010157600080fd5b506100ee610110366004610a95565b610300565b6100ee610123366004610aca565b61041b565b34801561013457600080fd5b50475b6040519081526020015b60405180910390f35b34801561015657600080fd5b506100ee610165366004610aec565b610445565b34801561017657600080fd5b50610137610185366004610b05565b610508565b34801561019657600080fd5b506100ee610533565b3480156101ab57600080fd5b506001546040516001600160a01b039091168152602001610141565b3480156101d357600080fd5b506100ee6101e2366004610aca565b6105e0565b6100ee61060c565b6100ee6101fd366004610b7b565b610614565b34801561020e57600080fd5b506100ee61021d366004610bbd565b6106b3565b34801561022e57600080fd5b506100ee61023d366004610aca565b61073a565b34801561024e57600080fd5b506100ee61025d366004610aca565b610763565b34801561026e57600080fd5b5061013761027d366004610aca565b6001600160a01b031660009081526004602052604090205490565b336000818152600460205260408120805434928392916102b9908490610c26565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b3360009081526002602052604090205460ff1661033057604051630f78199760e11b815260040160405180910390fd5b6001600160a01b0382166000908152600460205260409020548111156103695760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526004602052604081208054839290610391908490610c39565b9091555050336000818152600360209081526040808320878452909152812080548492906103c0908490610c26565b92505081905550826001600160a01b031684826001600160a01b03167f41a1d93164b85ee22290546a8988d6cea30a2fce0a7d4ac0694467f73cba35b18560405161040d91815260200190565b60405180910390a450505050565b6001600160a01b0381166000908152600460205260408120805434928392916102b9908490610c26565b61044d610774565b336000818152600460205260409020548281101561047e5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b038216600090815260046020526040812080548592906104a6908490610c39565b909155506104b6905082846107b7565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc6046846040516104f191815260200190565b60405180910390a250506105056001600055565b50565b6001600160a01b03821660009081526003602090815260408083208484529091529020545b92915050565b61053b610774565b336000818152600460205260408120549081900361056c5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526004602052604081205561058f82826107b7565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc6046826040516105ca91815260200190565b60405180910390a250506105de6001600055565b565b6105e861081c565b6001600160a01b03166000908152600260205260409020805460ff19166001179055565b6105de610298565b34816106208183610c62565b1561062a57600080fd5b60006106368284610c76565b905060005b828110156106ab57816004600088888581811061065a5761065a610c8a565b905060200201602081019061066f9190610aca565b6001600160a01b03166001600160a01b03168152602001908152602001600020600082825461069e9190610c26565b909155505060010161063b565b505050505050565b3360009081526002602052604090205460ff166106e357604051630f78199760e11b815260040160405180910390fd5b336106ee8284610ca0565b6001600160a01b03821660009081526003602090815260408083208984529091529020541161071c57600080fd5b6107298186868686610875565b610733818661096c565b5050505050565b61074261081c565b6001600160a01b03166000908152600260205260409020805460ff19169055565b61076b61081c565b61050581610a0f565b6002600054036107b0576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d8060008114610804576040519150601f19603f3d011682016040523d82523d6000602084013e610809565b606091505b505090508061081757600080fd5b505050565b3361082f6001546001600160a01b031690565b6001600160a01b0316146105de576040517f118cdaa700000000000000000000000000000000000000000000000000000000815233600482015260240160405180910390fd5b60005b828110156106ab57600084848381811061089457610894610c8a565b90506020020160208101906108a99190610aca565b6001600160a01b03881660009081526003602090815260408083208a84529091528120805492935085929091906108e1908490610c39565b90915550506001600160a01b0381166000908152600460205260408120805485929061090e908490610c26565b92505081905550806001600160a01b031686886001600160a01b03167f66146bebca25df9b39213211f3772ec0db2654a806515a04a19a5494cbd3e2cc8660405161095b91815260200190565b60405180910390a450600101610878565b6001600160a01b0382166000908152600360209081526040808320848452909152812054906109a36001546001600160a01b031690565b6001600160a01b038181166000818152600460209081526040808320889055938916808352600382528483208984528252848320929092559251868152939450909286927f66146bebca25df9b39213211f3772ec0db2654a806515a04a19a5494cbd3e2cc910161040d565b600180546001600160a01b038381167fffffffffffffffffffffffff0000000000000000000000000000000000000000831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b80356001600160a01b0381168114610a9057600080fd5b919050565b600080600060608486031215610aaa57600080fd5b83359250610aba60208501610a79565b9150604084013590509250925092565b600060208284031215610adc57600080fd5b610ae582610a79565b9392505050565b600060208284031215610afe57600080fd5b5035919050565b60008060408385031215610b1857600080fd5b610b2183610a79565b946020939093013593505050565b60008083601f840112610b4157600080fd5b50813567ffffffffffffffff811115610b5957600080fd5b6020830191508360208260051b8501011115610b7457600080fd5b9250929050565b60008060208385031215610b8e57600080fd5b823567ffffffffffffffff811115610ba557600080fd5b610bb185828601610b2f565b90969095509350505050565b60008060008060608587031215610bd357600080fd5b84359350602085013567ffffffffffffffff811115610bf157600080fd5b610bfd87828801610b2f565b9598909750949560400135949350505050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561052d5761052d610c10565b8181038181111561052d5761052d610c10565b634e487b7160e01b600052601260045260246000fd5b600082610c7157610c71610c4c565b500690565b600082610c8557610c85610c4c565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761052d5761052d610c1056fea26469706673582212200f0b1b67a5a855ec61fc14d45278f2ae634e41b01ba343f8ed8d3bdafc92424a64736f6c63430008180033",
+  "solcInputHash": "f8e00c5d06c81eb41275c53199b657d6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"InsufficientFunds\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Credit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Debit\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"credit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"creditAccount\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"creditAccounts\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"manyAccounts\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"amountForEachManyAccount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"oneAccount\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountForOneAccount\",\"type\":\"uint256\"}],\"name\":\"creditManyAndOne\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"withdrawAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"errors\":{\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"kind\":\"dev\",\"methods\":{\"creditAccount(address)\":{\"details\":\"Credits account. You could credit yourself or someone using this.\"},\"creditAccounts(address[])\":{\"details\":\"Credits player as though player manually credits themselves.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"getBalance(address)\":{\"notice\":\"returns the balance of a wallet account\"},\"getTotalBalance()\":{\"notice\":\"returns the ether balance of this wallet contract\"},\"withdraw(uint256)\":{\"notice\":\"Allows you to withdraw a specified amount of your wallet balance\"},\"withdrawAll()\":{\"notice\":\"Allows you to withdraw all your wallet balance\"}},\"notice\":\"TODO: Move to orisirisi-contracts since it could be globally scoped\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Wallets.sol\":\"Wallets\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"src/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nabstract contract Ownable {\\n    address private _owner;\\n\\n    /// The caller account is not authorized to perform an operation.\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    event OwnershipTransferred(\\n        address indexed previousOwner,\\n        address indexed newOwner\\n    );\\n\\n    /// @dev The owner is not a valid owner account.\\n    error OwnableInvalidOwner(address owner);\\n\\n    constructor() {\\n        _transferOwnership(msg.sender);\\n    }\\n\\n    /// @dev Throws if called by any account other than the owner.\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /// @dev Returns the address of the current owner.\\n    function owner() public view returns (address) {\\n        return _owner;\\n    }\\n\\n    /// @dev Throws if the sender is not the owner.\\n    function _checkOwner() internal view {\\n        if (owner() != msg.sender) {\\n            revert OwnableUnauthorizedAccount(msg.sender);\\n        }\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Can only be called by the current owner.\\n    function transferOwnership(address newOwner) public onlyOwner {\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Internal function without access restriction.\\n    function _transferOwnership(address newOwner) internal {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x032ee2938cbee6e55ca02fc17a15aaf59f652cd8755c78c5a7ab8fcb0196dd16\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nimport {Ownable} from './Ownable.sol';\\nimport {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';\\n\\n/// TODO: Move to orisirisi-contracts since it could be globally scoped\\ncontract Wallets is UsingReentrancyGuard {\\n    mapping(address account => uint amount) balances;\\n\\n    event Credit(address indexed account, uint amount);\\n    event Debit(address indexed account, uint amount);\\n\\n    error InsufficientFunds();\\n\\n    receive() external payable {\\n        _credit(msg.sender, msg.value);\\n    }\\n\\n    /// @dev Credits account. You could credit yourself or someone using this.\\n    function creditAccount(address account) external payable {\\n        _credit(account, msg.value);\\n    }\\n\\n    function credit() external payable {\\n        _credit(msg.sender, msg.value);\\n    }\\n\\n    /// @dev Credits player as though player manually credits themselves.\\n    function creditAccounts(address[] calldata accounts) external payable {\\n        uint amount = msg.value;\\n        uint accountsLength = accounts.length;\\n        require(amount % accountsLength == 0);\\n        uint amountForEachAccount = amount / accountsLength;\\n        for (uint i; i < accountsLength; ) {\\n            _credit(accounts[i], amountForEachAccount);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    function creditManyAndOne(\\n        address[] calldata manyAccounts,\\n        uint amountForEachManyAccount,\\n        address oneAccount,\\n        uint amountForOneAccount\\n    ) external payable {\\n        uint16 manyAccountsLength = uint16(manyAccounts.length);\\n        require(\\n            (amountForEachManyAccount * manyAccountsLength) +\\n                amountForOneAccount ==\\n                msg.value\\n        );\\n\\n        for (uint16 i; i < manyAccountsLength; ) {\\n            _credit(manyAccounts[i], amountForEachManyAccount);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        _credit(oneAccount, amountForOneAccount);\\n    }\\n\\n    /// @notice Allows you to withdraw a specified amount of your wallet balance\\n    function withdraw(uint amount) external nonReentrant {\\n        address account = msg.sender;\\n        uint balance = balances[account];\\n        if (balance < amount) {\\n            revert InsufficientFunds();\\n        }\\n        balances[account] -= amount;\\n\\n        _pay(account, amount);\\n\\n        emit Debit(account, amount);\\n    }\\n\\n    /// @notice Allows you to withdraw all your wallet balance\\n    function withdrawAll() external nonReentrant {\\n        address account = msg.sender;\\n        uint balance = balances[account];\\n        if (balance == 0) {\\n            revert InsufficientFunds();\\n        }\\n        balances[account] = 0;\\n\\n        _pay(account, balance);\\n\\n        emit Debit(account, balance);\\n    }\\n\\n    function _credit(address account, uint amount) private {\\n        balances[account] += amount;\\n        emit Credit(account, amount);\\n    }\\n\\n    /// @notice returns the balance of a wallet account\\n    function getBalance(address account) external view returns (uint) {\\n        return balances[account];\\n    }\\n\\n    /// @notice returns the ether balance of this wallet contract\\n    function getTotalBalance() external view returns (uint) {\\n        return address(this).balance;\\n    }\\n\\n    function _pay(address to, uint256 amount) private {\\n        (bool sent, ) = to.call{value: amount}('');\\n        require(sent);\\n    }\\n}\\n\",\"keccak256\":\"0xaaf976356153c071f80be99bf0b05210b231e3bcd4d9810f25c11194d1a6c914\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (security/ReentrancyGuard.sol)\\n\\npragma solidity 0.8.24;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract UsingReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant _NOT_ENTERED = 1;\\n    uint256 private constant _ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be _NOT_ENTERED\\n        if (_status == _ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = _ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == _ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x6b9570fca9d462b08d83a60fe56279e845a700799f2b354fa60df7a9f21ed2a5\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506001600055610718806100256000396000f3fe60806040526004361061007f5760003560e01c8063a06d083c1161004e578063a06d083c146100fe578063caa8cbcb14610106578063dca5d1f814610119578063f8b2cb4f1461012c57600080fd5b806312b58349146100955780632e1a7d4d146100b65780634d4b298e146100d6578063853828b6146100e957600080fd5b366100905761008e3334610162565b005b600080fd5b3480156100a157600080fd5b50475b60405190815260200160405180910390f35b3480156100c257600080fd5b5061008e6100d13660046104eb565b6101d1565b61008e6100e4366004610520565b610294565b3480156100f557600080fd5b5061008e61029e565b61008e61034b565b61008e61011436600461058e565b610355565b61008e6101273660046105d0565b6103c4565b34801561013857600080fd5b506100a4610147366004610520565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b0382166000908152600160205260408120805483929061018a90849061064b565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b6101d9610443565b336000818152600160205260409020548281101561020a5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526001602052604081208054859290610232908490610664565b9091555061024290508284610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468460405161027d91815260200190565b60405180910390a250506102916001600055565b50565b6102918134610162565b6102a6610443565b33600081815260016020526040812054908190036102d75760405163356680b760e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260408120556102fa8282610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468260405161033591815260200190565b60405180910390a250506103496001600055565b565b6103493334610162565b3481610361818361068d565b1561036b57600080fd5b600061037782846106a1565b905060005b828110156103bc576103b4868683818110610399576103996106b5565b90506020020160208101906103ae9190610520565b83610162565b60010161037c565b505050505050565b8334826103d561ffff8416876106cb565b6103df919061064b565b146103e957600080fd5b60005b8161ffff168161ffff1610156104385761043087878361ffff16818110610415576104156106b5565b905060200201602081019061042a9190610520565b86610162565b6001016103ec565b506103bc8383610162565b60026000540361047f576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d80600081146104d3576040519150601f19603f3d011682016040523d82523d6000602084013e6104d8565b606091505b50509050806104e657600080fd5b505050565b6000602082840312156104fd57600080fd5b5035919050565b80356001600160a01b038116811461051b57600080fd5b919050565b60006020828403121561053257600080fd5b61053b82610504565b9392505050565b60008083601f84011261055457600080fd5b50813567ffffffffffffffff81111561056c57600080fd5b6020830191508360208260051b850101111561058757600080fd5b9250929050565b600080602083850312156105a157600080fd5b823567ffffffffffffffff8111156105b857600080fd5b6105c485828601610542565b90969095509350505050565b6000806000806000608086880312156105e857600080fd5b853567ffffffffffffffff8111156105ff57600080fd5b61060b88828901610542565b9096509450506020860135925061062460408701610504565b949793965091946060013592915050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561065e5761065e610635565b92915050565b8181038181111561065e5761065e610635565b634e487b7160e01b600052601260045260246000fd5b60008261069c5761069c610677565b500690565b6000826106b0576106b0610677565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761065e5761065e61063556fea26469706673582212203afd555cf496838dbc6f85102ee53b3a52c12178e855f847345e040ec68927c964736f6c63430008180033",
+  "deployedBytecode": "0x60806040526004361061007f5760003560e01c8063a06d083c1161004e578063a06d083c146100fe578063caa8cbcb14610106578063dca5d1f814610119578063f8b2cb4f1461012c57600080fd5b806312b58349146100955780632e1a7d4d146100b65780634d4b298e146100d6578063853828b6146100e957600080fd5b366100905761008e3334610162565b005b600080fd5b3480156100a157600080fd5b50475b60405190815260200160405180910390f35b3480156100c257600080fd5b5061008e6100d13660046104eb565b6101d1565b61008e6100e4366004610520565b610294565b3480156100f557600080fd5b5061008e61029e565b61008e61034b565b61008e61011436600461058e565b610355565b61008e6101273660046105d0565b6103c4565b34801561013857600080fd5b506100a4610147366004610520565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b0382166000908152600160205260408120805483929061018a90849061064b565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b6101d9610443565b336000818152600160205260409020548281101561020a5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526001602052604081208054859290610232908490610664565b9091555061024290508284610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468460405161027d91815260200190565b60405180910390a250506102916001600055565b50565b6102918134610162565b6102a6610443565b33600081815260016020526040812054908190036102d75760405163356680b760e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260408120556102fa8282610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468260405161033591815260200190565b60405180910390a250506103496001600055565b565b6103493334610162565b3481610361818361068d565b1561036b57600080fd5b600061037782846106a1565b905060005b828110156103bc576103b4868683818110610399576103996106b5565b90506020020160208101906103ae9190610520565b83610162565b60010161037c565b505050505050565b8334826103d561ffff8416876106cb565b6103df919061064b565b146103e957600080fd5b60005b8161ffff168161ffff1610156104385761043087878361ffff16818110610415576104156106b5565b905060200201602081019061042a9190610520565b86610162565b6001016103ec565b506103bc8383610162565b60026000540361047f576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d80600081146104d3576040519150601f19603f3d011682016040523d82523d6000602084013e6104d8565b606091505b50509050806104e657600080fd5b505050565b6000602082840312156104fd57600080fd5b5035919050565b80356001600160a01b038116811461051b57600080fd5b919050565b60006020828403121561053257600080fd5b61053b82610504565b9392505050565b60008083601f84011261055457600080fd5b50813567ffffffffffffffff81111561056c57600080fd5b6020830191508360208260051b850101111561058757600080fd5b9250929050565b600080602083850312156105a157600080fd5b823567ffffffffffffffff8111156105b857600080fd5b6105c485828601610542565b90969095509350505050565b6000806000806000608086880312156105e857600080fd5b853567ffffffffffffffff8111156105ff57600080fd5b61060b88828901610542565b9096509450506020860135925061062460408701610504565b949793965091946060013592915050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561065e5761065e610635565b92915050565b8181038181111561065e5761065e610635565b634e487b7160e01b600052601260045260246000fd5b60008261069c5761069c610677565b500690565b6000826106b0576106b0610677565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761065e5761065e61063556fea26469706673582212203afd555cf496838dbc6f85102ee53b3a52c12178e855f847345e040ec68927c964736f6c63430008180033",
   "devdoc": {
-    "details": "ProofOfChance Wallets supports only coinflip at the time of deployment It acts as a regular wallet that can be 'Credited' and 'Debited' More importantly, it allows ProofOfChance apps to 'CreditFromGame` or `DebitForGame` in the context of a given game",
     "errors": {
-      "OwnableInvalidOwner(address)": [
-        {
-          "details": "The owner is not a valid owner account."
-        }
-      ],
       "ReentrancyGuardReentrantCall()": [
         {
           "details": "Unauthorized reentrant call."
@@ -422,36 +199,20 @@
     },
     "kind": "dev",
     "methods": {
-      "creditPlayer(address)": {
+      "creditAccount(address)": {
+        "details": "Credits account. You could credit yourself or someone using this."
+      },
+      "creditAccounts(address[])": {
         "details": "Credits player as though player manually credits themselves."
-      },
-      "creditPlayers(address[])": {
-        "details": "Credits player as though player manually credits themselves."
-      },
-      "owner()": {
-        "details": "Returns the address of the current owner."
-      },
-      "transferOwnership(address)": {
-        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
       }
     },
     "version": 1
   },
   "userdoc": {
-    "errors": {
-      "OwnableUnauthorizedAccount(address)": [
-        {
-          "notice": "The caller account is not authorized to perform an operation."
-        }
-      ]
-    },
     "kind": "user",
     "methods": {
       "getBalance(address)": {
-        "notice": "returns the balance of a wallet owner it does not include the balances deposited in games"
-      },
-      "getGameBalance(address,uint256)": {
-        "notice": "Returns the wallet balance of an app's game"
+        "notice": "returns the balance of a wallet account"
       },
       "getTotalBalance()": {
         "notice": "returns the ether balance of this wallet contract"
@@ -463,12 +224,13 @@
         "notice": "Allows you to withdraw all your wallet balance"
       }
     },
+    "notice": "TODO: Move to orisirisi-contracts since it could be globally scoped",
     "version": 1
   },
   "storageLayout": {
     "storage": [
       {
-        "astId": 1921,
+        "astId": 1690,
         "contract": "src/Wallets.sol:Wallets",
         "label": "_status",
         "offset": 0,
@@ -476,35 +238,11 @@
         "type": "t_uint256"
       },
       {
-        "astId": 1175,
-        "contract": "src/Wallets.sol:Wallets",
-        "label": "_owner",
-        "offset": 0,
-        "slot": "1",
-        "type": "t_address"
-      },
-      {
-        "astId": 1371,
-        "contract": "src/Wallets.sol:Wallets",
-        "label": "apps",
-        "offset": 0,
-        "slot": "2",
-        "type": "t_mapping(t_address,t_bool)"
-      },
-      {
-        "astId": 1377,
-        "contract": "src/Wallets.sol:Wallets",
-        "label": "gameBalances",
-        "offset": 0,
-        "slot": "3",
-        "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))"
-      },
-      {
-        "astId": 1381,
+        "astId": 1369,
         "contract": "src/Wallets.sol:Wallets",
         "label": "balances",
         "offset": 0,
-        "slot": "4",
+        "slot": "1",
         "type": "t_mapping(t_address,t_uint256)"
       }
     ],
@@ -514,36 +252,10 @@
         "label": "address",
         "numberOfBytes": "20"
       },
-      "t_bool": {
-        "encoding": "inplace",
-        "label": "bool",
-        "numberOfBytes": "1"
-      },
-      "t_mapping(t_address,t_bool)": {
-        "encoding": "mapping",
-        "key": "t_address",
-        "label": "mapping(address => bool)",
-        "numberOfBytes": "32",
-        "value": "t_bool"
-      },
-      "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
-        "encoding": "mapping",
-        "key": "t_address",
-        "label": "mapping(address => mapping(uint256 => uint256))",
-        "numberOfBytes": "32",
-        "value": "t_mapping(t_uint256,t_uint256)"
-      },
       "t_mapping(t_address,t_uint256)": {
         "encoding": "mapping",
         "key": "t_address",
         "label": "mapping(address => uint256)",
-        "numberOfBytes": "32",
-        "value": "t_uint256"
-      },
-      "t_mapping(t_uint256,t_uint256)": {
-        "encoding": "mapping",
-        "key": "t_uint256",
-        "label": "mapping(uint256 => uint256)",
         "numberOfBytes": "32",
         "value": "t_uint256"
       },
