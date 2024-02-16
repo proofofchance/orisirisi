@@ -4,10 +4,14 @@ import {
   useCoinflipGame,
   useDispatchErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
-import { parseInteger } from '@orisirisi/orisirisi-data-utils';
+import {
+  capitalizeFirstLetter,
+  parseInteger,
+} from '@orisirisi/orisirisi-data-utils';
 import { useIsClient } from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import {
+  useCurrentChain,
   useCurrentWeb3Account,
   useCurrentWeb3Provider,
 } from '@orisirisi/orisirisi-web3-ui';
@@ -62,6 +66,20 @@ export function PlayGame() {
     toast.error("Oops! Looks like you've already played this game.", {
       position: 'bottom-right',
     });
+    replace(gamePath!);
+  }
+
+  const currentChain = useCurrentChain();
+
+  if (game && game.getChain() !== currentChain) {
+    toast.error(
+      `Invalid Network! Sorry, you have to be on ${capitalizeFirstLetter(
+        game.getChain().getName()
+      )} network to play this game`,
+      {
+        position: 'bottom-right',
+      }
+    );
     replace(gamePath!);
   }
 

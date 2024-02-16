@@ -1,20 +1,14 @@
 import { CoinflipGame } from '@orisirisi/coinflip';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
-import { useRouter } from 'next/router';
-// import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
-  PlayIcon,
 } from '@heroicons/react/24/solid';
-import { MainButton } from './main-control-buttons/main-button';
 import { UploadProofMainButton } from './main-control-buttons/upload-proof-main-button';
-import { useCurrentWeb3Provider } from '@orisirisi/orisirisi-web3-ui';
-import toast from 'react-hot-toast';
-import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { PlayMainButton } from './main-control-buttons/play-main-button';
 
 export function MainControlButtons({
   currentWeb3Account,
@@ -24,10 +18,6 @@ export function MainControlButtons({
   currentWeb3Account: Web3Account | null;
   game: CoinflipGame;
 } & PropsWithClassName) {
-  const { push } = useRouter();
-
-  const currentWeb3Provider = useCurrentWeb3Provider();
-
   const getMainButton = () => {
     if (currentWeb3Account && game.is_awaiting_my_chance_reveal) {
       return (
@@ -39,46 +29,11 @@ export function MainControlButtons({
     }
     if (game.isAwaitingPlayers() && game.iHaveNotPlayed()) {
       return (
-        <MainButton
-          disabled={!currentWeb3Account}
-          disabledReason="Connect wallet first ↑"
-          onClick={async () => {
-            const myBalance = await currentWeb3Account!.getBalance(
-              currentWeb3Provider!
-            );
-
-            if (myBalance < game.wager) {
-              return toast.error(
-                `Insufficient balance. You need ${
-                  game.wager
-                } ${Chain.fromChainID(game.chain_id).getCurrency()} to play`,
-                {
-                  position: 'bottom-left',
-                }
-              );
-            }
-
-            return push(
-              `/games/${game.id}/play?chain=${game.getChain().getName()}`
-            );
-          }}
-          icon={<PlayIcon className="h-8" />}
-          label="Play"
-        />
+        <PlayMainButton game={game} currentWeb3Account={currentWeb3Account} />
       );
     }
 
     return null;
-    // TODO: Maybe add back if we need a slide show for proving more intuitively
-    // (
-    //   <MainButton
-    //     onClick={() =>
-    //       push(`/games/${game.id}/prove?chain=${game.getChain().getName()}`)
-    //     }
-    //     icon={<ShieldCheckIcon className="h-8" />}
-    //     label={`${game.iHavePlayed() ? 'Prove so far' : 'Prove'}`}
-    //   />
-    // );
   };
 
   const mainButton = getMainButton();
