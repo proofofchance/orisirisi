@@ -187,10 +187,8 @@ function WonOrLostCard({
         <span role="img" aria-label="congrats-text">
           🎉
         </span>{' '}
-        <b className="tracking-wide">
-          {formatUSD(amountForEachWinnerUsd * numberOfPlayers, 0)}
-        </b>{' '}
-        was given to players that predicted {coinSideToString(outcome)}{' '}
+        <b className="tracking-wide">{formatUSD(amountForEachWinnerUsd, 0)}</b>{' '}
+        was given to every player that predicted {coinSideToString(outcome)}{' '}
         <span role="img" aria-label="congrats-text">
           🎉
         </span>
