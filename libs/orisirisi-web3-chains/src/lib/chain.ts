@@ -11,7 +11,8 @@ export enum ChainID {
 export class Chain {
   private constructor(public readonly id: ChainID) {}
 
-  isSupported = () => Chain.isSupportedId(this.id);
+  isSupported = () => Chain.isSepolia(this.id);
+  static isSepolia = (id: number) => id === ChainID.SepoliaTestNet;
   static isSupportedId = (id: number) => id in ChainID;
 
   getCurrency = () => {
