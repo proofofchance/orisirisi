@@ -74,9 +74,11 @@ export function GameActivitiesView({
 
   let myGameStatus = null;
   if (game.isCompleted() && game.iHavePlayed()) {
-    myGameStatus = game.getGamePlayByPlayerAddress(
+    const gamePlay = game.getGamePlayByPlayerAddress(
       currentWeb3Account!.address
-    )!.status;
+    );
+
+    myGameStatus = gamePlay ? gamePlay.status : null;
   }
 
   return (
