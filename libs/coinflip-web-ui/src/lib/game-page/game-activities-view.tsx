@@ -172,7 +172,7 @@ function WonOrLostCard({
         <span role="img" aria-label="congrats-text">
           🎉
         </span>{' '}
-        Players that predicted {coinSideToString(game.outcome)} won
+        Players that predicted {coinSideToString(game.outcome)} won{' '}
         <b className="tracking-wide">
           {formatUSD(game.amount_shared_with_winners_usd!, 0)}
         </b>{' '}
