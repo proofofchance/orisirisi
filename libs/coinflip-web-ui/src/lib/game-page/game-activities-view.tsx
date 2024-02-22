@@ -93,14 +93,7 @@ export function GameActivitiesView({
         </div>
       )}
       {game.isCompleted() && (
-        <WonOrLostCard
-          outcome={game.outcome!}
-          chain={game.getChain()}
-          gamePlayStatus={myGameStatus}
-          amountForEachWinner={game.amount_for_each_winner!}
-          amountForEachWinnerUsd={game.amount_for_each_winner_usd!}
-          numberOfPlayers={game.total_players_required}
-        />
+        <WonOrLostCard game={game} gamePlayStatus={myGameStatus} />
       )}
 
       {topActivityView()}
@@ -143,19 +136,11 @@ export function GameActivitiesView({
 }
 
 function WonOrLostCard({
-  outcome,
-  chain,
+  game,
   gamePlayStatus,
-  amountForEachWinner,
-  amountForEachWinnerUsd,
-  numberOfPlayers,
 }: {
-  outcome: CoinSide;
-  chain: Chain;
+  game: CoinflipGame;
   gamePlayStatus: CoinflipGamePlayStatus | null;
-  amountForEachWinner: number;
-  amountForEachWinnerUsd: number;
-  numberOfPlayers: number;
 }) {
   const getWonOrLostContent = () => {
     if (gamePlayStatus === 'won') {
@@ -167,8 +152,8 @@ function WonOrLostCard({
           <span>
             You won{' '}
             <b className="tracking-wide">
-              {amountForEachWinner} {chain.getCurrency()} ~
-              {formatUSD(amountForEachWinnerUsd, 0)}
+              {game.amount_for_each_winner} {game.getChain().getCurrency()} ~
+              {formatUSD(game.amount_for_each_winner_usd!, 0)}
             </b>{' '}
             from this game.
           </span>
@@ -187,8 +172,10 @@ function WonOrLostCard({
         <span role="img" aria-label="congrats-text">
           🎉
         </span>{' '}
-        <b className="tracking-wide">{formatUSD(amountForEachWinnerUsd, 0)}</b>{' '}
-        was given to every player that predicted {coinSideToString(outcome)}{' '}
+        Players that predicted {coinSideToString(game.outcome)} won
+        <b className="tracking-wide">
+          {formatUSD(game.amount_shared_with_winners_usd!, 0)}
+        </b>{' '}
         <span role="img" aria-label="congrats-text">
           🎉
         </span>

@@ -41,6 +41,8 @@ export class Game {
     public game_plays: GamePlay[] | null,
     public amount_for_each_winner: number | null,
     public amount_for_each_winner_usd: number | null,
+    public amount_shared_with_winners: number | null,
+    public amount_shared_with_winners_usd: number | null,
     public refunded_at: number | null,
     public refunded_amount_per_player: number | null
   ) {}
