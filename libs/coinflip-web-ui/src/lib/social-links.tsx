@@ -15,7 +15,7 @@ export function SocialLinks() {
           <SocialIcon
             style={{ height: '100%', width: '100%' }}
             target="_blank"
-            url="https://discord.gg/gkPkAYpN"
+            url="https://discord.gg/Ss7wSuqzE5"
           />
         </div>
         <div className="h-12 w-12 hover:h-14 hover:w-14 mt-4">
