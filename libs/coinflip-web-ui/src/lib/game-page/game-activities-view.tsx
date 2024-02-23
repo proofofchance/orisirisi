@@ -53,12 +53,14 @@ export function GameActivitiesView({
     )
       return (
         <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
-          <p className="text-sm m-2">Game Coin is currently flipping.</p>
+          <p className="text-sm m-2">
+            This game's coin is currently flipping...
+          </p>
 
           <Coin side={null} flipInfinitely className="self-center" />
 
           <p className="text-sm self-end mt-6 mb-2">
-            Refresh to see the outcome in a minute...
+            ...Refresh to see the outcome in a minute
           </p>
         </div>
       );
