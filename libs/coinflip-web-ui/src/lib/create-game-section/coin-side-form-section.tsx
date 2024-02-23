@@ -46,7 +46,7 @@ export function CoinSideFormSection({
     <FormSectionShell title="Pick a Coin Side">
       <TipCard
         className="md:w-[320px]"
-        tip="This is your prediction of the coinflip outcome. You win if you prediction turns out right."
+        tip="This is your prediction of the coinflip outcome. You win if your prediction comes out right."
       />
 
       <div className="mt-8 flex gap-8 items-center">

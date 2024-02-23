@@ -38,7 +38,7 @@ export function ConfirmGameDetailsFormSection({
     </div>
   );
   return (
-    <FormSectionShell title="Confirm Details">
+    <FormSectionShell title="Confirm Game Details">
       <div className="mt-4 w-[400px] flex flex-col gap-1">
         {row('Wager:', wager, 0)}
         {row(
