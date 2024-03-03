@@ -7,7 +7,8 @@
     "test": "hardhat test",
     "dev:start-web3-provider": "hardhat node",
     "dev:deploy": "hardhat run --network localhost scripts/deploy.ts",
-    "sepolia:deploy": "hardhat run --network sepolia scripts/deploy.ts"
+    "sepolia:deploy": "hardhat run --network sepolia scripts/deploy.ts",
+    "polygon:deploy": "hardhat run --network polygon scripts/deploy.ts"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

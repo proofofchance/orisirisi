@@ -10,6 +10,7 @@
     "dev:start-web3-provider": "cd libs/coinflip-contracts && pnpm dev:start-web3-provider",
     "dev:deploy-contracts": "cd libs/coinflip-contracts && pnpm dev:deploy",
     "sepolia:deploy-contracts": "cd libs/coinflip-contracts && pnpm sepolia:deploy",
+    "polygon:deploy-contracts": "cd libs/coinflip-contracts && pnpm polygon:deploy",
     "test:contracts": "cd libs/coinflip-contracts && pnpm test"
   },
   "private": true,
