@@ -47,7 +47,7 @@ const config: HardhatUserConfig = {
     tests: './tests',
   },
   etherscan: {
-    apiKey: process.env['ETHERSCAN_API_KEY'] ?? undefined,
+    apiKey: process.env['CHAIN_EXPLORER_API_KEY'] ?? undefined,
   },
   gasReporter: {
     enabled: process.env['GAS_REPORT_MODE'] === 'ON',
