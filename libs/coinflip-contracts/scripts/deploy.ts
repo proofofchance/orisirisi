@@ -2,6 +2,7 @@ import { CoinflipGame } from '@orisirisi/coinflip';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
 import { ethers, deployments, run, network } from 'hardhat';
 import { parseEther } from 'ethers';
+import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 const NODE_INDEXING_GRACE_PERIOD_MS = 1 * 60 * 1000;
 
@@ -29,10 +30,12 @@ export async function deployCoinflipContracts() {
     deployOptions
   );
 
+  const chain = Chain.fromName(network.name).ok!;
+
   const coinflipArgs = [
     walletsAddress,
     CoinflipGame.maxNumberOfPlayers,
-    parseEther(CoinflipGame.getMinWagerEth().toString()),
+    parseEther(CoinflipGame.getMinWagerEth(chain.id).toString()),
   ];
 
   const { address: coinflipAddress } = await deployments.deploy('Coinflip', {
@@ -40,17 +43,13 @@ export async function deployCoinflipContracts() {
     args: coinflipArgs,
   });
 
-  const isLocalDeployment = network.name === 'localhost';
-
-  if (!isLocalDeployment) {
+  if (!chain.isLocal()) {
     await sleep(NODE_INDEXING_GRACE_PERIOD_MS);
 
     await run('verify:verify', {
       address: walletsAddress,
     });
-  }
 
-  if (!isLocalDeployment) {
     await sleep(NODE_INDEXING_GRACE_PERIOD_MS);
 
     await run('verify:verify', {

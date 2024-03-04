@@ -19,6 +19,7 @@ export class Chain {
       ChainID.Local,
       ChainID.LocalAlt,
     ].includes(id);
+  isLocal = () => [ChainID.Local, ChainID.LocalAlt].includes(this.id);
 
   getCurrency = () => {
     switch (this.id) {
