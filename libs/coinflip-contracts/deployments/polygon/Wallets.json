@@ -1,0 +1,285 @@
+{
+  "address": "0x42c95416B24046031310029a0531BA49592bAcbF",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "InsufficientFunds",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Credit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Debit",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "credit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "creditAccount",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "creditAccounts",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "manyAccounts",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountForEachManyAccount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "oneAccount",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountForOneAccount",
+          "type": "uint256"
+        }
+      ],
+      "name": "creditManyAndOne",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x5329f5bb89c586eff42576198e91018afd0370821a8f1ce7e1e7a1844abcbe34",
+  "receipt": {
+    "to": null,
+    "from": "0x9B54b2B5Acf909692A762f017724a4574d7b6a2a",
+    "contractAddress": "0x42c95416B24046031310029a0531BA49592bAcbF",
+    "transactionIndex": 157,
+    "gasUsed": "467113",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000008000000000000080000000000000000000000000000000000000000000800000000000400000000100000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000200002000000000000000000000000000000000000000000000000000000004000000100000000000001000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000100000",
+    "blockHash": "0x274ba8c2507ccb35c1c27d79d31035b30b9fb73a503ba84bc3dbd17728dfc4fb",
+    "transactionHash": "0x5329f5bb89c586eff42576198e91018afd0370821a8f1ce7e1e7a1844abcbe34",
+    "logs": [
+      {
+        "transactionIndex": 157,
+        "blockNumber": 54265073,
+        "transactionHash": "0x5329f5bb89c586eff42576198e91018afd0370821a8f1ce7e1e7a1844abcbe34",
+        "address": "0x0000000000000000000000000000000000001010",
+        "topics": [
+          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+          "0x0000000000000000000000000000000000000000000000000000000000001010",
+          "0x0000000000000000000000009b54b2b5acf909692a762f017724a4574d7b6a2a",
+          "0x0000000000000000000000007c7379531b2aee82e4ca06d4175d13b9cbeafd49"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000022badfecc3dd88000000000000000000000000000000000000000000000004563918244f40000000000000000000000000000000000000000000000002cd83fc5ab0bf379a1f2100000000000000000000000000000000000000000000000456165d44627c227800000000000000000000000000000000000000000002cd83fc7d6b9f245dfca9",
+        "logIndex": 2965,
+        "blockHash": "0x274ba8c2507ccb35c1c27d79d31035b30b9fb73a503ba84bc3dbd17728dfc4fb"
+      }
+    ],
+    "blockNumber": 54265073,
+    "cumulativeGasUsed": "28555619",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "f8e00c5d06c81eb41275c53199b657d6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"InsufficientFunds\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Credit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Debit\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"credit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"creditAccount\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"creditAccounts\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"manyAccounts\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"amountForEachManyAccount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"oneAccount\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amountForOneAccount\",\"type\":\"uint256\"}],\"name\":\"creditManyAndOne\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"withdrawAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"errors\":{\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"kind\":\"dev\",\"methods\":{\"creditAccount(address)\":{\"details\":\"Credits account. You could credit yourself or someone using this.\"},\"creditAccounts(address[])\":{\"details\":\"Credits player as though player manually credits themselves.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"getBalance(address)\":{\"notice\":\"returns the balance of a wallet account\"},\"getTotalBalance()\":{\"notice\":\"returns the ether balance of this wallet contract\"},\"withdraw(uint256)\":{\"notice\":\"Allows you to withdraw a specified amount of your wallet balance\"},\"withdrawAll()\":{\"notice\":\"Allows you to withdraw all your wallet balance\"}},\"notice\":\"TODO: Move to orisirisi-contracts since it could be globally scoped\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Wallets.sol\":\"Wallets\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"src/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nabstract contract Ownable {\\n    address private _owner;\\n\\n    /// The caller account is not authorized to perform an operation.\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    event OwnershipTransferred(\\n        address indexed previousOwner,\\n        address indexed newOwner\\n    );\\n\\n    /// @dev The owner is not a valid owner account.\\n    error OwnableInvalidOwner(address owner);\\n\\n    constructor() {\\n        _transferOwnership(msg.sender);\\n    }\\n\\n    /// @dev Throws if called by any account other than the owner.\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /// @dev Returns the address of the current owner.\\n    function owner() public view returns (address) {\\n        return _owner;\\n    }\\n\\n    /// @dev Throws if the sender is not the owner.\\n    function _checkOwner() internal view {\\n        if (owner() != msg.sender) {\\n            revert OwnableUnauthorizedAccount(msg.sender);\\n        }\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Can only be called by the current owner.\\n    function transferOwnership(address newOwner) public onlyOwner {\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /// @dev Transfers ownership of the contract to a new account (`newOwner`).\\n    /// Internal function without access restriction.\\n    function _transferOwnership(address newOwner) internal {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0x032ee2938cbee6e55ca02fc17a15aaf59f652cd8755c78c5a7ab8fcb0196dd16\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.24;\\n\\nimport {Ownable} from './Ownable.sol';\\nimport {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';\\n\\n/// TODO: Move to orisirisi-contracts since it could be globally scoped\\ncontract Wallets is UsingReentrancyGuard {\\n    mapping(address account => uint amount) balances;\\n\\n    event Credit(address indexed account, uint amount);\\n    event Debit(address indexed account, uint amount);\\n\\n    error InsufficientFunds();\\n\\n    receive() external payable {\\n        _credit(msg.sender, msg.value);\\n    }\\n\\n    /// @dev Credits account. You could credit yourself or someone using this.\\n    function creditAccount(address account) external payable {\\n        _credit(account, msg.value);\\n    }\\n\\n    function credit() external payable {\\n        _credit(msg.sender, msg.value);\\n    }\\n\\n    /// @dev Credits player as though player manually credits themselves.\\n    function creditAccounts(address[] calldata accounts) external payable {\\n        uint amount = msg.value;\\n        uint accountsLength = accounts.length;\\n        require(amount % accountsLength == 0);\\n        uint amountForEachAccount = amount / accountsLength;\\n        for (uint i; i < accountsLength; ) {\\n            _credit(accounts[i], amountForEachAccount);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n    }\\n\\n    function creditManyAndOne(\\n        address[] calldata manyAccounts,\\n        uint amountForEachManyAccount,\\n        address oneAccount,\\n        uint amountForOneAccount\\n    ) external payable {\\n        uint16 manyAccountsLength = uint16(manyAccounts.length);\\n        require(\\n            (amountForEachManyAccount * manyAccountsLength) +\\n                amountForOneAccount ==\\n                msg.value\\n        );\\n\\n        for (uint16 i; i < manyAccountsLength; ) {\\n            _credit(manyAccounts[i], amountForEachManyAccount);\\n            unchecked {\\n                ++i;\\n            }\\n        }\\n\\n        _credit(oneAccount, amountForOneAccount);\\n    }\\n\\n    /// @notice Allows you to withdraw a specified amount of your wallet balance\\n    function withdraw(uint amount) external nonReentrant {\\n        address account = msg.sender;\\n        uint balance = balances[account];\\n        if (balance < amount) {\\n            revert InsufficientFunds();\\n        }\\n        balances[account] -= amount;\\n\\n        _pay(account, amount);\\n\\n        emit Debit(account, amount);\\n    }\\n\\n    /// @notice Allows you to withdraw all your wallet balance\\n    function withdrawAll() external nonReentrant {\\n        address account = msg.sender;\\n        uint balance = balances[account];\\n        if (balance == 0) {\\n            revert InsufficientFunds();\\n        }\\n        balances[account] = 0;\\n\\n        _pay(account, balance);\\n\\n        emit Debit(account, balance);\\n    }\\n\\n    function _credit(address account, uint amount) private {\\n        balances[account] += amount;\\n        emit Credit(account, amount);\\n    }\\n\\n    /// @notice returns the balance of a wallet account\\n    function getBalance(address account) external view returns (uint) {\\n        return balances[account];\\n    }\\n\\n    /// @notice returns the ether balance of this wallet contract\\n    function getTotalBalance() external view returns (uint) {\\n        return address(this).balance;\\n    }\\n\\n    function _pay(address to, uint256 amount) private {\\n        (bool sent, ) = to.call{value: amount}('');\\n        require(sent);\\n    }\\n}\\n\",\"keccak256\":\"0xaaf976356153c071f80be99bf0b05210b231e3bcd4d9810f25c11194d1a6c914\",\"license\":\"SEE LICENSE IN LICENSE\"},\"src/Wallets/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.9.0) (security/ReentrancyGuard.sol)\\n\\npragma solidity 0.8.24;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract UsingReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant _NOT_ENTERED = 1;\\n    uint256 private constant _ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be _NOT_ENTERED\\n        if (_status == _ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = _ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = _NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == _ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x6b9570fca9d462b08d83a60fe56279e845a700799f2b354fa60df7a9f21ed2a5\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506001600055610718806100256000396000f3fe60806040526004361061007f5760003560e01c8063a06d083c1161004e578063a06d083c146100fe578063caa8cbcb14610106578063dca5d1f814610119578063f8b2cb4f1461012c57600080fd5b806312b58349146100955780632e1a7d4d146100b65780634d4b298e146100d6578063853828b6146100e957600080fd5b366100905761008e3334610162565b005b600080fd5b3480156100a157600080fd5b50475b60405190815260200160405180910390f35b3480156100c257600080fd5b5061008e6100d13660046104eb565b6101d1565b61008e6100e4366004610520565b610294565b3480156100f557600080fd5b5061008e61029e565b61008e61034b565b61008e61011436600461058e565b610355565b61008e6101273660046105d0565b6103c4565b34801561013857600080fd5b506100a4610147366004610520565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b0382166000908152600160205260408120805483929061018a90849061064b565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b6101d9610443565b336000818152600160205260409020548281101561020a5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526001602052604081208054859290610232908490610664565b9091555061024290508284610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468460405161027d91815260200190565b60405180910390a250506102916001600055565b50565b6102918134610162565b6102a6610443565b33600081815260016020526040812054908190036102d75760405163356680b760e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260408120556102fa8282610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468260405161033591815260200190565b60405180910390a250506103496001600055565b565b6103493334610162565b3481610361818361068d565b1561036b57600080fd5b600061037782846106a1565b905060005b828110156103bc576103b4868683818110610399576103996106b5565b90506020020160208101906103ae9190610520565b83610162565b60010161037c565b505050505050565b8334826103d561ffff8416876106cb565b6103df919061064b565b146103e957600080fd5b60005b8161ffff168161ffff1610156104385761043087878361ffff16818110610415576104156106b5565b905060200201602081019061042a9190610520565b86610162565b6001016103ec565b506103bc8383610162565b60026000540361047f576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d80600081146104d3576040519150601f19603f3d011682016040523d82523d6000602084013e6104d8565b606091505b50509050806104e657600080fd5b505050565b6000602082840312156104fd57600080fd5b5035919050565b80356001600160a01b038116811461051b57600080fd5b919050565b60006020828403121561053257600080fd5b61053b82610504565b9392505050565b60008083601f84011261055457600080fd5b50813567ffffffffffffffff81111561056c57600080fd5b6020830191508360208260051b850101111561058757600080fd5b9250929050565b600080602083850312156105a157600080fd5b823567ffffffffffffffff8111156105b857600080fd5b6105c485828601610542565b90969095509350505050565b6000806000806000608086880312156105e857600080fd5b853567ffffffffffffffff8111156105ff57600080fd5b61060b88828901610542565b9096509450506020860135925061062460408701610504565b949793965091946060013592915050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561065e5761065e610635565b92915050565b8181038181111561065e5761065e610635565b634e487b7160e01b600052601260045260246000fd5b60008261069c5761069c610677565b500690565b6000826106b0576106b0610677565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761065e5761065e61063556fea26469706673582212203afd555cf496838dbc6f85102ee53b3a52c12178e855f847345e040ec68927c964736f6c63430008180033",
+  "deployedBytecode": "0x60806040526004361061007f5760003560e01c8063a06d083c1161004e578063a06d083c146100fe578063caa8cbcb14610106578063dca5d1f814610119578063f8b2cb4f1461012c57600080fd5b806312b58349146100955780632e1a7d4d146100b65780634d4b298e146100d6578063853828b6146100e957600080fd5b366100905761008e3334610162565b005b600080fd5b3480156100a157600080fd5b50475b60405190815260200160405180910390f35b3480156100c257600080fd5b5061008e6100d13660046104eb565b6101d1565b61008e6100e4366004610520565b610294565b3480156100f557600080fd5b5061008e61029e565b61008e61034b565b61008e61011436600461058e565b610355565b61008e6101273660046105d0565b6103c4565b34801561013857600080fd5b506100a4610147366004610520565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b0382166000908152600160205260408120805483929061018a90849061064b565b90915550506040518181526001600160a01b038316907f1bbf55d483639f8103dc4e035af71a4fbdb16c80be740fa3eef81198acefa0949060200160405180910390a25050565b6101d9610443565b336000818152600160205260409020548281101561020a5760405163356680b760e01b815260040160405180910390fd5b6001600160a01b03821660009081526001602052604081208054859290610232908490610664565b9091555061024290508284610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468460405161027d91815260200190565b60405180910390a250506102916001600055565b50565b6102918134610162565b6102a6610443565b33600081815260016020526040812054908190036102d75760405163356680b760e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260408120556102fa8282610486565b816001600160a01b03167f59c79d79be0fadf59fe689b6952b7ebe90201a3a1f00d4a31982377890bc60468260405161033591815260200190565b60405180910390a250506103496001600055565b565b6103493334610162565b3481610361818361068d565b1561036b57600080fd5b600061037782846106a1565b905060005b828110156103bc576103b4868683818110610399576103996106b5565b90506020020160208101906103ae9190610520565b83610162565b60010161037c565b505050505050565b8334826103d561ffff8416876106cb565b6103df919061064b565b146103e957600080fd5b60005b8161ffff168161ffff1610156104385761043087878361ffff16818110610415576104156106b5565b905060200201602081019061042a9190610520565b86610162565b6001016103ec565b506103bc8383610162565b60026000540361047f576040517f3ee5aeb500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6002600055565b6000826001600160a01b03168260405160006040518083038185875af1925050503d80600081146104d3576040519150601f19603f3d011682016040523d82523d6000602084013e6104d8565b606091505b50509050806104e657600080fd5b505050565b6000602082840312156104fd57600080fd5b5035919050565b80356001600160a01b038116811461051b57600080fd5b919050565b60006020828403121561053257600080fd5b61053b82610504565b9392505050565b60008083601f84011261055457600080fd5b50813567ffffffffffffffff81111561056c57600080fd5b6020830191508360208260051b850101111561058757600080fd5b9250929050565b600080602083850312156105a157600080fd5b823567ffffffffffffffff8111156105b857600080fd5b6105c485828601610542565b90969095509350505050565b6000806000806000608086880312156105e857600080fd5b853567ffffffffffffffff8111156105ff57600080fd5b61060b88828901610542565b9096509450506020860135925061062460408701610504565b949793965091946060013592915050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561065e5761065e610635565b92915050565b8181038181111561065e5761065e610635565b634e487b7160e01b600052601260045260246000fd5b60008261069c5761069c610677565b500690565b6000826106b0576106b0610677565b500490565b634e487b7160e01b600052603260045260246000fd5b808202811582820484141761065e5761065e61063556fea26469706673582212203afd555cf496838dbc6f85102ee53b3a52c12178e855f847345e040ec68927c964736f6c63430008180033",
+  "devdoc": {
+    "errors": {
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "creditAccount(address)": {
+        "details": "Credits account. You could credit yourself or someone using this."
+      },
+      "creditAccounts(address[])": {
+        "details": "Credits player as though player manually credits themselves."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "getBalance(address)": {
+        "notice": "returns the balance of a wallet account"
+      },
+      "getTotalBalance()": {
+        "notice": "returns the ether balance of this wallet contract"
+      },
+      "withdraw(uint256)": {
+        "notice": "Allows you to withdraw a specified amount of your wallet balance"
+      },
+      "withdrawAll()": {
+        "notice": "Allows you to withdraw all your wallet balance"
+      }
+    },
+    "notice": "TODO: Move to orisirisi-contracts since it could be globally scoped",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1690,
+        "contract": "src/Wallets.sol:Wallets",
+        "label": "_status",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 1369,
+        "contract": "src/Wallets.sol:Wallets",
+        "label": "balances",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_uint256)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
