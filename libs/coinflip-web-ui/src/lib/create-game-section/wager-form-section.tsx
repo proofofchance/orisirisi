@@ -45,7 +45,9 @@ export function WagerFormSection({ onSubmit }: Props) {
     const wagerFloat = parseFloat(wager);
 
     if (!isUpToMinimumWager(wagerFloat, chain!.id)) {
-      return `Minimum wager allowed is ${CoinflipGame.getMinWagerEth()} ${chain!.getCurrency()}`;
+      return `Minimum wager allowed is ${CoinflipGame.getMinWagerEth(
+        chain!.id
+      )} ${chain!.getCurrency()}`;
     }
 
     const accountBalance = await currentWeb3Account!.getBalance(
@@ -67,7 +69,7 @@ export function WagerFormSection({ onSubmit }: Props) {
       />
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <DecimalInput
-          placeholder={`${CoinflipGame.getMinWagerEth()}`}
+          placeholder={`${CoinflipGame.getMinWagerEth(chain?.id)}`}
           className="w-[100px] md:w-[320px] border-none px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg"
           {...register('wager', {
             validate,
