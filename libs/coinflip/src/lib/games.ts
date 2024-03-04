@@ -117,7 +117,7 @@ export class Game {
       case ChainID.Ethereum:
         return 0.04;
       case ChainID.Polygon:
-        return 1;
+        return 10;
     }
   }
 }
