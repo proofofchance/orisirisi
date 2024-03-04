@@ -13,6 +13,10 @@ const networks: NetworksUserConfig = {
     url: process.env['SEPOLIA_JSON_RPC_URL'],
     accounts: [process.env['SEPOLIA_PRIVATE_KEY']!],
   },
+  polygon: {
+    url: process.env['POLYGON_JSON_RPC_URL'],
+    accounts: [process.env['POLYGON_PRIVATE_KEY']!],
+  },
 };
 const nonEmptyNetworks = Object.keys(networks).reduce(
   (nonEmptyNetworks, network) => {
