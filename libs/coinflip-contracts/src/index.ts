@@ -11,6 +11,9 @@ import walletsLocalDeployment from '../deployments/localhost/Wallets.json';
 import coinflipSepoliaDeployment from '../deployments/sepolia/Coinflip.json';
 import walletsSepoliaDeployment from '../deployments/sepolia/Wallets.json';
 
+import coinflipPolygonDeployment from '../deployments/polygon/Coinflip.json';
+import walletsPolygonDeployment from '../deployments/polygon/Wallets.json';
+
 export class CoinflipContract {
   static fromSignerAndChain(signer: Signer, chainId: ChainID) {
     return Coinflip__factory.connect(this.getAddress(chainId), signer);
@@ -22,6 +25,8 @@ export class CoinflipContract {
         return coinflipLocalDeployment.address;
       case ChainID.SepoliaTestNet:
         return coinflipSepoliaDeployment.address;
+      case ChainID.Polygon:
+        return coinflipPolygonDeployment.address;
       default:
         throw new Error('Undeployed Contract');
     }
@@ -43,6 +48,8 @@ export class WalletsContract {
         return walletsLocalDeployment.address;
       case ChainID.SepoliaTestNet:
         return walletsSepoliaDeployment.address;
+      case ChainID.Polygon:
+        return walletsPolygonDeployment.address;
       default:
         throw new Error('Undeployed Contract');
     }
