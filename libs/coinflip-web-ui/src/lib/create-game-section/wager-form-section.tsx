@@ -10,9 +10,7 @@ import { ChainCurrencyButton } from './get-wager-form-section/chain-currency-but
 import { ErrorMessageParagraph } from './error-message-paragraph';
 import { FormSectionShell } from './form-section-shell';
 import { TipCard } from './tip-card';
-
-const isUpToMinimumWager = (wager: number) =>
-  wager >= CoinflipGame.getMinWagerEth();
+import { ChainID } from '@orisirisi/orisirisi-web3-chains';
 
 export interface WagerForm {
   wager: string;
@@ -46,7 +44,7 @@ export function WagerFormSection({ onSubmit }: Props) {
 
     const wagerFloat = parseFloat(wager);
 
-    if (!isUpToMinimumWager(wagerFloat)) {
+    if (!isUpToMinimumWager(wagerFloat, chain!.id)) {
       return `Minimum wager allowed is ${CoinflipGame.getMinWagerEth()} ${chain!.getCurrency()}`;
     }
 
@@ -84,3 +82,6 @@ export function WagerFormSection({ onSubmit }: Props) {
     </FormSectionShell>
   );
 }
+
+const isUpToMinimumWager = (wager: number, currentChainId: ChainID) =>
+  wager >= CoinflipGame.getMinWagerEth(currentChainId);
