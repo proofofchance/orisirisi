@@ -13,7 +13,12 @@ export class Chain {
 
   isSupported = () => Chain.isSupportedId(this.id);
   static isSupportedId = (id: number) =>
-    [ChainID.SepoliaTestNet, ChainID.Local, ChainID.LocalAlt].includes(id);
+    [
+      ChainID.SepoliaTestNet,
+      ChainID.Polygon,
+      ChainID.Local,
+      ChainID.LocalAlt,
+    ].includes(id);
 
   getCurrency = () => {
     switch (this.id) {
