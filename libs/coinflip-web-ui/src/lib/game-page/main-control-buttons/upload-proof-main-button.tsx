@@ -56,6 +56,17 @@ export function UploadProofMainButton({
     }
   };
 
+  const useDisabled = (): [boolean, string] => {
+    if (game.isAwaitingPlayers())
+      return [
+        true,
+        'Incomplete players. Please share game with potential participants.',
+      ];
+    return [false, ''];
+  };
+
+  const [disabled, disabledReason] = useDisabled();
+
   return (
     <>
       <input
@@ -67,6 +78,8 @@ export function UploadProofMainButton({
         ref={uploadProofButtonRef}
       />
       <MainButton
+        disabled={disabled}
+        disabledReason={disabledReason}
         onClick={() => uploadProofButtonRef.current!.click()}
         icon={<ArrowUpTrayIcon className="h-8" />}
         label="Upload Proof"

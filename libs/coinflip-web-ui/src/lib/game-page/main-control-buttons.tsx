@@ -19,17 +19,20 @@ export function MainControlButtons({
   game: CoinflipGame;
 } & PropsWithClassName) {
   const getMainButton = () => {
-    if (currentWeb3Account && game.is_awaiting_my_chance_reveal) {
+    if (game.isAwaitingPlayers() && game.iHaveNotPlayed()) {
+      return (
+        <PlayMainButton game={game} currentWeb3Account={currentWeb3Account} />
+      );
+    }
+    if (
+      currentWeb3Account &&
+      (game.isAwaitingPlayers() || game.isAwaitingRevealedChances())
+    ) {
       return (
         <UploadProofMainButton
           game={game}
           currentWeb3Account={currentWeb3Account}
         />
-      );
-    }
-    if (game.isAwaitingPlayers() && game.iHaveNotPlayed()) {
-      return (
-        <PlayMainButton game={game} currentWeb3Account={currentWeb3Account} />
       );
     }
 
