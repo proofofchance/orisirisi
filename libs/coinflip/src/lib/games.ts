@@ -58,7 +58,7 @@ export class Game {
     return !this.my_game_play_id;
   }
   iAmYetToUploadMyProof(): boolean {
-    return !this.is_awaiting_my_chance_reveal;
+    return !!this.is_awaiting_my_chance_reveal;
   }
 
   getChain(): Chain {
