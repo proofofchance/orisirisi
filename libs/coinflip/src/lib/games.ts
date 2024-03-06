@@ -57,6 +57,9 @@ export class Game {
   iHaveNotPlayed(): boolean {
     return !this.my_game_play_id;
   }
+  iAmYetToUploadMyProof(): boolean {
+    return !this.is_awaiting_my_chance_reveal;
+  }
 
   getChain(): Chain {
     return Chain.fromChainID(this.chain_id);
