@@ -14,6 +14,13 @@ export function useCoinflipGameWallet(
   const [wallet, setWallet] = useState<CoinflipGameWallet | null>(null);
   const [error, setError] = useState<CoinflipHTTPServiceError | null>(null);
 
+  const refresh = () => setShouldRefresh(true);
+
+  useEffect(() => {
+    if (params && wallet) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
   useEffect(() => {
     if (params && shouldRefresh) {
       const fetchController = new AbortController();
@@ -40,7 +47,7 @@ export function useCoinflipGameWallet(
 
   return {
     wallet,
-    refresh: () => setShouldRefresh(true),
+    refresh,
     isLoading,
     hasLoaded: wallet !== null && !error,
     error,
