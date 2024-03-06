@@ -79,7 +79,7 @@ export function CreateGameSection() {
     .addStep(
       ['chance'],
       <ChanceFormSection
-        proofOfChanceFileName={`coinflip-game-you-created-on-${currentChain!.getName()}`}
+        proofOfChanceFileName={`coinflip-game-you-created-on-${currentChain?.getName()}`}
         stepCount={stepCount}
         proofOfChance={proofOfChance}
         setProofOfChance={setProofOfChance}
