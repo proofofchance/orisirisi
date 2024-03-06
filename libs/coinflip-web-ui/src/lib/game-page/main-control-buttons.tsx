@@ -27,7 +27,7 @@ export function MainControlButtons({
     if (
       currentWeb3Account &&
       game.iHavePlayed() &&
-      game.iAmYetToUploadMyProof()
+      (game.isAwaitingPlayers() || game.iAmYetToUploadMyProof())
     ) {
       return (
         <UploadProofMainButton
