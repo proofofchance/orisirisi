@@ -91,7 +91,7 @@ export function GameProofModal() {
                     {shortenPublicAddress(player_address)}{' '}
                     {isMyAddress && <span>(You)</span>}
                   </div>
-                  <div className="bg-black text-white">
+                  <div className="bg-black text-white break-words">
                     {chance.replace(/ /g, '■')}
                   </div>
                   <div>{chance.length}</div>
