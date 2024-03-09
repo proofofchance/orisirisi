@@ -179,6 +179,14 @@ export class HTTPService {
     throw new Error(await response.text());
   }
 
+  static async keepIndexingActive() {
+    const endpointPath = `${HTTPService.baseHost}/keep_indexing_active_request/refresh`;
+
+    await fetch(endpointPath, {
+      method: 'POST',
+    });
+  }
+
   private static maybeReturnHTTPServiceError = async <Resource>(
     response: Response,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
