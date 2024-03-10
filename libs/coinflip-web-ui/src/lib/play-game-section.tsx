@@ -22,7 +22,11 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { COINFLIP_INDEXING_RATE_MS, CoinflipGame } from '@orisirisi/coinflip';
+import {
+  COINFLIP_INDEXING_RATE_MS,
+  CoinflipGame,
+  CoinflipHTTPService,
+} from '@orisirisi/coinflip';
 import { useEffect, useState } from 'react';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
@@ -93,6 +97,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
         message: 'Your proof of chance must be downloaded first.',
       });
     }
+    CoinflipHTTPService.keepIndexingActive();
 
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 

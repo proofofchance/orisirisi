@@ -38,7 +38,10 @@ import {
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { COINFLIP_INDEXING_RATE_MS } from '@orisirisi/coinflip';
+import {
+  COINFLIP_INDEXING_RATE_MS,
+  CoinflipHTTPService,
+} from '@orisirisi/coinflip';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
 
@@ -126,6 +129,8 @@ export function CreateGameSection() {
     expiryUnit,
     coinSide,
   }: CreateGameForm) => {
+    CoinflipHTTPService.keepIndexingActive();
+
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     // TODO: Do something with error here

@@ -17,7 +17,10 @@ import {
 } from '@orisirisi/orisirisi-web3';
 import { WalletsContract } from '@orisirisi/coinflip-contracts';
 import toast from 'react-hot-toast';
-import { COINFLIP_INDEXING_RATE_MS } from '@orisirisi/coinflip';
+import {
+  COINFLIP_INDEXING_RATE_MS,
+  CoinflipHTTPService,
+} from '@orisirisi/coinflip';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
 
 interface WalletBalanceButtonProps {
@@ -43,6 +46,8 @@ export function WalletBalanceButton({
   useOnClickOutside(ref, () => showMenu && setShowMenu(false));
 
   const withdrawWalletBalance = async () => {
+    CoinflipHTTPService.keepIndexingActive();
+
     const { ok: signer, error } = await currentWeb3Account!.getSigner();
 
     // TODO: Do something with error here
