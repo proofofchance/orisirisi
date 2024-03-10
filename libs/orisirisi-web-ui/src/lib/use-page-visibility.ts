@@ -20,5 +20,6 @@ export function usePageVisibility(
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [ignoreOnload, onPageVisible]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
