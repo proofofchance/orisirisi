@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import './styles.css';
@@ -10,7 +9,7 @@ import {
   MobileAugmentingNavigationBar,
 } from '@orisirisi/coinflip-web-ui';
 import { Toaster } from 'react-hot-toast';
-import { useIsClient } from '@orisirisi/orisirisi-web-ui';
+import { useIsClient, usePageVisibility } from '@orisirisi/orisirisi-web-ui';
 import { useDisconnectForUnsupportedChain } from '@orisirisi/orisirisi-web3-ui';
 import { CoinflipHTTPService } from '@orisirisi/coinflip';
 
@@ -18,21 +17,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
   const isClient = useIsClient();
   useDisconnectForUnsupportedChain();
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      const isAppVisibleToUser = !document.hidden;
-
-      if (isAppVisibleToUser) {
-        CoinflipHTTPService.keepIndexingActive();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
+  usePageVisibility(() => CoinflipHTTPService.keepIndexingActive());
 
   return (
     <>
