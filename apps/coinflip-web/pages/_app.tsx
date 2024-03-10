@@ -19,7 +19,19 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
   useDisconnectForUnsupportedChain();
 
   useEffect(() => {
-    CoinflipHTTPService.keepIndexingActive();
+    const handleVisibilityChange = () => {
+      const isAppVisibleToUser = !document.hidden;
+
+      if (isAppVisibleToUser) {
+        CoinflipHTTPService.keepIndexingActive();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (
