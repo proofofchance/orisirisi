@@ -97,7 +97,7 @@ export default function GamePage() {
       <MainControlButtons
         currentWeb3Account={currentWeb3Account}
         game={game}
-        className="fixed bottom-8 right-20"
+        className="fixed bottom-8 right-12"
       />
     </>
   );

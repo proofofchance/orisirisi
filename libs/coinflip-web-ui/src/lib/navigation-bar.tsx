@@ -102,7 +102,7 @@ export function MobileAugmentingNavigationBar({
         View Games
       </Link>
       {isNotConnected && <Tooltip id="create-game-link-tooltip" />}
-      {isClient && isNotConnected ? (
+      {isClient && isNotConnected && (
         <div
           className="cursor-not-allowed opacity-70 underline"
           data-tooltip-id="create-game-link-tooltip"
@@ -110,10 +110,6 @@ export function MobileAugmentingNavigationBar({
         >
           Create Game
         </div>
-      ) : (
-        <Link href="/create-game" className="mr-4 underline block md:hidden">
-          Create Game
-        </Link>
       )}
     </div>
   );

@@ -1,5 +1,9 @@
 import { CoinflipGame } from '@orisirisi/coinflip';
-import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import {
+  PropsWithClassName,
+  cn,
+  useIsMobile,
+} from '@orisirisi/orisirisi-web-ui';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import {
   ChevronDownIcon,
@@ -41,8 +45,9 @@ export function MainControlButtons({
   };
 
   const mainButton = getMainButton();
+  const isMobile = useIsMobile();
 
-  if (!mainButton) return null;
+  if (isMobile || !mainButton) return null;
 
   return (
     <div
