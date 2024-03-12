@@ -20,7 +20,7 @@ import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
 import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
-import { Chain, ChainExplorer } from '@orisirisi/orisirisi-web3-chains';
+import { ChainExplorer } from '@orisirisi/orisirisi-web3-chains';
 import { timeAgo } from '@orisirisi/orisirisi-data-utils';
 
 export function GameActivitiesView({

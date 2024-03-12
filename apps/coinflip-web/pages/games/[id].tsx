@@ -71,7 +71,7 @@ export default function GamePage() {
     <>
       <GameProofModal />
       <GamePlayProofModal />
-      <div className="px-8 md:px-20 lg:px-60 text-white mb-48">
+      <div className="px-1 md:px-20 lg:px-60 text-white mb-48">
         <div className="mt-4">
           <div className="flex justify-between mb-4">
             <h2 className="text-2xl">GAME #{id}</h2>
