@@ -19,7 +19,11 @@ import {
   parseInteger,
 } from '@orisirisi/orisirisi-data-utils';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
-import { useIsClient, useWindowTitle } from '@orisirisi/orisirisi-web-ui';
+import {
+  Loader,
+  useIsClient,
+  useWindowTitle,
+} from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 
 export default function GamePage() {
@@ -62,7 +66,8 @@ export default function GamePage() {
     replace('/games');
   }
 
-  if (!(maybeGame.hasLoaded && maybeGameActivities.hasLoaded)) return null;
+  if (!(maybeGame.hasLoaded && maybeGameActivities.hasLoaded))
+    return <Loader loadingText="Loading Game Activities..." />;
 
   const game = maybeGame.game!;
   const gameActivities = maybeGameActivities.gameActivities!;
