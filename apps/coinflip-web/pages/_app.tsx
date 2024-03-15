@@ -23,6 +23,29 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Proof of Chance - Coinflip</title>
+
+        <meta
+          name="description"
+          content="Coinflip P2P game powered by ProofOfChance's protocol"
+        />
+        <meta
+          name="keywords"
+          content="crypto, betting, protocol, gamblefi, proof, chance, transparent, zero-knowledge, zk"
+        />
+
+        <meta
+          property="og:title"
+          content="Play Coinflip with your ProofofChance"
+        />
+        <meta
+          property="og:description"
+          content="Coinflip P2P game powered by ProofOfChance's protocol"
+        />
+        <meta
+          property="og:image"
+          content="https://res.cloudinary.com/dfhulw5qx/image/upload/v1710545603/proofofchance/public/poc_logo.png"
+        />
+        <meta property="og:image:alt" content="ProofofChance's logo" />
       </Head>
 
       <main className="app">
