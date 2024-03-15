@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect } from 'react';
 import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import { CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
-import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import { Loader, PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import {
   GamesPageFilter,
   GamesPageForFilter,
@@ -37,7 +37,7 @@ export function GamesPage() {
     }
   }, [forFilter, currentWeb3Account, replace]);
 
-  if (!hasLoaded) return null;
+  if (!hasLoaded) return <Loader loadingText="Loading Games..." />;
 
   return (
     <div>
