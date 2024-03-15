@@ -41,7 +41,6 @@ describe('createGame', () => {
         const lessThanMinWager = parseEther(
           (CoinflipGame.getMinWagerEth() - 0.001).toString()
         );
-        console.log({ lessThanMinWager });
         await expect(
           coinflipContract.createGame(...createGameParams.toArgs(), {
             value: lessThanMinWager,
