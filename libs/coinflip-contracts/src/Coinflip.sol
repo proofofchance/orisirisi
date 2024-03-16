@@ -80,7 +80,7 @@ contract Coinflip is
     }
 
     /// @notice Updates min wager allowed
-    function updateMinWagerOfPlayers(uint minWager_) external onlyOwner {
+    function updateMinWagerPerGame(uint minWager_) external onlyOwner {
         minWager = minWager_;
     }
 
@@ -205,13 +205,21 @@ contract Coinflip is
     /// @param gameIDs game IDs of expired games
     function refundExpiredGamePlayersForAllGames(
         uint[] calldata gameIDs
-    ) external {
+    ) external onlyOwner {
         for (uint8 i; i < gameIDs.length; ) {
-            refundExpiredGamePlayers(gameIDs[i]);
+            _refundExpiredGamePlayers(gameIDs[i]);
             unchecked {
                 ++i;
             }
         }
+    }
+
+    /// @notice Refund wagers of an expired game to its players
+    /// @param gameID game ID of expired game
+    function refundExpiredGamePlayers(
+        uint gameID
+    ) public onlyOwner {
+        _refundExpiredGamePlayers(gameID)
     }
 
     function adjustExpiryForGame(
@@ -242,26 +250,6 @@ contract Coinflip is
         return address(this).balance;
     }
 
-    function refundExpiredGamePlayers(
-        uint gameID
-    ) private onlyOwner mustMatchGameStatus(gameID, Game.Status.Expired) {
-        address[] memory allPlayers = allPlayers[gameID];
-        uint16 allPlayersLength = uint16(allPlayers.length);
-        uint totalWager = wagers[gameID] * allPlayersLength;
-        (
-            uint refundAmountPerPlayer,
-            uint serviceChargeAmount
-        ) = getSplitAndServiceChargeAmounts(totalWager, allPlayersLength);
-        wallets.creditManyAndOne{value: totalWager}(
-            allPlayers,
-            refundAmountPerPlayer,
-            owner(),
-            serviceChargeAmount
-        );
-        setGameStatus(gameID, Game.Status.Concluded);
-        emit ExpiredGameRefunded(gameID, refundAmountPerPlayer);
-    }
-
     function creditGameWinners(
         uint gameID,
         address[] memory winners
@@ -279,6 +267,26 @@ contract Coinflip is
             serviceChargeAmount
         );
         return amountForEachPlayer;
+    }
+
+    function _refundExpiredGamePlayers(
+        uint gameID
+    ) private mustMatchGameStatus(gameID, Game.Status.Expired) {
+        address[] memory allPlayers = allPlayers[gameID];
+        uint16 allPlayersLength = uint16(allPlayers.length);
+        uint totalWager = wagers[gameID] * allPlayersLength;
+        (
+            uint refundAmountPerPlayer,
+            uint serviceChargeAmount
+        ) = getSplitAndServiceChargeAmounts(totalWager, allPlayersLength);
+        wallets.creditManyAndOne{value: totalWager}(
+            allPlayers,
+            refundAmountPerPlayer,
+            owner(),
+            serviceChargeAmount
+        );
+        setGameStatus(gameID, Game.Status.Concluded);
+        emit ExpiredGameRefunded(gameID, refundAmountPerPlayer);
     }
 
     function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
