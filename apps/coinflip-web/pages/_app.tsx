@@ -37,6 +37,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
           property="og:title"
           content="Play Coinflip with your ProofofChance"
         />
+        <meta property="og:type" content="website" />
         <meta
           property="og:description"
           content="Coinflip P2P game powered by ProofOfChance's protocol"
