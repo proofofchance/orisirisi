@@ -46,14 +46,14 @@ contract Wallets is UsingReentrancyGuard {
         address oneAccount,
         uint amountForOneAccount
     ) external payable {
-        uint16 manyAccountsLength = uint16(manyAccounts.length);
+        uint manyAccountsLength = manyAccounts.length;
         require(
             (amountForEachManyAccount * manyAccountsLength) +
                 amountForOneAccount ==
                 msg.value
         );
 
-        for (uint16 i; i < manyAccountsLength; ) {
+        for (uint i; i < manyAccountsLength; ) {
             _credit(manyAccounts[i], amountForEachManyAccount);
             unchecked {
                 ++i;
