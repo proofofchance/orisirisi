@@ -35,7 +35,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
 
         <meta
           property="og:title"
-          content="Play Coinflip with your ProofofChance"
+          content="Play Coinflip with your Proof of Chance"
         />
         <meta property="og:type" content="website" />
         <meta
