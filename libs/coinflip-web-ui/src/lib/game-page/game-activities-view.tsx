@@ -214,7 +214,9 @@ function GameProofOfChanceActivity({ game }: { game: CoinflipGame }) {
         proofOfChances={game.public_proof_of_chances!}
       />
 
-      <span className="text-xs self-end">{formatTime(new Date())}</span>
+      <span className="text-xs self-end">
+        {formatTime(new Date(game.getCompletedAtMs()!))}
+      </span>
     </div>
   );
 }
