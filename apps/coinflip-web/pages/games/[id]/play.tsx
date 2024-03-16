@@ -55,7 +55,11 @@ export function PlayGame() {
     currentWeb3Provider &&
     currentWeb3Account?.getBalance(currentWeb3Provider).then((myBalance) => {
       if (myBalance && myBalance < game.wager) {
-        dispatchErrorToastRequest('ChainID needs to specified!');
+        dispatchErrorToastRequest(
+          `Insufficient balance. You need ${game.wager} ${Chain.fromChainID(
+            game.chain_id
+          ).getCurrency()} to play`
+        );
         replace(gamePath!);
       }
     });
