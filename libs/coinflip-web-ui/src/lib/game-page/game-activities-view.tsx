@@ -19,7 +19,6 @@ import { shortenPublicAddress } from '../data-utils';
 import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
-import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
 import { ChainExplorer } from '@orisirisi/orisirisi-web3-chains';
 import { timeAgo } from '@orisirisi/orisirisi-data-utils';
 
@@ -36,11 +35,8 @@ export function GameActivitiesView({
     if (game.isCompleted())
       return (
         <>
-          <GameOutcomeActivity gameOutcome={game.outcome!} />
-          <GameProofOfChanceActivity
-            gameId={game.id}
-            proofOfChances={game.public_proof_of_chances!}
-          />
+          <GameOutcomeActivity game={game} />
+          <GameProofOfChanceActivity game={game} />
         </>
       );
 
@@ -194,30 +190,29 @@ function WonOrLostCard({
   );
 }
 
-function GameOutcomeActivity({ gameOutcome }: { gameOutcome: CoinSide }) {
+function GameOutcomeActivity({ game }: { game: CoinflipGame }) {
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
       <h3 className="text-xl">Game Outcome</h3>
-      <Coin className="self-center" side={gameOutcome} />
-      <span className="text-xs self-end">{formatTime(new Date())}</span>
+      <Coin className="self-center" side={game.outcome} />
+      <span className="text-xs self-end">
+        {formatTime(new Date(game.getCompletedAtMs()!))}
+      </span>
     </div>
   );
 }
 
-function GameProofOfChanceActivity({
-  gameId,
-  proofOfChances,
-}: {
-  gameId: number;
-  proofOfChances: PublicProofOfChance[];
-}) {
+function GameProofOfChanceActivity({ game }: { game: CoinflipGame }) {
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
       <h3 className="text-lg mb-2">
         Game's Proof of Chance{' '}
         <span className="text-xs">(used to determine outcome)</span>
       </h3>
-      <GameProofOfChance gameId={gameId} proofOfChances={proofOfChances} />
+      <GameProofOfChance
+        gameId={game.id}
+        proofOfChances={game.public_proof_of_chances!}
+      />
 
       <span className="text-xs self-end">{formatTime(new Date())}</span>
     </div>
