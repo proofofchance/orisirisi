@@ -26,7 +26,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
 
         <meta
           name="description"
-          content="Coinflip - The world's first 100% transparent P2P betting game powered by ProofOfChance's protocol"
+          content="Coinflip - The world's first 100% transparent P2P betting game powered by ProofOfChance"
         />
         <meta
           name="keywords"
@@ -40,7 +40,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
         <meta property="og:type" content="website" />
         <meta
           property="og:description"
-          content="Coinflip - The world's first 100% transparent P2P betting game powered by ProofOfChance's protocol"
+          content="Coinflip - The world's first 100% transparent P2P betting game powered by ProofOfChance"
         />
         <meta
           property="og:image"
