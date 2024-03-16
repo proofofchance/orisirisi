@@ -30,7 +30,7 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
         />
         <meta
           name="keywords"
-          content="crypto, betting, protocol, gamblefi, proof, chance, transparent, zero-knowledge, zk"
+          content="web3, casino, crypto, betting, protocol, gamblefi, proof, chance, transparent, zero-knowledge, zk"
         />
 
         <meta
