@@ -216,10 +216,8 @@ contract Coinflip is
 
     /// @notice Refund wagers of an expired game to its players
     /// @param gameID game ID of expired game
-    function refundExpiredGamePlayers(
-        uint gameID
-    ) public onlyOwner {
-        _refundExpiredGamePlayers(gameID)
+    function refundExpiredGamePlayers(uint gameID) public onlyOwner {
+        _refundExpiredGamePlayers(gameID);
     }
 
     function adjustExpiryForGame(

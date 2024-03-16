@@ -110,8 +110,7 @@ export class Game {
     return game;
   }
 
-  // This calculated such that initial service percent, 2% is balances the min gas fee at that time
-  // The service charge per contract will then be adjusted as the gas prices aberrate
+  // Factors: server cost & rpc cost & service charge & gas prices
   static getMinWagerEth(chainId: ChainID = ChainID.Ethereum): number {
     switch (chainId) {
       case ChainID.Local:
