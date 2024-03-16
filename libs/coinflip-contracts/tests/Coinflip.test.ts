@@ -14,22 +14,40 @@ import { anyValue } from '@nomicfoundation/hardhat-chai-matchers/withArgs';
 import { time } from '@nomicfoundation/hardhat-network-helpers';
 
 describe('createGame', () => {
-  context('When using valid parameters', () => {
-    context('Number of players', () => {
-      it('requires at least number of coin sides', async () => {
-        const { coinflipContract } = await deployCoinflipContracts();
+  context('Number of players', () => {
+    it('requires at least 2 players respective the number of coin sides', async () => {
+      const { coinflipContract } = await deployCoinflipContracts();
 
-        const createGameParams = await CreateGameParams.new(coinflipContract);
+      const createGameParams = await CreateGameParams.new(coinflipContract);
 
-        await expect(
-          coinflipContract.createGame(
-            ...createGameParams.withNumberOfPlayers(1).toArgs(),
-            {
-              value: createGameParams.wager,
-            }
-          )
-        ).to.be.reverted;
-      });
+      await expect(
+        coinflipContract.createGame(
+          ...createGameParams.withNumberOfPlayers(1).toArgs(),
+          {
+            value: createGameParams.wager,
+          }
+        )
+      ).to.be.reverted;
+    });
+
+    it('reverts with MaxNumberOfPlayersError when it is exceeded', async () => {
+      const { coinflipContract } = await deployCoinflipContracts();
+
+      const createGameParams = await CreateGameParams.new(coinflipContract);
+
+      await expect(
+        coinflipContract.createGame(
+          ...createGameParams
+            .withNumberOfPlayers(CoinflipGame.maxNumberOfPlayers + 1)
+            .toArgs(),
+          {
+            value: createGameParams.wager,
+          }
+        )
+      ).to.be.revertedWithCustomError(
+        coinflipContract,
+        'MaxNumberOfPlayersError'
+      );
     });
 
     context('Game Wager', () => {
