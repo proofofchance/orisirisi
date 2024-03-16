@@ -15,7 +15,7 @@ export type ConcludedGameStatus = Exclude<
 
 export class Game {
   static minNumberOfPlayers = 2;
-  static maxNumberOfPlayers = 20;
+  static maxNumberOfPlayers = 120;
 
   public readonly proofOfChanceByPlayerAddress: Map<
     string,
