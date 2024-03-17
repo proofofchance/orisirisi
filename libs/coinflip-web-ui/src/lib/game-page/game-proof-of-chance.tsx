@@ -50,8 +50,9 @@ export function GameProofModal() {
   if (!modalProps) return null;
 
   const [gameId, proofs] = modalProps;
+  const showWhiteSpaceHint = proofs.some((p) => p.chance.includes(' '));
 
-  const headers = ["Player's Address", 'Chance', 'Chance length'];
+  const headers = ['Players', 'Chance', 'Length'];
   const totalChanceLength = RevealedProofOfChance.countAllChances(proofs);
   const totalChanceLengthIsEven = totalChanceLength % 2 === 0;
 
@@ -67,6 +68,7 @@ export function GameProofModal() {
         <p className="text-sm">
           If total chance length is an <b>EVEN NUMBER</b>, the outcome is{' '}
           <b>HEAD</b>. If it is an <b>ODD NUMBER</b>, the outcome is <b>TAIL</b>
+          .
         </p>
         <div className="mt-2 text-sm">
           <div
@@ -91,8 +93,10 @@ export function GameProofModal() {
                     {shortenPublicAddress(player_address)}{' '}
                     {isMyAddress && <span>(You)</span>}
                   </div>
-                  <div className="bg-black text-white break-words">
-                    {chance.replace(/ /g, '■')}
+                  <div className="text-white break-words">
+                    <span className="bg-black">
+                      {chance.replace(/ /g, '■')}
+                    </span>
                   </div>
                   <div>{chance.length}</div>
                 </div>
@@ -112,6 +116,11 @@ export function GameProofModal() {
             </div>
           </div>
           <hr />
+          {showWhiteSpaceHint && (
+            <p className="mt-4 text-xs">
+              <i>N/B: A white box represents a white space</i>
+            </p>
+          )}
 
           <p id="game-proof-modal--conclusion" className="mt-6">
             Since the total chance length, <b>{totalChanceLength}</b>, is an{' '}

@@ -329,40 +329,6 @@ function GameStatusActivity({
   );
 }
 
-function SmallCopyButton({
-  copyText,
-  copyTip,
-  afterCopyMessage = 'Copied successfully!',
-}: {
-  copyText: string;
-  copyTip: string;
-  afterCopyMessage?: string;
-}) {
-  const copy = async () => {
-    await navigator.clipboard.writeText(copyText);
-
-    toast.success(afterCopyMessage, {
-      position: 'bottom-center',
-    });
-  };
-
-  const toolTipId = `copy-tip-about-${copyText}`;
-
-  return (
-    <>
-      <Tooltip id={toolTipId} />
-      <div
-        onClick={copy}
-        className="inline-block cursor-pointer"
-        data-tooltip-id={toolTipId}
-        data-tooltip-content={copyTip}
-      >
-        <DocumentDuplicateIcon className="h-4 w-4 relative top-[2px]" />
-      </div>
-    </>
-  );
-}
-
 function GameActivity({
   currentAccountAddress,
   gameActivity,
@@ -476,6 +442,40 @@ function GameActivity({
         </span>
       )}
     </div>
+  );
+}
+
+function SmallCopyButton({
+  copyText,
+  copyTip,
+  afterCopyMessage = 'Copied successfully!',
+}: {
+  copyText: string;
+  copyTip: string;
+  afterCopyMessage?: string;
+}) {
+  const copy = async () => {
+    await navigator.clipboard.writeText(copyText);
+
+    toast.success(afterCopyMessage, {
+      position: 'bottom-center',
+    });
+  };
+
+  const toolTipId = `copy-tip-about-${copyText}`;
+
+  return (
+    <>
+      <Tooltip id={toolTipId} />
+      <div
+        onClick={copy}
+        className="inline-block cursor-pointer"
+        data-tooltip-id={toolTipId}
+        data-tooltip-content={copyTip}
+      >
+        <DocumentDuplicateIcon className="h-4 w-4 relative top-[2px]" />
+      </div>
+    </>
   );
 }
 
