@@ -2,7 +2,7 @@ import { Crypto, Hashes } from '@orisirisi/orisirisi-data-utils';
 import { AbiCoder } from 'ethers';
 
 type HexString = `0x${string}`;
-export class PublicProofOfChance {
+export class RevealedProofOfChance {
   public readonly chance: string;
   public readonly salt: string;
   private constructor(
@@ -22,10 +22,10 @@ export class PublicProofOfChance {
   getColor(gameId: number) {
     const first4Digits = this.player_address.substring(0, 6);
     const consistentColorIndex =
-      (Number(first4Digits) + gameId) % PublicProofOfChance.colors.length;
-    return PublicProofOfChance.colors[consistentColorIndex];
+      (Number(first4Digits) + gameId) % RevealedProofOfChance.colors.length;
+    return RevealedProofOfChance.colors[consistentColorIndex];
   }
-  static sumCharactersOfChances = (pocs: PublicProofOfChance[]) =>
+  static sumCharactersOfChances = (pocs: RevealedProofOfChance[]) =>
     pocs.reduce((countSoFar, poc) => countSoFar + poc.chance.length, 0);
   static combinedColor = '#fff';
   private static colors: `#${string}`[] = [
@@ -44,15 +44,15 @@ export class PublicProofOfChance {
     '#2969FF',
   ];
   static manyfromJSON(
-    manyJson: PublicProofOfChance[] | null
-  ): PublicProofOfChance[] | null {
+    manyJson: RevealedProofOfChance[] | null
+  ): RevealedProofOfChance[] | null {
     if (!manyJson) return null;
-    return manyJson.map(PublicProofOfChance.fromJSON);
+    return manyJson.map(RevealedProofOfChance.fromJSON);
   }
-  static fromJSON(json: PublicProofOfChance): PublicProofOfChance {
-    return new PublicProofOfChance(json.player_address, json.chance_and_salt);
+  static fromJSON(json: RevealedProofOfChance): RevealedProofOfChance {
+    return new RevealedProofOfChance(json.player_address, json.chance_and_salt);
   }
-  static countAllChances = (pocs: PublicProofOfChance[]) =>
+  static countAllChances = (pocs: RevealedProofOfChance[]) =>
     pocs.reduce((countSoFar, poc) => countSoFar + poc.chance.length, 0);
 }
 

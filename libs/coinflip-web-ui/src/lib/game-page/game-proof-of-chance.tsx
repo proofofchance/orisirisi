@@ -1,4 +1,4 @@
-import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
+import { RevealedProofOfChance } from '@orisirisi/proof-of-chance';
 import { DocumentIcon } from '@heroicons/react/24/solid';
 import { atom, useAtom } from 'jotai';
 import { Modal } from '../modals';
@@ -10,7 +10,7 @@ export function GameProofOfChance({
   proofOfChances,
 }: {
   gameId: number;
-  proofOfChances: PublicProofOfChance[];
+  proofOfChances: RevealedProofOfChance[];
 }) {
   const { openModal } = useGameProofModal();
 
@@ -19,7 +19,7 @@ export function GameProofOfChance({
       <DocumentIcon
         onClick={() => openModal(gameId, proofOfChances)}
         style={{
-          color: PublicProofOfChance.combinedColor,
+          color: RevealedProofOfChance.combinedColor,
         }}
         className="h-20 hover:h-24 transition duration-150 ease-in-out"
       />
@@ -29,11 +29,11 @@ export function GameProofOfChance({
 }
 
 const gameProofModal = atom<
-  [gameId: number, proofs: PublicProofOfChance[]] | null
+  [gameId: number, proofs: RevealedProofOfChance[]] | null
 >(null);
 function useGameProofModal() {
   const [modalProps, setModalProps] = useAtom(gameProofModal);
-  const openModal = (gameId: number, proofs: PublicProofOfChance[]) =>
+  const openModal = (gameId: number, proofs: RevealedProofOfChance[]) =>
     setModalProps([gameId, proofs]);
   const closeModal = () => setModalProps(null);
   return {
@@ -52,7 +52,7 @@ export function GameProofModal() {
   const [gameId, proofs] = modalProps;
 
   const headers = ["Player's Address", 'Chance', 'Chance length'];
-  const totalChanceLength = PublicProofOfChance.countAllChances(proofs);
+  const totalChanceLength = RevealedProofOfChance.countAllChances(proofs);
   const totalChanceLengthIsEven = totalChanceLength % 2 === 0;
 
   return (

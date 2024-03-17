@@ -1,5 +1,5 @@
 import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
-import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
+import { RevealedProofOfChance } from '@orisirisi/proof-of-chance';
 import { CoinSide } from './coin';
 
 export type GameStatus =
@@ -17,9 +17,9 @@ export class Game {
   static minNumberOfPlayers = 2;
   static maxNumberOfPlayers = 120;
 
-  public readonly proofOfChanceByPlayerAddress: Map<
+  public readonly revealedProofOfChanceByPlayerAddress: Map<
     string,
-    PublicProofOfChance
+    RevealedProofOfChance
   > = new Map();
 
   private constructor(
@@ -35,7 +35,7 @@ export class Game {
     public unavailable_coin_side: CoinSide | null,
     public is_awaiting_my_chance_reveal: boolean | null,
     public my_game_play_id: number | null,
-    public public_proof_of_chances: PublicProofOfChance[] | null,
+    public revealed_proof_of_chances: RevealedProofOfChance[] | null,
     public outcome: CoinSide | null,
     public completed_at: number | null,
     public game_plays: GamePlay[] | null,
@@ -69,8 +69,8 @@ export class Game {
   getCompletedAtMs = () =>
     this.completed_at ? this.completed_at * 1000 : null;
 
-  getProofOfChanceByPlayerAddress = (playerAddress: string) =>
-    this.proofOfChanceByPlayerAddress.get(playerAddress) || null;
+  getRevealedProofOfChanceByPlayerAddress = (playerAddress: string) =>
+    this.revealedProofOfChanceByPlayerAddress.get(playerAddress) || null;
 
   getGamePlayByPlayerAddress = (playerAddress: string) =>
     this.game_plays?.find(
@@ -100,11 +100,11 @@ export class Game {
   static fromJSON(json: Game): Game {
     // @ts-ignore
     const game = Object.assign(new Game(), json);
-    game.public_proof_of_chances = PublicProofOfChance.manyfromJSON(
-      game.public_proof_of_chances
+    game.revealed_proof_of_chances = RevealedProofOfChance.manyfromJSON(
+      game.revealed_proof_of_chances
     );
-    game.public_proof_of_chances?.forEach((poc) =>
-      game.proofOfChanceByPlayerAddress.set(poc.player_address, poc)
+    game.revealed_proof_of_chances?.forEach((poc) =>
+      game.revealedProofOfChanceByPlayerAddress.set(poc.player_address, poc)
     );
     game.game_plays = GamePlay.manyFromJSON(game.game_plays);
     return game;

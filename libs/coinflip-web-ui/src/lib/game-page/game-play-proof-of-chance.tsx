@@ -1,4 +1,4 @@
-import { PublicProofOfChance } from '@orisirisi/proof-of-chance';
+import { RevealedProofOfChance } from '@orisirisi/proof-of-chance';
 import { shortenPublicAddress } from '../data-utils';
 import { DocumentIcon } from '@heroicons/react/24/solid';
 import { atom, useAtom } from 'jotai';
@@ -25,12 +25,12 @@ export function UnrevealedGamePlayProofOfChance({
   );
 }
 
-export function GamePlayProofOfChance({
+export function RevealedGamePlayProofOfChance({
   gameId,
   proofOfChance,
 }: {
   gameId: number;
-  proofOfChance: PublicProofOfChance;
+  proofOfChance: RevealedProofOfChance;
 }) {
   const { openModal } = useGamePlayProofModal();
 
@@ -50,10 +50,10 @@ export function GamePlayProofOfChance({
   );
 }
 
-const gamePlayProofModal = atom<PublicProofOfChance | null>(null);
+const gamePlayProofModal = atom<RevealedProofOfChance | null>(null);
 function useGamePlayProofModal() {
   const [proof, setProof] = useAtom(gamePlayProofModal);
-  const openModal = (proof: PublicProofOfChance) => setProof(proof);
+  const openModal = (proof: RevealedProofOfChance) => setProof(proof);
   const closeModal = () => setProof(null);
   return {
     showModal: !!proof,

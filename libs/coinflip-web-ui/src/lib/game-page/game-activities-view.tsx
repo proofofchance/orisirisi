@@ -12,7 +12,7 @@ import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tooltip } from 'react-tooltip';
 import {
-  GamePlayProofOfChance,
+  RevealedGamePlayProofOfChance,
   UnrevealedGamePlayProofOfChance,
 } from './game-play-proof-of-chance';
 import { shortenPublicAddress, shortenSHA256 } from '../data-utils';
@@ -101,9 +101,10 @@ export function GameActivitiesView({
       {topActivityView()}
 
       {gameActivities.map((gameActivity, i) => {
-        const maybeProofOfChance = game.getProofOfChanceByPlayerAddress(
-          gameActivity.trigger_public_address
-        );
+        const maybeRevealedProofOfChance =
+          game.getRevealedProofOfChanceByPlayerAddress(
+            gameActivity.trigger_public_address
+          );
 
         return (
           <div key={i}>
@@ -120,7 +121,7 @@ export function GameActivitiesView({
               }
             >
               {gameActivity.isGamePlayChanceRevealedKind() &&
-                !maybeProofOfChance && (
+                !maybeRevealedProofOfChance && (
                   <UnrevealedGamePlayProofOfChance
                     playerAddress={gameActivity.trigger_public_address}
                     data-tooltip-id="unrevealed-poc-tooltip"
@@ -128,10 +129,10 @@ export function GameActivitiesView({
                   />
                 )}
               {gameActivity.isGamePlayChanceRevealedKind() &&
-                maybeProofOfChance && (
-                  <GamePlayProofOfChance
+                maybeRevealedProofOfChance && (
+                  <RevealedGamePlayProofOfChance
                     gameId={game.id}
-                    proofOfChance={maybeProofOfChance!}
+                    proofOfChance={maybeRevealedProofOfChance!}
                   />
                 )}
             </GameActivity>
@@ -218,7 +219,7 @@ function GameProofOfChanceActivity({ game }: { game: CoinflipGame }) {
       </h3>
       <GameProofOfChance
         gameId={game.id}
-        proofOfChances={game.public_proof_of_chances!}
+        proofOfChances={game.revealed_proof_of_chances!}
       />
 
       <span className="text-xs self-end">
