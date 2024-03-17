@@ -402,9 +402,9 @@ function GameActivity({
 
     const proofOfChancePart = (
       <>
-        with ProofofChance:{' '}
+        with ProofofChance:
         <span
-          className="underline cursor-pointer"
+          className="cursor-pointer"
           data-tooltip-id="unshortened-proof-of-chance"
           data-tooltip-content={proofOfChance}
         >
