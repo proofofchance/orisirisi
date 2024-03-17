@@ -30,6 +30,7 @@ import {
 import { useEffect, useState } from 'react';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
+import { ServiceChargeInfo } from './create-game-section/service-charge-info';
 
 type PlayGameForm = CoinSideForm & ChanceForm;
 
@@ -147,7 +148,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
   if (!game) return null;
 
   return (
-    <div>
+    <div className="text-white">
       {!isFirstStep && <BackButton onClick={goToPreviousStep} />}
 
       <form onSubmit={formMethods.handleSubmit(playGame)}>
@@ -155,6 +156,9 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
           {formSteps.renderStep(stepCount)}
         </FormProvider>
 
+        {isLastStep && currentChain && (
+          <ServiceChargeInfo currentChain={currentChain} />
+        )}
         <div className="mt-16 w-100 text-center">
           <BottomNavigationButtons
             isFirstStep={isFirstStep}

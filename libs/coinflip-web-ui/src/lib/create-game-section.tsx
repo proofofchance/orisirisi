@@ -44,6 +44,7 @@ import {
 } from '@orisirisi/coinflip';
 import { ProofOfChance } from '@orisirisi/proof-of-chance';
 import { sleep } from '@orisirisi/orisirisi-data-utils';
+import { ServiceChargeInfo } from './create-game-section/service-charge-info';
 
 type CreateGameForm = WagerForm &
   NumberOfPlayersForm &
@@ -173,7 +174,7 @@ export function CreateGameSection() {
     }
   };
   return (
-    <div>
+    <div className="text-white">
       {!isFirstStep && <BackButton onClick={goToPreviousStep} />}
 
       <form onSubmit={formMethods.handleSubmit(createGame)}>
@@ -181,6 +182,9 @@ export function CreateGameSection() {
           {formSteps.renderStep(stepCount)}
         </FormProvider>
 
+        {isLastStep && currentChain && (
+          <ServiceChargeInfo currentChain={currentChain} />
+        )}
         <div className="mt-16 w-100 text-center">
           <BottomNavigationButtons
             isFirstStep={isFirstStep}

@@ -122,6 +122,18 @@ export class Game {
         return 10;
     }
   }
+
+  // Factors: server cost & gas prices
+  static getServiceChargePercent(chainId: ChainID): number {
+    switch (chainId) {
+      case ChainID.Local:
+      case ChainID.LocalAlt:
+      case ChainID.SepoliaTestNet:
+      case ChainID.Ethereum:
+      case ChainID.Polygon:
+        return 8;
+    }
+  }
 }
 
 export const formatUSD = (wager: number, minimumFractionDigits = 2) => {
