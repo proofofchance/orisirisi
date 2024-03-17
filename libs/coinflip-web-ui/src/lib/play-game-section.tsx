@@ -122,7 +122,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
 
       toast.dismiss(awaitingApprovalToastId);
 
-      const loadingToastId = toast.loading('Creating your Game Play', {
+      const loadingToastId = toast.loading('Placing your Bet', {
         position: 'bottom-right',
       });
 
