@@ -113,9 +113,11 @@ export function GameActivitiesView({
                 currentWeb3Account ? currentWeb3Account.getAddress() : null
               }
               gameActivity={gameActivity}
-              proofOfChance={game
-                .getGamePlayByPlayerAddress(gameActivity.trigger_public_address)
-                ?.getProofOfChance()}
+              proofOfChance={
+                game.getGamePlayByPlayerAddress(
+                  gameActivity.trigger_public_address
+                )?.proof_of_chance
+              }
             >
               {gameActivity.isGamePlayChanceRevealedKind() &&
                 !maybeProofOfChance && (

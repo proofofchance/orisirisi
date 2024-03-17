@@ -191,12 +191,10 @@ export class GamePlay {
     public game_id: number,
     public chain_id: number,
     public player_address: string,
-    private proof_of_chance: string,
+    public proof_of_chance: string,
     public chance_and_salt: string | null,
     public status: GamePlayStatus
   ) {}
-
-  getProofOfChance = () => `0x${this.proof_of_chance}`;
 
   static fromJSON(json: GamePlay): GamePlay {
     // @ts-ignore
