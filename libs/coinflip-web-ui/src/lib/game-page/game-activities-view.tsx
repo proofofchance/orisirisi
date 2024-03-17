@@ -15,12 +15,14 @@ import {
   GamePlayProofOfChance,
   UnrevealedGamePlayProofOfChance,
 } from './game-play-proof-of-chance';
-import { shortenPublicAddress } from '../data-utils';
+import { shortenPublicAddress, shortenSHA256 } from '../data-utils';
 import styled from 'styled-components';
 import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
 import { GameProofOfChance } from './game-proof-of-chance';
 import { ChainExplorer } from '@orisirisi/orisirisi-web3-chains';
 import { timeAgo } from '@orisirisi/orisirisi-data-utils';
+import { DocumentDuplicateIcon } from '@heroicons/react/24/solid';
+import toast from 'react-hot-toast';
 
 export function GameActivitiesView({
   gameActivities,
@@ -111,6 +113,9 @@ export function GameActivitiesView({
                 currentWeb3Account ? currentWeb3Account.getAddress() : null
               }
               gameActivity={gameActivity}
+              proofOfChance={game
+                .getGamePlayByPlayerAddress(gameActivity.trigger_public_address)
+                ?.getProofOfChance()}
             >
               {gameActivity.isGamePlayChanceRevealedKind() &&
                 !maybeProofOfChance && (
@@ -314,17 +319,57 @@ function GameStatusActivity({
   );
 }
 
+function SmallCopyButton({
+  copyText,
+  copyTip,
+  afterCopyMessage = 'Copied successfully!',
+}: {
+  copyText: string;
+  copyTip: string;
+  afterCopyMessage?: string;
+}) {
+  const copy = async () => {
+    await navigator.clipboard.writeText(copyText);
+
+    toast.success(afterCopyMessage, {
+      position: 'bottom-center',
+    });
+  };
+
+  const toolTipId = `copy-tip-about-${copyText}`;
+
+  return (
+    <>
+      <Tooltip id={toolTipId} />
+      <div
+        onClick={copy}
+        className="inline-block cursor-pointer"
+        data-tooltip-id={toolTipId}
+        data-tooltip-content={copyTip}
+      >
+        <DocumentDuplicateIcon className="h-4 w-4 relative top-[2px]" />
+      </div>
+    </>
+  );
+}
+
 function GameActivity({
   currentAccountAddress,
   gameActivity,
   children,
+  proofOfChance,
 }: {
   currentAccountAddress: string | null;
   gameActivity: CoinflipGameActivity;
+  proofOfChance?: string;
 } & PropsWithChildren) {
   const triggerPublicAddress = shortenPublicAddress(
     gameActivity.trigger_public_address
   );
+  const shortenedProofOfChance = proofOfChance
+    ? shortenSHA256(proofOfChance)
+    : null;
+
   const triggerIsMe =
     currentAccountAddress === gameActivity.trigger_public_address;
 
@@ -335,7 +380,7 @@ function GameActivity({
       case 'game_play_created':
         return getGamePlayCreatedReport();
       case 'game_play_chance_revealed':
-        return getPlayChanceCreatedReport();
+        return getPlayChanceUploadedReport();
       default:
         throw new Error(`Unknown game activity kind ${gameActivity.kind}`);
     }
@@ -353,13 +398,38 @@ function GameActivity({
       gameActivity.getPlayCreatedData().coin_side
     );
 
+    const proofOfChancePart = (
+      <>
+        with ProofofChance:{' '}
+        <span
+          className="underline cursor-pointer"
+          data-tooltip-id="unshortened-proof-of-chance"
+          data-tooltip-content={proofOfChance}
+        >
+          {shortenedProofOfChance}
+        </span>{' '}
+        <SmallCopyButton
+          copyText={proofOfChance!}
+          copyTip="Copy ProofofChance"
+        />
+      </>
+    );
+
     if (triggerIsMe) {
-      return `You predict ${coinSide}`;
+      return (
+        <>
+          You predict {coinSide} {proofOfChancePart}
+        </>
+      );
     }
-    return `Player:${triggerPublicAddress} predicts ${coinSide}`;
+    return (
+      <>
+        Player:{triggerPublicAddress} predicts {coinSide} {proofOfChancePart}
+      </>
+    );
   };
 
-  const getPlayChanceCreatedReport = () => {
+  const getPlayChanceUploadedReport = () => {
     if (triggerIsMe) {
       return 'You uploaded your proof of chance';
     }
@@ -372,7 +442,8 @@ function GameActivity({
 
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all my-2">
-      <p className="pb-4">{getReport()}</p>
+      <Tooltip id="unshortened-proof-of-chance" />
+      <p className="pb-4 break-words">{getReport()}</p>
       {children}
       {gameActivity.transaction_hash ? (
         <div className="flex mt-2 justify-between">
