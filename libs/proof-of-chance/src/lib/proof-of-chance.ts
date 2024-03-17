@@ -7,7 +7,7 @@ export class RevealedProofOfChance {
   public readonly salt: string;
   private constructor(
     public readonly player_address: HexString,
-    public readonly chance_and_salt: HexString,
+    private readonly chance_and_salt: HexString,
     public readonly proof_of_chance: string
   ) {
     const [chance, salt] = AbiCoder.defaultAbiCoder().decode(
@@ -19,6 +19,9 @@ export class RevealedProofOfChance {
   }
   async getProofOfChance() {
     return await buildProofOfChance(this.chance_and_salt);
+  }
+  getChanceAndSalt() {
+    return this.chance_and_salt.slice(2);
   }
   getColor(gameId: number) {
     const first4Digits = this.player_address.substring(0, 6);
