@@ -8,7 +8,11 @@ import {
   coinSideToString,
   formatUSD,
 } from '@orisirisi/coinflip';
-import { ArrowLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownLeftIcon,
+  ArrowLeftIcon,
+  ChevronUpIcon,
+} from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tooltip } from 'react-tooltip';
 import {
@@ -296,7 +300,10 @@ function GameStatusActivity({
         return [
           <>
             Awaiting participating players. Play or share this game in your
-            network (<ArrowLeftIcon className="h-4 w-4" />)
+            network
+            <span>
+              (<ArrowDownLeftIcon className="h-4 w-4" />)
+            </span>
           </>,
           formatTime(new Date()),
         ];
