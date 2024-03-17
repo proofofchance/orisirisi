@@ -67,7 +67,7 @@ export function ExpiryFormSection({ onSubmit }: { onSubmit?: () => void }) {
     <FormSectionShell title="Set Game Expiry">
       <TipCard
         className="md:400px"
-        tip="This game will expire if other players do not participate fully before the time limit specified here. No worries, wagers get refunded automatically."
+        tip="Wagers are refunded if other players do not participate fully before the time expiry limit specified here"
       />
 
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">

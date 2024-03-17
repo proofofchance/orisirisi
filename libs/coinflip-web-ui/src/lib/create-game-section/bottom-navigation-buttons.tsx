@@ -80,7 +80,7 @@ export function BottomNavigationButtons({
 
       {isLastStep && (
         <BottomNavigationButton type="submit" {...remainingProps} active>
-          Submit
+          Place Bet
         </BottomNavigationButton>
       )}
     </>

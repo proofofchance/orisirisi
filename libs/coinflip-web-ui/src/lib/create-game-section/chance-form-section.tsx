@@ -116,7 +116,7 @@ export function ChanceFormSection({
         <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full">
           <TextInput
             autoComplete="off"
-            placeholder={`I am about to get lucky`}
+            placeholder={`Feelin' lucky`}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 maybeSubmit();

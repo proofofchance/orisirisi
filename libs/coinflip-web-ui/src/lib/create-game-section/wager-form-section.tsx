@@ -65,7 +65,7 @@ export function WagerFormSection({ onSubmit }: Props) {
     <FormSectionShell title="How much would you like to bet?">
       <TipCard
         className="md:w-[480px]"
-        tip="Other participating players will be required to equally stake the amount specified here."
+        tip="Other participating players will be required to equally bet the amount specified here."
       />
       <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full px-2">
         <DecimalInput
