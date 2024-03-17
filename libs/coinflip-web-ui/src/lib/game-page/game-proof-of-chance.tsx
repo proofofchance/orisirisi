@@ -118,7 +118,7 @@ export function GameProofModal() {
           <hr />
           {showWhiteSpaceHint && (
             <p className="mt-4 text-xs">
-              <i>N/B: A white box represents a white space</i>
+              <i>N/B: White box depicts white space</i>
             </p>
           )}
 
