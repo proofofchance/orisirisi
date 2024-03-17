@@ -409,7 +409,7 @@ function GameActivity({
           data-tooltip-content={proofOfChance}
         >
           {shortenedProofOfChance}
-        </span>{' '}
+        </span>
         <SmallCopyButton
           copyText={proofOfChance!}
           copyTip="Copy ProofofChance"
