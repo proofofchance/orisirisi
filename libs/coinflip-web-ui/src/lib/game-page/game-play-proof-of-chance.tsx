@@ -97,7 +97,7 @@ export function GamePlayProofModal() {
             - For EVM reasons, before generating the proof of chance, we ABI
             encode the chance and salt with{' '}
             <a
-              href="https://github.com/proofofchance/orisirisi/blob/main/libs/proof-of-chance/src/lib/proof-of-chance.ts#L111"
+              href="https://github.com/proofofchance/orisirisi/blob/main/libs/proof-of-chance/src/lib/proof-of-chance.ts#L115"
               target="_blank"
               rel="noreferrer"
               className="underline"
