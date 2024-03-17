@@ -8,7 +8,7 @@ import {
   coinSideToString,
   formatUSD,
 } from '@orisirisi/coinflip';
-import { ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tooltip } from 'react-tooltip';
 import {
@@ -294,7 +294,10 @@ function GameStatusActivity({
     switch (status) {
       case 'awaiting_players':
         return [
-          'Awaiting participating players. Play or share this game in your network.',
+          <>
+            Awaiting participating players. Play or share this game in your
+            network (<ArrowLeftIcon className="h-4 w-4" />)
+          </>,
           formatTime(new Date()),
         ];
       case 'expired':
