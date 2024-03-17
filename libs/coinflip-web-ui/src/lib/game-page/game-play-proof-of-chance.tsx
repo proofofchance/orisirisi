@@ -135,8 +135,8 @@ function SmallCopyButton({
   };
 
   return (
-    <div onClick={copy} className="inline-block cursor-pointer">
+    <span onClick={copy} className="inline-block cursor-pointer">
       <DocumentDuplicateIcon className="h-4 w-4 relative top-[2px]" />
-    </div>
+    </span>
   );
 }

@@ -467,14 +467,14 @@ function SmallCopyButton({
   return (
     <>
       <Tooltip id={toolTipId} />
-      <div
+      <span
         onClick={copy}
         className="inline-block cursor-pointer"
         data-tooltip-id={toolTipId}
         data-tooltip-content={copyTip}
       >
         <DocumentDuplicateIcon className="h-4 w-4 relative top-[2px]" />
-      </div>
+      </span>
     </>
   );
 }
