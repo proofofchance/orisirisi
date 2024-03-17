@@ -94,8 +94,8 @@ export function GamePlayProofModal() {
             the player's chance (lucky words).
           </p>
           <p className="mt-4 break-words">
-            - For obscurity reasons, before generating the proof of chance, we
-            ABI encode the chance and salt with{' '}
+            - For EVM reasons, before generating the proof of chance, we ABI
+            encode the chance and salt with{' '}
             <a
               href="https://github.com/proofofchance/orisirisi/blob/main/libs/proof-of-chance/src/lib/proof-of-chance.ts#L111"
               target="_blank"
@@ -111,7 +111,7 @@ export function GamePlayProofModal() {
             - As shown in the player's play activity, this player played with a
             proof of chance: <b>{proof.proof_of_chance}</b>{' '}
             <SmallCopyButton copyText={proof.proof_of_chance} />, the SHA256
-            hash of the encoded chance and salt.
+            hash of the hexadecimal chance and salt (from above).
           </p>
         </div>
       </div>
