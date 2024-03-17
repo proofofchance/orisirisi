@@ -392,7 +392,7 @@ function GameActivity({
     if (triggerIsMe) {
       return 'You created this game';
     }
-    return `This game was created by ${triggerPublicAddress}`;
+    return `This game was created by Player:${triggerPublicAddress}`;
   };
 
   const getGamePlayCreatedReport = () => {
