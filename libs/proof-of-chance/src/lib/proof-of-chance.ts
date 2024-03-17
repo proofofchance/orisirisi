@@ -100,7 +100,7 @@ export class ProofOfChance {
   static fromFileContent(fileContent: string) {
     const chance = this.getFromFileContent(
       fileContent,
-      'Your chance in Hex format:'
+      'Your chance a.k.a your Lucky Charm:'
     );
     const salt = this.getFromFileContent(
       fileContent,
