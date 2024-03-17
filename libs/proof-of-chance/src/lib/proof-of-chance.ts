@@ -7,7 +7,8 @@ export class RevealedProofOfChance {
   public readonly salt: string;
   private constructor(
     public readonly player_address: HexString,
-    public readonly chance_and_salt: HexString
+    public readonly chance_and_salt: HexString,
+    public readonly proof_of_chance: string
   ) {
     const [chance, salt] = AbiCoder.defaultAbiCoder().decode(
       ['bytes16', 'bytes8'],
@@ -50,7 +51,11 @@ export class RevealedProofOfChance {
     return manyJson.map(RevealedProofOfChance.fromJSON);
   }
   static fromJSON(json: RevealedProofOfChance): RevealedProofOfChance {
-    return new RevealedProofOfChance(json.player_address, json.chance_and_salt);
+    return new RevealedProofOfChance(
+      json.player_address,
+      json.chance_and_salt,
+      json.proof_of_chance
+    );
   }
   static countAllChances = (pocs: RevealedProofOfChance[]) =>
     pocs.reduce((countSoFar, poc) => countSoFar + poc.chance.length, 0);
