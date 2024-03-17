@@ -62,7 +62,7 @@ export function WagerFormSection({ onSubmit }: Props) {
   };
 
   return (
-    <FormSectionShell title="How much do you want to stake?">
+    <FormSectionShell title="How much would you like to bet?">
       <TipCard
         className="md:w-[480px]"
         tip="Other participating players will be required to equally stake the amount specified here."
