@@ -58,7 +58,7 @@ export function GamesPage() {
   if (!hasLoaded) return <Loader loadingText="Loading Games..." />;
 
   return (
-    <div>
+    <div className="text-white">
       <GamesFiltersAndStats
         filter={{ forFilter }}
         currentWeb3Account={currentWeb3Account}
@@ -86,38 +86,44 @@ function GamesFiltersAndStats({
   totalPaidOutAmount: number;
 }) {
   return (
-    <div
-      className={cn(
-        'flex w-100 justify-between text-white my-4 items-center',
-        !currentWeb3Account && 'justify-center'
-      )}
-    >
-      {currentWeb3Account && (
-        <div className="flex w-60 justify-between">
-          <GamesForFilterButton
-            className="px-4 rounded-lg"
-            currentFilter={filter}
-            filter="all"
-          >
-            <RubikCubeIcon />
-            <span>All</span>
-          </GamesForFilterButton>
-          <GamesForFilterButton
-            className="px-4 rounded-lg"
-            currentFilter={filter}
-            filter="my_games"
-          >
-            <CurrencyDollarIcon className="h-5" />
-            <span>My Games</span>
-          </GamesForFilterButton>
-        </div>
-      )}
+    <>
+      <div
+        className={cn(
+          'flex w-100 justify-between text-white my-4 items-center',
+          !currentWeb3Account && 'justify-center'
+        )}
+      >
+        {currentWeb3Account && (
+          <div className="flex w-60 justify-between">
+            <GamesForFilterButton
+              className="px-4 rounded-lg"
+              currentFilter={filter}
+              filter="all"
+            >
+              <RubikCubeIcon />
+              <span>All</span>
+            </GamesForFilterButton>
+            <GamesForFilterButton
+              className="px-4 rounded-lg"
+              currentFilter={filter}
+              filter="my_games"
+            >
+              <CurrencyDollarIcon className="h-5" />
+              <span>My Games</span>
+            </GamesForFilterButton>
+          </div>
+        )}
 
-      <div className="text-sm hidden sm:block">
+        <div className="text-sm hidden sm:block">
+          Completed: <b>{totalCompletedCount}</b> - Total Paid Out:{' '}
+          <b>{formatUSD(totalPaidOutAmount)}</b>
+        </div>
+      </div>
+      <div className="text-sm block sm:hidden mb-4">
         Completed: <b>{totalCompletedCount}</b> - Total Paid Out:{' '}
         <b>{formatUSD(totalPaidOutAmount)}</b>
       </div>
-    </div>
+    </>
   );
 }
 function GamesForFilterButton({
