@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import {
-  ChainLogo,
+  CoinWithChainLogoAnimated,
   CopyGameLinkButton,
   ExploreOtherGamesView,
   GameActivitiesView,
@@ -80,8 +80,8 @@ export default function GamePage() {
         <div className="mt-4">
           <div className="flex justify-between mb-4">
             <h2 className="text-2xl">GAME #{id}</h2>
-            <div className="w-4">
-              <ChainLogo chain={game.getChain()} />
+            <div className="w-4 mr-6">
+              <CoinWithChainLogoAnimated chain={game.getChain()} />
             </div>
           </div>
           <GameDetails game={game} />

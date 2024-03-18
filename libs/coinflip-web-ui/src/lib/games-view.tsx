@@ -1,7 +1,7 @@
 import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
 import { GameExpiryCountdown, useGameExpiryCountdown } from './hooks';
 import { MagnifyingGlassInCloudIcon, StopWatchIcon } from './icons';
-import { ChainLogo } from './chain-logo';
+import { CoinWithChainLogoRarelyAnimated } from './chain-logo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
@@ -75,7 +75,7 @@ function GameCard({
         <div className="text-sm">#{game.id}</div>
 
         <div className="w-4">
-          <ChainLogo chain={game.getChain()} />
+          <CoinWithChainLogoRarelyAnimated chain={game.getChain()} />
         </div>
       </div>
 
