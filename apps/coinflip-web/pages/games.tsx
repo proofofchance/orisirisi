@@ -15,6 +15,7 @@ import {
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
+import { formatUSD } from '@orisirisi/coinflip';
 
 export function GamesPage() {
   const { currentWeb3Account } = useCurrentWeb3Account();
@@ -58,9 +59,11 @@ export function GamesPage() {
 
   return (
     <div>
-      <GamesFilterButtons
+      <GamesFiltersAndStats
         filter={{ forFilter }}
         currentWeb3Account={currentWeb3Account}
+        totalCompletedCount={paginatedGames!.total_completed_games_count}
+        totalPaidOutAmount={paginatedGames!.total_paid_out_amount}
       />
       <GamesView
         ref={lastGameViewElementRef}
@@ -71,17 +74,21 @@ export function GamesPage() {
   );
 }
 
-function GamesFilterButtons({
+function GamesFiltersAndStats({
   filter,
   currentWeb3Account,
+  totalCompletedCount,
+  totalPaidOutAmount,
 }: {
   filter: GamesPageFilter;
   currentWeb3Account: Web3Account | null;
+  totalCompletedCount: number;
+  totalPaidOutAmount: number;
 }) {
   return (
     <div
       className={cn(
-        'flex w-100 justify-between text-white my-4',
+        'flex w-100 justify-between text-white my-4 items-center',
         !currentWeb3Account && 'justify-center'
       )}
     >
@@ -105,6 +112,11 @@ function GamesFilterButtons({
           </GamesForFilterButton>
         </div>
       )}
+
+      <div className="text-sm hidden sm:block">
+        Completed: <b>{totalCompletedCount}</b> - Total Paid Out:{' '}
+        <b>{formatUSD(totalPaidOutAmount)}</b>
+      </div>
     </div>
   );
 }

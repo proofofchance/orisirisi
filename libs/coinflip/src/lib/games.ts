@@ -17,7 +17,8 @@ export class PaginatedGames {
   private constructor(
     public games: Game[],
     public total_completed_games_count: number,
-    public total_games_count: number
+    public total_games_count: number,
+    public total_paid_out_amount: number
   ) {}
 
   nextOffset = () => this.games.length;
@@ -26,7 +27,8 @@ export class PaginatedGames {
     return new PaginatedGames(
       [...this.games, ...paginatedGames.games],
       paginatedGames.total_completed_games_count,
-      paginatedGames.total_games_count
+      paginatedGames.total_games_count,
+      paginatedGames.total_paid_out_amount
     );
   }
 
