@@ -2,6 +2,7 @@ export * from './lib/coin';
 
 export {
   Game as CoinflipGame,
+  PaginatedGames as CoinflipPaginatedGames,
   GameActivity as CoinflipGameActivity,
   formatUSD,
   type GameStatus as CoinflipGameStatus,

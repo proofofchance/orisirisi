@@ -1,6 +1,12 @@
 import { Result } from '@orisirisi/orisirisi-error-handling';
 import { buildQueryString } from '@orisirisi/orisirisi-browser';
-import { Game, GameActivity, GameStatus, GameWallet } from './games';
+import {
+  Game,
+  GameActivity,
+  GameStatus,
+  GameWallet,
+  PaginatedGames,
+} from './games';
 import { NextEnvironments } from '@orisirisi/orisirisi';
 
 export interface FetchGamesParams {
@@ -9,6 +15,7 @@ export interface FetchGamesParams {
   id_to_ignore?: number;
   page_size?: number;
   chain_id_to_ignore?: number;
+  offset?: number;
 }
 
 export interface FetchGameParams {
@@ -54,7 +61,7 @@ export class HTTPService {
   static async fetchGames(
     params: FetchGamesParams,
     signal: AbortSignal
-  ): Promise<Game[]> {
+  ): Promise<PaginatedGames> {
     const queryString = buildQueryString(params as Record<string, string>);
     const response = await fetch(
       HTTPService.appendBaseUrl(`/games${queryString}`),
@@ -63,9 +70,9 @@ export class HTTPService {
       }
     );
 
-    const games = await response.json();
+    const paginatedGames = await response.json();
 
-    return Game.manyFromJSON(games);
+    return PaginatedGames.fromJSON(paginatedGames);
   }
   static async fetchGame(params: FetchGameParams, signal: AbortSignal) {
     let endpointPath = `/games/${params.id}/${params.chain_id}`;

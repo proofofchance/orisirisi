@@ -9,11 +9,12 @@ import {
   GamesView,
   RubikCubeIcon,
   useAuthErrorToastRequest,
-  useCoinflipGames,
+  useCoinflipPaginatedGames,
   useErrorToastRequest,
 } from '@orisirisi/coinflip-web-ui';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
+import { useInView } from 'react-intersection-observer';
 
 export function GamesPage() {
   const { currentWeb3Account } = useCurrentWeb3Account();
@@ -24,7 +25,15 @@ export function GamesPage() {
 
   const forFilter = (query.for ?? 'all') as GamesPageForFilter;
 
-  const { hasLoaded, games, isLoading } = useCoinflipGames({ forFilter });
+  const {
+    hasLoaded,
+    paginatedGames,
+    isLoading,
+    loadNextPage,
+    hasMore: paginatedGamesHasMore,
+  } = useCoinflipPaginatedGames({
+    forFilter,
+  });
 
   useEffect(() => {
     if (forFilter === 'my_games' && !currentWeb3Account) {
@@ -37,6 +46,14 @@ export function GamesPage() {
     }
   }, [forFilter, currentWeb3Account, replace]);
 
+  const [lastGameViewElementRef, inView] = useInView();
+
+  useEffect(() => {
+    if (inView && paginatedGamesHasMore) {
+      loadNextPage();
+    }
+  }, [inView, paginatedGamesHasMore, loadNextPage]);
+
   if (!hasLoaded) return <Loader loadingText="Loading Games..." />;
 
   return (
@@ -45,7 +62,11 @@ export function GamesPage() {
         filter={{ forFilter }}
         currentWeb3Account={currentWeb3Account}
       />
-      <GamesView games={games!} isLoading={isLoading} />
+      <GamesView
+        ref={lastGameViewElementRef}
+        games={paginatedGames!.games}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

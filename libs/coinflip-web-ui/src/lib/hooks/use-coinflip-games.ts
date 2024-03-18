@@ -3,6 +3,7 @@ import {
   CoinflipGameStatus,
   CoinflipHTTPService,
   CoinflipHTTPServiceError,
+  CoinflipPaginatedGames,
   FetchCoinflipGameParams,
   FetchCoinflipGamesParams,
 } from '@orisirisi/coinflip';
@@ -24,17 +25,29 @@ interface UseCoinflipGamesParams {
   pageSize?: number;
 }
 
-export function useCoinflipGames({
+export function useCoinflipPaginatedGames({
   forFilter,
   statusFilter,
   idToIgnore,
   pageSize,
 }: UseCoinflipGamesParams) {
   const { currentWeb3Account } = useCurrentWeb3Account();
+
+  const [shouldLoad, setShouldLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [games, setGames] = useState<CoinflipGame[] | null>(null);
+  const [paginatedGames, setPaginatedGames] =
+    useState<CoinflipPaginatedGames | null>(null);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
+    setPaginatedGames(null);
+    setShouldLoad(true);
+    setHasMore(false);
+  }, [forFilter, statusFilter, idToIgnore, pageSize]);
+
+  useEffect(() => {
+    if (!shouldLoad) return;
+
     const buildParams = (): FetchCoinflipGamesParams => {
       const chainIdToIgnore = FeatureFlags.showTestnets()
         ? undefined
@@ -44,6 +57,7 @@ export function useCoinflipGames({
         id_to_ignore: idToIgnore,
         page_size: pageSize,
         chain_id_to_ignore: chainIdToIgnore,
+        offset: paginatedGames ? paginatedGames.nextOffset() : 0,
       };
 
       if (forFilter === 'my_games') {
@@ -59,7 +73,16 @@ export function useCoinflipGames({
     if (forFilter === 'my_games' && !currentWeb3Account)
       return setIsLoading(false);
     CoinflipHTTPService.fetchGames(buildParams(), fetchController.signal)
-      .then((games) => setGames(games))
+      .then((newPaginatedGames) => {
+        setShouldLoad(false);
+        if (!newPaginatedGames) return;
+        if (!paginatedGames) {
+          setPaginatedGames(newPaginatedGames);
+        } else {
+          setPaginatedGames(paginatedGames.appendWith(newPaginatedGames));
+        }
+        setHasMore(!newPaginatedGames.isEmpty());
+      })
       .catch((error: unknown) => {
         if (!fetchController.signal.aborted) throw error;
       })
@@ -68,9 +91,23 @@ export function useCoinflipGames({
     return () => {
       fetchController.abort('STALE_COINFLIP_GAMES_REQUEST');
     };
-  }, [forFilter, statusFilter, idToIgnore, pageSize, currentWeb3Account]);
+  }, [
+    shouldLoad,
+    paginatedGames,
+    forFilter,
+    statusFilter,
+    idToIgnore,
+    pageSize,
+    currentWeb3Account,
+  ]);
 
-  return { games, isLoading, hasLoaded: games !== null };
+  return {
+    paginatedGames,
+    isLoading,
+    hasLoaded: paginatedGames !== null,
+    hasMore,
+    loadNextPage: () => paginatedGames && setShouldLoad(true),
+  };
 }
 
 export function useCoinflipGame(params: FetchCoinflipGameParams | null) {
