@@ -60,12 +60,6 @@ function GameCard({
   game: CoinflipGame;
   goToGamePage: (id: number, chain_id: number) => void;
 }) {
-  const gameExpiryCountdown = useGameExpiryCountdown(
-    game.getExpiryTimestampMs()
-  );
-
-  const showCountdown =
-    game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished();
   return (
     <Link
       href={`/games/${game.id}?chain=${game.getChain().getName()}`}
@@ -90,20 +84,7 @@ function GameCard({
             {game.wager} {game.getChain().getCurrency()}
           </h4>
         </div>
-        {showCountdown ? (
-          <div className="text-sm mt-4 flex gap-2 items-center">
-            <span className="h-4 w-4">
-              <StopWatchIcon />
-            </span>
-            <span>
-              <GameExpiryCountdown countdown={gameExpiryCountdown} />
-            </span>
-          </div>
-        ) : game.isExpired() || game.isCompleted() ? (
-          <div className="flex mt-4">
-            <GameStatusBadge gameStatus={game.status} />
-          </div>
-        ) : null}
+        <GameCardCountdown game={game} />
       </div>
 
       {false && (
@@ -123,6 +104,36 @@ function GameCard({
       )}
     </Link>
   );
+}
+
+function GameCardCountdown({ game }: { game: CoinflipGame }) {
+  const gameExpiryCountdown = useGameExpiryCountdown(
+    game.getExpiryTimestampMs()
+  );
+
+  const showCountdown =
+    game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished();
+
+  if (showCountdown) {
+    return (
+      <div className="text-sm mt-4 flex gap-2 items-center">
+        <span className="h-4 w-4">
+          <StopWatchIcon />
+        </span>
+        <span>
+          <GameExpiryCountdown countdown={gameExpiryCountdown} />
+        </span>
+      </div>
+    );
+  } else if (game.isExpired() || game.isCompleted()) {
+    return (
+      <div className="flex mt-4">
+        <GameStatusBadge gameStatus={game.status} />
+      </div>
+    );
+  } else {
+    return null;
+  }
 }
 
 function GamesEmptyView() {
