@@ -85,7 +85,7 @@ export function WalletBalanceButton({
     }
   };
   const menu = () => (
-    <div className="bg-white rounded-md text-black flex flex-col justify-center items-center p-1 absolute w-48 top-20">
+    <div className="bg-white rounded-md text-black flex flex-col justify-center items-center p-1 absolute z-10 w-48 top-20">
       {wallet!.isWithdrawable() && (
         <div
           onClick={withdrawWalletBalance}
