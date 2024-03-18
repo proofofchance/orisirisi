@@ -13,6 +13,31 @@ export type ConcludedGameStatus = Exclude<
   'awaiting_players' | 'awaiting_revealed_chances'
 >;
 
+export class PaginatedGames {
+  private constructor(
+    public games: Game[],
+    public total_completed_games_count: number,
+    public total_games_count: number
+  ) {}
+
+  nextOffset = () => this.games.length;
+  isEmpty = () => this.games.length === 0;
+  appendWith(paginatedGames: PaginatedGames) {
+    return new PaginatedGames(
+      [...this.games, ...paginatedGames.games],
+      paginatedGames.total_completed_games_count,
+      paginatedGames.total_games_count
+    );
+  }
+
+  static fromJSON(json: PaginatedGames): PaginatedGames {
+    // @ts-ignore
+    const paginatedGames = Object.assign(new PaginatedGames(), json);
+    paginatedGames.games = Game.manyFromJSON(paginatedGames.games);
+    return paginatedGames;
+  }
+}
+
 export class Game {
   static minNumberOfPlayers = 2;
   static maxNumberOfPlayers = 5_000;

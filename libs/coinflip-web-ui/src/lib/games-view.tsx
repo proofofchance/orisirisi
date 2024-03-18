@@ -4,18 +4,22 @@ import { MagnifyingGlassInCloudIcon, StopWatchIcon } from './icons';
 import { ChainLogo } from './chain-logo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { PropsWithClassName, cn } from '@orisirisi/orisirisi-web-ui';
+import {
+  PropsWithClassName,
+  SmallLoadingSpinner,
+  cn,
+} from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
 import { GameStatusBadge } from './game-status-badge';
+import { forwardRef } from 'react';
 
-export function GamesView({
-  games,
-  isLoading,
-  className,
-}: {
-  games: CoinflipGame[];
-  isLoading: boolean;
-} & PropsWithClassName) {
+export const GamesView = forwardRef<
+  HTMLDivElement | null,
+  {
+    games: CoinflipGame[];
+    isLoading: boolean;
+  } & PropsWithClassName
+>(({ games, isLoading, className }, lastGameViewElementRef) => {
   const { push } = useRouter();
 
   const goToGamePage = (id: number, chain_id: number) =>
@@ -37,9 +41,17 @@ export function GamesView({
           key={game.id + game.chain_id}
         />
       ))}
+      <div ref={lastGameViewElementRef}>
+        {isLoading && (
+          <SmallLoadingSpinner
+            className="mt-8"
+            loadingText="Loading more games..."
+          />
+        )}
+      </div>
     </div>
   );
-}
+});
 
 function GameCard({
   game,
