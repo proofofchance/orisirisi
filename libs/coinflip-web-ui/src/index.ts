@@ -1,3 +1,4 @@
+export * from './lib/back-buttons';
 export { Background } from './lib/background';
 export { NavigationBar, ConnectWalletOptionsModal } from './lib/navigation-bar';
 export * from './lib/social-links';

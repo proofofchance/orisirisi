@@ -31,15 +31,26 @@ export function CoinWithChainLogoRarelyAnimated({ chain }: { chain: Chain }) {
   );
 }
 
-export function CoinWithChainLogoAnimated({ chain }: { chain: Chain }) {
+export function CoinWithChainLogoAnimated({
+  chain,
+  size,
+}: {
+  chain: Chain;
+  size: 'sm' | 'lg';
+}) {
   return (
     <CoinShell
       axis={pickRandom(['X', 'Y'])}
       delay={pickRandom([4, 5, 6, 7, 8])}
       degree={pickRandom([360, 720, 1080, 1440])}
     >
-      <div className="h-10 w-10 rounded-full flex justify-center items-center bg-white animate-flip">
-        <div className="w-4">
+      <div
+        className={cn(
+          'h-10 w-10 rounded-full flex justify-center items-center bg-white animate-flip',
+          size === 'sm' && 'h-[22px] w-[22px]'
+        )}
+      >
+        <div className={cn('w-4', size === 'sm' && 'w-2')}>
           <ChainLogo chain={chain} />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormSteps } from './form-steps';
-import { BackButton } from './create-game-section/back-button';
+import { BackButton } from './back-buttons';
 import { BottomNavigationButtons } from './create-game-section/bottom-navigation-buttons';
 import {
   WagerForm,
@@ -175,7 +175,9 @@ export function CreateGameSection() {
   };
   return (
     <div className="text-white">
-      {!isFirstStep && <BackButton onClick={goToPreviousStep} />}
+      {!isFirstStep && (
+        <BackButton className="mt-6" onClick={goToPreviousStep} />
+      )}
 
       <form onSubmit={formMethods.handleSubmit(createGame)}>
         <FormProvider {...formMethods}>
