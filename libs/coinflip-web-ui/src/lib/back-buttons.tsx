@@ -20,11 +20,11 @@ export function BackButtonNoBorder({ className, ...props }: ButtonProps) {
     <button
       {...props}
       className={cn(
-        'rounded-lg text-white flex items-center hover:text-black focus:outline-none',
+        'px-2 py-1 rounded-lg text-white flex items-center hover:text-black focus:outline-none',
         className
       )}
     >
-      <ChevronLeftIcon className="h-4" />
+      <ChevronLeftIcon className="h-5" />
     </button>
   );
 }
