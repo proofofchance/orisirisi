@@ -6,7 +6,6 @@ import {
   Background,
   SocialLinks,
   NavigationBar,
-  MobileAugmentingNavigationBar,
 } from '@orisirisi/coinflip-web-ui';
 import { Toaster } from 'react-hot-toast';
 import { useIsClient, usePageVisibility } from '@orisirisi/orisirisi-web-ui';
@@ -24,6 +23,10 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Proof of Chance - Coinflip</title>
 
+        <meta
+          name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+        />
         <meta
           name="description"
           content="Coinflip - The world's first 100% transparent P2P betting game powered by ProofOfChance"
@@ -49,11 +52,10 @@ function CoinflipWebApp({ Component, pageProps }: AppProps) {
         <meta property="og:image:alt" content="ProofofChance's logo" />
       </Head>
 
-      <main className="app">
+      <main className="app font-[Poppins]">
         {isClient && <Toaster />}
         <Background className="px-12 sm:px-20">
           <NavigationBar className="py-4" />
-          <MobileAugmentingNavigationBar className="mt-2" />
           <SocialLinks />
           <Component {...pageProps} />
         </Background>

@@ -94,7 +94,7 @@ export function GamePlayProofModal() {
             the player's chance (lucky words).
           </p>
           <p className="mt-4 break-words">
-            - For EVM reasons, before generating the proof of chance, we ABI
+            - Because of the EVM, before generating the proof of chance, we ABI
             encode the chance and salt with{' '}
             <a
               href="https://github.com/proofofchance/orisirisi/blob/main/libs/proof-of-chance/src/lib/proof-of-chance.ts#L115"

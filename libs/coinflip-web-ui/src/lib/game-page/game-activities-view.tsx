@@ -83,14 +83,19 @@ export function GameActivitiesView({
 
   return (
     <>
-      <h3 className="text-2xl mt-8 mb-6">Activities</h3>
+      <h3 className="text-2xl text-center mt-6 tracking-wider curved-underscore">
+        Activities{' '}
+      </h3>
+      <div className="flex justify-center mb-6">
+        <div className="h-[2px] w-6 bg-white rounded-2xl border-none" />
+      </div>
 
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />
 
       {game.isRefunded() && (
         <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-2">
           <div className="flex flex-col items-center">
-            All participating players got refunded
+            All participating players got refunded.
           </div>
         </div>
       )}
@@ -153,7 +158,7 @@ function WonOrLostCard({
   const getWonOrLostContent = () => {
     if (gamePlayStatus === 'won') {
       return (
-        <>
+        <span className="text-lg">
           <span role="img" aria-label="congrats-text">
             Congrats 🎊
           </span>
@@ -167,18 +172,18 @@ function WonOrLostCard({
             </b>{' '}
             from this game.
           </span>
-        </>
+        </span>
       );
     } else if (gamePlayStatus === 'lost') {
       return (
-        <span className="text-lg" role="img" aria-label="lost-text">
+        <span role="img" aria-label="lost-text">
           Oh no! 😔 You lost this game. Better luck next time!
         </span>
       );
     }
 
     return (
-      <span>
+      <span className="text-center break-words">
         <span role="img" aria-label="congrats-text">
           🎊
         </span>{' '}
@@ -261,7 +266,7 @@ function Coin({
     >
       <div
         className={cn(
-          'bg-slate-400 w-14 h-14 flex justify-center items-center text-black rounded-full',
+          'bg-orange-600 w-14 h-14 flex justify-center items-center text-black rounded-full',
           isFlipping && 'animate-flip'
         )}
       >
