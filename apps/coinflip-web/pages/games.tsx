@@ -85,11 +85,13 @@ function GamesFiltersAndStats({
   totalCompletedCount: number;
   totalPaidOutAmount: number;
 }) {
+  const isDisconnected = !currentWeb3Account;
+
   return (
     <div
       className={cn(
         'flex w-100 md:justify-between justify-center flex-col md:flex-row text-white mt-4 items-center',
-        !currentWeb3Account && 'justify-center md:justify-center'
+        isDisconnected && 'justify-center md:justify-center'
       )}
     >
       {currentWeb3Account && (
@@ -102,6 +104,15 @@ function GamesFiltersAndStats({
             <CurrencyDollarIcon className="h-5" />
             <span>My Games</span>
           </GamesForFilterButton>
+        </div>
+      )}
+
+      {isDisconnected && (
+        <div className="block md:hidden">
+          <h3 className="text-2xl text-center tracking-wider">Games</h3>
+          <div className="flex justify-center">
+            <div className="h-[2px] w-10 bg-white rounded-2xl border-none" />
+          </div>
         </div>
       )}
 
