@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import {
+  BackButton,
+  BackButtonNoBorder,
   CoinWithChainLogoAnimated,
   CopyGameLinkButton,
   ExploreOtherGamesView,
@@ -22,9 +24,11 @@ import { useCurrentWeb3Account } from '@orisirisi/orisirisi-web3-ui';
 import {
   Loader,
   useIsClient,
+  useIsMobile,
   useWindowTitle,
 } from '@orisirisi/orisirisi-web-ui';
 import { Chain } from '@orisirisi/orisirisi-web3-chains';
+import { CoinflipGame } from '@orisirisi/coinflip';
 
 export default function GamePage() {
   const isClient = useIsClient();
@@ -78,15 +82,9 @@ export default function GamePage() {
       <GamePlayProofModal />
       <div className="px-1 md:px-20 lg:px-60 text-white mb-48">
         <div className="mt-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold tracking-wide font-[Poppins]">
-              GAME #{id}
-            </h2>
-            <div className="w-4 mr-6">
-              <CoinWithChainLogoAnimated chain={game.getChain()} />
-            </div>
-          </div>
-          <GameDetails className="mt-10" game={game} />
+          {isClient && <GameHeader game={game} />}
+
+          <GameDetails className="mt-4" game={game} />
         </div>
 
         <GameActivitiesView
@@ -107,5 +105,37 @@ export default function GamePage() {
         className="fixed bottom-8 right-12"
       />
     </>
+  );
+}
+
+function GameHeader({ game }: { game: CoinflipGame }) {
+  const isMobile = useIsMobile();
+  const { push } = useRouter();
+
+  if (isMobile) {
+    return (
+      <div>
+        <BackButtonNoBorder
+          className="absolute mt-[9px]"
+          onClick={() => push('/games')}
+        />
+        <div className="flex justify-center items-center gap-2">
+          <CoinWithChainLogoAnimated chain={game.getChain()} size="sm" />
+          <h2 className="text-2xl tracking-wider font-[Poppins]">
+            Game #{game.id}
+          </h2>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-2xl font-semibold tracking-wide font-[Poppins]">
+        GAME #{game.id}
+      </h2>
+      <div className="w-4 mr-6">
+        <CoinWithChainLogoAnimated size="lg" chain={game.getChain()} />
+      </div>
+    </div>
   );
 }

@@ -106,8 +106,7 @@ export function ChanceFormSection({
             The chance<i>(lucky word(s))</i> you type here will be mixed with
             the chances of other players' to determine the coinflip outcome.
             Basically, if the total number of letters of all chances is even,
-            the outcome will be Head, otherwise, Tail. Good luck!{' '}
-            <FaceSmileIcon className="h-4 mb-1 inline" />
+            the outcome will be Head, otherwise, Tail. Good luck! 🙂
           </span>
         }
       />

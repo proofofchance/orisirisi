@@ -83,9 +83,7 @@ export function GameActivitiesView({
 
   return (
     <>
-      <h3 className="text-2xl text-center mt-6 tracking-wider curved-underscore">
-        Activities{' '}
-      </h3>
+      <h3 className="text-2xl text-center mt-8 tracking-wider">Activities </h3>
       <div className="flex justify-center mb-6">
         <div className="h-[2px] w-6 bg-white rounded-2xl border-none" />
       </div>
@@ -308,11 +306,12 @@ function GameStatusActivity({
         return [
           <>
             Awaiting participating players. Play or share this game in your
-            network [
-            <span className="inline-block cursor-pointer">
-              <ArrowDownLeftIcon className="h-4 w-4 relative top-[3px]" />
-            </span>
-            ]
+            network{' '}
+            <SmallCopyButton
+              copyText={window.location.href}
+              copyTip="Copy Game Link"
+              afterCopyMessage="Game link copied successfully!"
+            />
           </>,
           formatTime(new Date()),
         ];
