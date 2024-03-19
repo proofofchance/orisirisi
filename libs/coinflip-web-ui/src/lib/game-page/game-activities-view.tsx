@@ -8,7 +8,7 @@ import {
   coinSideToString,
   formatCurrency,
 } from '@orisirisi/coinflip';
-import { ArrowDownLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import { Tooltip } from 'react-tooltip';
 import {

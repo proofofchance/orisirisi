@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 import {
-  BackButton,
   BackButtonNoBorder,
   CoinWithChainLogoAnimated,
   CopyGameLinkButton,
@@ -114,17 +113,14 @@ function GameHeader({ game }: { game: CoinflipGame }) {
 
   if (isMobile) {
     return (
-      <div>
-        <BackButtonNoBorder
-          className="absolute mt-[9px]"
-          onClick={() => push('/games')}
-        />
+      <div className="flex justify-between items-center">
+        <BackButtonNoBorder onClick={() => push('/games')} />
         <div className="flex justify-center items-center gap-2">
-          <CoinWithChainLogoAnimated chain={game.getChain()} size="sm" />
           <h2 className="text-2xl tracking-wider font-[Poppins]">
             Game #{game.id}
           </h2>
         </div>
+        <CoinWithChainLogoAnimated chain={game.getChain()} size="sm" />
       </div>
     );
   }

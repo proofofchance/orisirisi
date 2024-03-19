@@ -6,7 +6,6 @@ export function GameExpiryCountdown({ countdown }: { countdown: Countdown }) {
     <>
       {padDigit(countdown.daysLeft)}d : {padDigit(countdown.hoursLeft)}h :{' '}
       {padDigit(countdown.minutesLeft)}m : {padDigit(countdown.secondsLeft)}s
-      left
     </>
   );
 }

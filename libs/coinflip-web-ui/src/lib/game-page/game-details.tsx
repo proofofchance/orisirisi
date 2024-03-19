@@ -24,7 +24,7 @@ export function GameDetails({
       />
       {game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished() && (
         <GameDetailRow
-          label="Time left to participate"
+          label={isMobile ? 'Time Left' : 'Time Left to Participate'}
           detail={<GameExpiryCountdown countdown={gameExpiryCountdown} />}
         />
       )}

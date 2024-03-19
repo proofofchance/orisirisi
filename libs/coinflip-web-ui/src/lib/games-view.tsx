@@ -124,7 +124,7 @@ function GameCardCountdown({ game }: { game: CoinflipGame }) {
           <StopWatchIcon />
         </span>
         <span>
-          <GameExpiryCountdown countdown={gameExpiryCountdown} />
+          <GameExpiryCountdown countdown={gameExpiryCountdown} /> left
         </span>
       </div>
     );
