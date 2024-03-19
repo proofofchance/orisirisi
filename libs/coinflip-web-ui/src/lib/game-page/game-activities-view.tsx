@@ -85,7 +85,7 @@ export function GameActivitiesView({
     <>
       <h3 className="text-2xl text-center mt-8 tracking-wider">Activities </h3>
       <div className="flex justify-center mb-6">
-        <div className="h-[2px] w-6 bg-white rounded-2xl border-none" />
+        <div className="h-[2px] w-10 bg-white rounded-2xl border-none" />
       </div>
 
       <Tooltip id="unrevealed-poc-tooltip" place="bottom" />

@@ -20,7 +20,10 @@ export function ExploreOtherGamesView({
 
   return (
     <div className={cn('text-white mb-72', className)}>
-      <h3 className="text-2xl">Explore Other Ongoing Games</h3>
+      <h3 className="text-2xl text-center">Explore Other Games</h3>
+      <div className="flex justify-center mb-6">
+        <div className="h-[2px] w-12 bg-white rounded-2xl border-none" />
+      </div>
       <GamesView
         className="mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
         games={games}

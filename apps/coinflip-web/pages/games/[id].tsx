@@ -83,7 +83,7 @@ export default function GamePage() {
         <div className="mt-4">
           {isClient && <GameHeader game={game} />}
 
-          <GameDetails className="mt-4" game={game} />
+          <GameDetails className="mt-6" game={game} />
         </div>
 
         <GameActivitiesView
@@ -92,7 +92,7 @@ export default function GamePage() {
           currentWeb3Account={currentWeb3Account}
         />
 
-        <ExploreOtherGamesView gameId={game.id} className="mt-28" />
+        <ExploreOtherGamesView gameId={game.id} className="mt-16" />
       </div>
 
       {game.isAwaitingPlayers() && (
@@ -114,8 +114,11 @@ function GameHeader({ game }: { game: CoinflipGame }) {
   if (isMobile) {
     return (
       <div className="flex justify-between items-center">
-        <BackButtonNoBorder onClick={() => push('/games')} />
-        <div className="flex justify-center items-center gap-2">
+        <BackButtonNoBorder
+          className="relative right-4"
+          onClick={() => push('/games')}
+        />
+        <div className="flex justify-center items-center gap-2 relative right-4">
           <h2 className="text-2xl tracking-wider font-[Poppins]">
             Game #{game.id}
           </h2>
