@@ -163,17 +163,30 @@ export class Game {
   }
 }
 
-export const formatUSD = (wager: number, minimumFractionDigits = 2) => {
+export const formatCurrency = (
+  wager: number,
+  options: {
+    minimumFractionDigits?: number;
+    isCryptoCurrency?: boolean;
+    currency?: 'USD' & string;
+  } = {}
+) => {
+  const currency = options.currency || 'USD';
+
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
-
+    currency,
     // These options are needed to round to whole numbers if that's what you want.
-    minimumFractionDigits, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
   });
 
-  return formatter.format(wager);
+  let formatOutput = formatter.format(wager);
+  if (options.isCryptoCurrency) {
+    formatOutput = formatOutput.split(' ')[1];
+  }
+
+  return formatOutput;
 };
 
 interface GamePlayCreatedActivityData {

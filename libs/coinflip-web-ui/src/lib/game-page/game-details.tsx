@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { CoinflipGame, formatUSD } from '@orisirisi/coinflip';
+import { CoinflipGame, formatCurrency } from '@orisirisi/coinflip';
 import { GameExpiryCountdown, useGameExpiryCountdown } from '../hooks';
 
 export function GameDetails({ game }: { game: CoinflipGame }) {
@@ -12,9 +12,9 @@ export function GameDetails({ game }: { game: CoinflipGame }) {
     <div id="game-details-container">
       <GameDetailRow
         label="Wager"
-        detail={`${game.wager} ${gameChainCurrency} ~ USD ${formatUSD(
-          game.wager_usd
-        )}`}
+        detail={`${formatCurrency(game.wager, {
+          isCryptoCurrency: true,
+        })} ${gameChainCurrency}`}
       />
       {game.isNotCompleteYet() && gameExpiryCountdown.isNotFinished() && (
         <GameDetailRow
@@ -26,11 +26,8 @@ export function GameDetails({ game }: { game: CoinflipGame }) {
         label="Number of players"
         detail={`${game.total_players_required}`}
       />
-      {game.players_left > 0 && (
-        <GameDetailRow
-          label="Required Players For Completion"
-          detail={`${game.players_left}`}
-        />
+      {game.players_left > 0 && game.isAwaitingPlayers() && (
+        <GameDetailRow label="Players left" detail={`${game.players_left}`} />
       )}
     </div>
   );
