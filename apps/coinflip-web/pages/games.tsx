@@ -86,44 +86,30 @@ function GamesFiltersAndStats({
   totalPaidOutAmount: number;
 }) {
   return (
-    <>
-      <div
-        className={cn(
-          'flex w-100 justify-between text-white my-4 items-center',
-          !currentWeb3Account && 'justify-center'
-        )}
-      >
-        {currentWeb3Account && (
-          <div className="flex w-60 justify-between">
-            <GamesForFilterButton
-              className="px-4 rounded-lg"
-              currentFilter={filter}
-              filter="all"
-            >
-              <RubikCubeIcon />
-              <span>All</span>
-            </GamesForFilterButton>
-            <GamesForFilterButton
-              className="px-4 rounded-lg"
-              currentFilter={filter}
-              filter="my_games"
-            >
-              <CurrencyDollarIcon className="h-5" />
-              <span>My Games</span>
-            </GamesForFilterButton>
-          </div>
-        )}
-
-        <div className="text-sm hidden sm:block">
-          Completed: <b>{totalCompletedCount}</b> - Total Paid Out:{' '}
-          <b>{formatUSD(totalPaidOutAmount)}</b>
+    <div
+      className={cn(
+        'flex w-100 md:justify-between justify-center flex-col md:flex-row text-white my-4 items-center',
+        !currentWeb3Account && 'justify-center'
+      )}
+    >
+      {currentWeb3Account && (
+        <div className="flex w-[268px] md:w-60  justify-between">
+          <GamesForFilterButton currentFilter={filter} filter="all">
+            <RubikCubeIcon />
+            <span>All</span>
+          </GamesForFilterButton>
+          <GamesForFilterButton currentFilter={filter} filter="my_games">
+            <CurrencyDollarIcon className="h-5" />
+            <span>My Games</span>
+          </GamesForFilterButton>
         </div>
-      </div>
-      <div className="text-sm block sm:hidden mb-4">
-        Completed: <b>{totalCompletedCount}</b> - Total Paid Out:{' '}
+      )}
+
+      <div className="text-sm my-4 md:my-0">
+        Completed: <b>{totalCompletedCount}</b> | Total Paid Out:{' '}
         <b>{formatUSD(totalPaidOutAmount)}</b>
       </div>
-    </>
+    </div>
   );
 }
 function GamesForFilterButton({
@@ -150,7 +136,7 @@ function GamesForFilterButton({
         })
       }
       className={cn(
-        'flex items-center gap-2 p-1 pl-4',
+        'flex justify-center items-center gap-2 w-[128px] md:w-fit h-[32px] p-0 md:p-1 md:pl-4 md:px-4 rounded-lg text-center',
         filter === currentFilter.forFilter ? activeClass : inactiveClass,
         className
       )}
