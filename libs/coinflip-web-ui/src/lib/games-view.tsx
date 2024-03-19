@@ -80,10 +80,11 @@ function GameCard({
             ~{formatCurrency(game.max_possible_win_usd)}
           </h4>
         </div>
-        <div className="mt-2">
+        <div className="mt-4">
           Wager:{' '}
-          <h4 className="text-xl">
-            {game.wager} {game.getChain().getCurrency()}
+          <h4>
+            {formatCurrency(game.wager, { isCryptoCurrency: true })}{' '}
+            {game.getChain().getCurrency()}
           </h4>
         </div>
         <GameCardCountdown game={game} />
