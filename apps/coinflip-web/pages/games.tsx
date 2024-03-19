@@ -88,7 +88,7 @@ function GamesFiltersAndStats({
   return (
     <div
       className={cn(
-        'flex w-100 md:justify-between justify-center flex-col md:flex-row text-white my-4 items-center',
+        'flex w-100 md:justify-between justify-center flex-col md:flex-row text-white mt-4 items-center',
         !currentWeb3Account && 'justify-center md:justify-center'
       )}
     >
@@ -105,7 +105,7 @@ function GamesFiltersAndStats({
         </div>
       )}
 
-      <div className="text-sm my-4 md:my-0">
+      <div className="text-sm mt-4 md:mt-0">
         Completed: <b>{totalCompletedCount}</b> | Total Paid Out:{' '}
         <b>{formatCurrency(totalPaidOutAmount)}</b>
       </div>

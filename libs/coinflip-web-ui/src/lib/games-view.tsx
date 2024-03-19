@@ -30,7 +30,7 @@ export const GamesView = forwardRef<
   return (
     <div
       className={cn(
-        'text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8',
+        'text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-8 mt-2 md:mt-4',
         className
       )}
     >
