@@ -177,13 +177,13 @@ export const formatCurrency = (
     style: 'currency',
     currency,
     // These options are needed to round to whole numbers if that's what you want.
-    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    minimumFractionDigits: options.minimumFractionDigits ?? 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
   });
 
   let formatOutput = formatter.format(wager);
   if (options.isCryptoCurrency) {
-    formatOutput = formatOutput.split(' ')[1];
+    formatOutput = formatOutput.slice(1);
   }
 
   return formatOutput;
