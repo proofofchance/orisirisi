@@ -6,7 +6,7 @@ import {
   CoinflipGamePlayStatus,
   CoinflipGameStatus,
   coinSideToString,
-  formatUSD,
+  formatCurrency,
 } from '@orisirisi/coinflip';
 import { ArrowDownLeftIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Web3Account } from '@orisirisi/orisirisi-web3';
@@ -161,7 +161,9 @@ function WonOrLostCard({
             You won{' '}
             <b className="tracking-wide">
               {game.amount_for_each_winner} {game.getChain().getCurrency()} ~
-              {formatUSD(game.amount_for_each_winner_usd!, 0)}
+              {formatCurrency(game.amount_for_each_winner_usd!, {
+                minimumFractionDigits: 0,
+              })}
             </b>{' '}
             from this game.
           </span>
@@ -178,14 +180,16 @@ function WonOrLostCard({
     return (
       <span>
         <span role="img" aria-label="congrats-text">
-          🎉
+          🎊
         </span>{' '}
-        Players that predicted {coinSideToString(game.outcome)} won{' '}
+        Hurray! Players that predicted {coinSideToString(game.outcome)} won{' '}
         <b className="tracking-wide">
-          {formatUSD(game.amount_shared_with_winners_usd!, 0)}
+          {formatCurrency(game.amount_shared_with_winners_usd!, {
+            minimumFractionDigits: 0,
+          })}
         </b>{' '}
         <span role="img" aria-label="congrats-text">
-          🎉
+          🎊
         </span>
       </span>
     );
@@ -201,8 +205,8 @@ function WonOrLostCard({
 function GameOutcomeActivity({ game }: { game: CoinflipGame }) {
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
-      <h3 className="text-xl">Game Outcome</h3>
-      <Coin className="self-center" side={game.outcome} />
+      <h3 className="text-lg md:text-xl">Game Outcome</h3>
+      <Coin className="self-center my-3" side={game.outcome} />
       <span className="text-xs self-end">
         {formatTime(new Date(game.getCompletedAtMs()!))}
       </span>
@@ -213,7 +217,7 @@ function GameOutcomeActivity({ game }: { game: CoinflipGame }) {
 function GameProofOfChanceActivity({ game }: { game: CoinflipGame }) {
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-4 transition-all mt-2">
-      <h3 className="text-lg mb-2">
+      <h3 className="text-base md:text-lg mb-2">
         Game's Proof of Chance{' '}
         <span className="text-xs">(used to determine outcome)</span>
       </h3>
@@ -222,7 +226,7 @@ function GameProofOfChanceActivity({ game }: { game: CoinflipGame }) {
         proofOfChances={game.revealed_proof_of_chances!}
       />
 
-      <span className="text-xs self-end">
+      <span className="text-xs self-end mt-2">
         {formatTime(new Date(game.getCompletedAtMs()!))}
       </span>
     </div>
@@ -251,7 +255,10 @@ function Coin({
   }, [isFlipping, flipInfinitely, setIsFlipping]);
 
   return (
-    <CoinShell onClick={() => setIsFlipping(true)} className={className}>
+    <CoinShell
+      onClick={() => setIsFlipping(true)}
+      className={cn('cursor-pointer', className)}
+    >
       <div
         className={cn(
           'bg-slate-400 w-14 h-14 flex justify-center items-center text-black rounded-full',
@@ -366,7 +373,7 @@ function GameActivity({
     if (triggerIsMe) {
       return 'You created this game';
     }
-    return `This game was created by Player:${triggerPublicAddress}`;
+    return `Player:${triggerPublicAddress} created this game`;
   };
 
   const getGamePlayCreatedReport = () => {
@@ -437,7 +444,7 @@ function GameActivity({
           <span className="text-xs">{activityReadableTimestamp}</span>
         </div>
       ) : (
-        <span className="text-xs mt-2 self-end">
+        <span className="text-xs mt-4 self-end">
           {activityReadableTimestamp}
         </span>
       )}

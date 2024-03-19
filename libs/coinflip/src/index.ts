@@ -4,7 +4,7 @@ export {
   Game as CoinflipGame,
   PaginatedGames as CoinflipPaginatedGames,
   GameActivity as CoinflipGameActivity,
-  formatUSD,
+  formatCurrency,
   type GameStatus as CoinflipGameStatus,
   type ConcludedGameStatus as CoinflipConcludedGameStatus,
   GamePlay as CoinflipGamePlay,

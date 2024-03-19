@@ -15,7 +15,7 @@ import {
 import { Web3Account } from '@orisirisi/orisirisi-web3';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
-import { formatUSD } from '@orisirisi/coinflip';
+import { formatCurrency } from '@orisirisi/coinflip';
 
 export function GamesPage() {
   const { currentWeb3Account } = useCurrentWeb3Account();
@@ -89,7 +89,7 @@ function GamesFiltersAndStats({
     <div
       className={cn(
         'flex w-100 md:justify-between justify-center flex-col md:flex-row text-white my-4 items-center',
-        !currentWeb3Account && 'justify-center'
+        !currentWeb3Account && 'justify-center md:justify-center'
       )}
     >
       {currentWeb3Account && (
@@ -107,7 +107,7 @@ function GamesFiltersAndStats({
 
       <div className="text-sm my-4 md:my-0">
         Completed: <b>{totalCompletedCount}</b> | Total Paid Out:{' '}
-        <b>{formatUSD(totalPaidOutAmount)}</b>
+        <b>{formatCurrency(totalPaidOutAmount)}</b>
       </div>
     </div>
   );

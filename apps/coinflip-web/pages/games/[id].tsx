@@ -78,7 +78,7 @@ export default function GamePage() {
       <GamePlayProofModal />
       <div className="px-1 md:px-20 lg:px-60 text-white mb-48">
         <div className="mt-4">
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl">GAME #{id}</h2>
             <div className="w-4 mr-6">
               <CoinWithChainLogoAnimated chain={game.getChain()} />
