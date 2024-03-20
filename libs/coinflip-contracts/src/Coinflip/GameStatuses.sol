@@ -7,7 +7,11 @@ contract UsingGameStatuses {
     mapping(uint gameID => Game.Status) statuses;
     mapping(uint gameID => uint expiryTimestamp) expiryTimestamps;
 
-    error InvalidGameStatus(uint, Game.Status expected, Game.Status actual);
+    error InvalidGameStatus(
+        uint gameID,
+        Game.Status expected,
+        Game.Status actual
+    );
     error InvalidExpiryTimestamp();
 
     modifier mustMatchGameStatus(uint gameID, Game.Status expectedGameStatus) {
@@ -35,7 +39,7 @@ contract UsingGameStatuses {
         statuses[gameID] = status;
     }
 
-    function getGameStatus(uint gameID) internal view returns (Game.Status) {
+    function getGameStatus(uint gameID) private view returns (Game.Status) {
         if (expiryTimestamps[gameID] < block.timestamp) {
             return Game.Status.Expired;
         }

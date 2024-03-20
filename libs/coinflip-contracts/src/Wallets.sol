@@ -4,7 +4,6 @@ pragma solidity 0.8.25;
 import {Ownable} from './Ownable.sol';
 import {UsingReentrancyGuard} from './Wallets/ReentrancyGuard.sol';
 
-/// TODO: Move to orisirisi-contracts since it could be globally scoped
 contract Wallets is UsingReentrancyGuard {
     mapping(address account => uint amount) balances;
 
@@ -26,7 +25,7 @@ contract Wallets is UsingReentrancyGuard {
         _credit(msg.sender, msg.value);
     }
 
-    /// @dev Credits player as though player manually credits themselves.
+    /// @dev Credits accounts specified here
     function creditAccounts(address[] calldata accounts) external payable {
         uint amount = msg.value;
         uint accountsLength = accounts.length;
@@ -40,6 +39,9 @@ contract Wallets is UsingReentrancyGuard {
         }
     }
 
+    /// @notice Same behavior as `creditAccounts` but credits
+    /// `manyAccounts` using `amountForEachManyAccount` and
+    /// `oneAccount` using `amountForOneAccount`
     function creditManyAndOne(
         address[] calldata manyAccounts,
         uint amountForEachManyAccount,
@@ -63,7 +65,7 @@ contract Wallets is UsingReentrancyGuard {
         _credit(oneAccount, amountForOneAccount);
     }
 
-    /// @notice Allows you to withdraw a specified amount of your wallet balance
+    /// @notice Allows withdrawing a specified amount from your wallet balance
     function withdraw(uint amount) external nonReentrant {
         address account = msg.sender;
         uint balance = balances[account];
@@ -77,7 +79,7 @@ contract Wallets is UsingReentrancyGuard {
         emit Debit(account, amount);
     }
 
-    /// @notice Allows you to withdraw all your wallet balance
+    /// @notice Allows withdrawing all amount from your wallet balance
     function withdrawAll() external nonReentrant {
         address account = msg.sender;
         uint balance = balances[account];
@@ -91,19 +93,19 @@ contract Wallets is UsingReentrancyGuard {
         emit Debit(account, balance);
     }
 
-    function _credit(address account, uint amount) private {
-        balances[account] += amount;
-        emit Credit(account, amount);
-    }
-
     /// @notice returns the balance of a wallet account
     function getBalance(address account) external view returns (uint) {
         return balances[account];
     }
 
-    /// @notice returns the ether balance of this wallet contract
+    /// @notice returns the balance of this wallet contract in wei
     function getTotalBalance() external view returns (uint) {
         return address(this).balance;
+    }
+
+    function _credit(address account, uint amount) private {
+        balances[account] += amount;
+        emit Credit(account, amount);
     }
 
     function _pay(address to, uint256 amount) private {

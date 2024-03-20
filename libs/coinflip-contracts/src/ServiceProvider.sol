@@ -4,14 +4,12 @@ pragma solidity 0.8.25;
 import {Ownable} from './Ownable.sol';
 
 contract UsingServiceProvider is Ownable {
-    /// @dev due to charges for the minimum wager allowed
-    /// expected to be high due to the gas fee for the minimum wager
-    /// initialServiceCharges (at deployment):
-    /// If transaction fee is $6
+    /// @dev Factor-in gas prices, min-wager & operations cost
     uint8 public serviceChargePercent = 8;
 
     error InvalidServiceChargePercent();
 
+    /// @dev Allows owner update service charge percent
     function updateServiceChargePercent(
         uint8 serviceChargePercent_
     ) external onlyOwner {
@@ -22,7 +20,7 @@ contract UsingServiceProvider is Ownable {
         serviceChargePercent = serviceChargePercent_;
     }
 
-    /// @dev Returns the service provider wallet owner
+    /// @dev Returns the service provider wallet address
     function getServiceProviderWallet() external view returns (address) {
         return owner();
     }
@@ -31,10 +29,12 @@ contract UsingServiceProvider is Ownable {
         return (amount * serviceChargePercent) / 100;
     }
 
+    /// @notice Made public to allow auditing games transparently
+    /// @dev Returns the `splitAmount` for each `place` and the `serviceChargeAmount`
     function getSplitAndServiceChargeAmounts(
         uint totalAmount,
         uint places
-    ) internal view returns (uint, uint) {
+    ) public view returns (uint, uint) {
         uint splitAmount = totalAmount / places;
         splitAmount =
             splitAmount -

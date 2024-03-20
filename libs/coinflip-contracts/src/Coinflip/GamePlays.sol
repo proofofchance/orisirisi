@@ -5,14 +5,19 @@ import {Coin} from './Coin.sol';
 import {Game} from './Game.sol';
 
 contract UsingGamePlays {
-    mapping(uint gameID => mapping(address player => uint16 playID)) playRecord;
-    mapping(uint gameID => uint16 playCount) public playCounts;
-    mapping(uint gameID => uint16 numberOfPlayers) numberOfPlayersPerGame;
-    mapping(uint gameID => mapping(Coin.Side coinSide => address[] player)) players;
-    mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount)) coinSideCounts;
-    mapping(uint gameID => address[] player) allPlayers;
     mapping(uint gameID => mapping(uint16 playID => bytes32 proofOfChance))
         public proofOfChances;
+    mapping(uint gameID => uint16 playCount) public playCountsSoFar;
+    mapping(uint gameID => uint16 numberOfPlayers)
+        public numberOfPlayersForGameWith;
+    mapping(uint gameID => mapping(Coin.Side coinSide => address[] player))
+        public players;
+    mapping(uint gameID => address[] player) public allPlayers;
+
+    mapping(uint gameID => mapping(address player => uint16 playID))
+        private playRecord;
+    mapping(uint gameID => mapping(Coin.Side coinSide => uint16 coinSideCount))
+        private coinSideCounts;
 
     event GamePlayCreated(
         uint indexed gameID,
@@ -26,7 +31,8 @@ contract UsingGamePlays {
     error AlreadyPlayedError(uint16 playID);
 
     modifier mustAvoidAllGamePlaysMatching(uint gameID, Coin.Side coinSide) {
-        uint16 playsLeft = numberOfPlayersPerGame[gameID] - playCounts[gameID];
+        uint16 playsLeft = numberOfPlayersForGameWith[gameID] -
+            playCountsSoFar[gameID];
         uint16 headPlayCount = coinSideCounts[gameID][Coin.Side.Head];
         uint16 tailPlayCount = coinSideCounts[gameID][Coin.Side.Tail];
 
@@ -62,13 +68,13 @@ contract UsingGamePlays {
         Coin.Side coinSide,
         bytes32 proofOfChance
     ) internal {
-        uint16 gamePlayID = playCounts[gameID] + 1;
+        uint16 gamePlayID = playCountsSoFar[gameID] + 1;
         playRecord[gameID][player] = gamePlayID;
         proofOfChances[gameID][gamePlayID] = proofOfChance;
         players[gameID][coinSide].push(player);
         allPlayers[gameID].push(player);
         coinSideCounts[gameID][coinSide]++;
-        playCounts[gameID]++;
+        playCountsSoFar[gameID]++;
 
         emit GamePlayCreated(
             gameID,
@@ -80,6 +86,6 @@ contract UsingGamePlays {
     }
 
     function setNumberOfPlayers(uint gameID, uint16 numberOfPlayers) internal {
-        numberOfPlayersPerGame[gameID] = numberOfPlayers;
+        numberOfPlayersForGameWith[gameID] = numberOfPlayers;
     }
 }
