@@ -239,7 +239,7 @@ describe('revealChancesAndCreditWinners', () => {
   });
 });
 
-describe('refundExpiredGamePlayersForAllGames', () => {
+describe('refundExpiredGamePlayersForGames', () => {
   context('When using valid parameters', () => {
     it('refunds expired game wager successfully', async () => {
       const { coinflipContract, creator, walletsContract } =
@@ -272,6 +272,74 @@ describe('refundExpiredGamePlayersForAllGames', () => {
 
       expect(balanceAfterRefund).to.be.greaterThan(balanceBeforeRefund);
     });
+  });
+});
+
+describe('getSplitAndServiceChargeAmounts', () => {
+  it('for evenly splitable amounts, returns the split amount', async () => {
+    const { coinflipContract } = await deployCoinflipContracts();
+
+    await coinflipContract.updateServiceChargePercent(0);
+
+    const [splitAmount, serviceChargeAmount] =
+      await coinflipContract.getSplitAndServiceChargeAmounts(BigInt('10'), 2);
+
+    expect(splitAmount).to.equal(BigInt('5'));
+    expect(serviceChargeAmount).to.equal(0);
+  });
+
+  it('returns the split amount and equivalent service charge amount', async () => {
+    const { coinflipContract } = await deployCoinflipContracts();
+
+    await coinflipContract.updateServiceChargePercent(10);
+
+    const [splitAmount, serviceChargeAmount] =
+      await coinflipContract.getSplitAndServiceChargeAmounts(BigInt('200'), 2);
+
+    expect(splitAmount).to.equal(BigInt('90'));
+    expect(serviceChargeAmount).to.equal(2 * 10);
+  });
+
+  it('returns the split amount and equivalent service charge amount for uneven splits', async () => {
+    const { coinflipContract } = await deployCoinflipContracts();
+
+    await coinflipContract.updateServiceChargePercent(10);
+
+    const [splitAmount, serviceChargeAmount] =
+      await coinflipContract.getSplitAndServiceChargeAmounts(BigInt('200'), 3);
+
+    expect(splitAmount).to.equal(BigInt('60'));
+    expect(serviceChargeAmount).to.equal(2 * 10);
+  });
+
+  it('returns the split amount with extra wei and a slightly deducted equivalent service charge amount for ceiled wei splits', async () => {
+    const { coinflipContract } = await deployCoinflipContracts();
+
+    await coinflipContract.updateServiceChargePercent(10);
+
+    const [splitAmount, serviceChargeAmount] =
+      await coinflipContract.getSplitAndServiceChargeAmounts(
+        BigInt('200000000000000008'),
+        3
+      );
+
+    expect(splitAmount).to.equal(BigInt('60000000000000003'));
+    expect(serviceChargeAmount).to.equal(BigInt('19999999999999999'));
+  });
+
+  it('returns the service charge amount  with extra wei and a slightly deducted split amount for floored wei splits', async () => {
+    const { coinflipContract } = await deployCoinflipContracts();
+
+    await coinflipContract.updateServiceChargePercent(10);
+
+    const [splitAmount, serviceChargeAmount] =
+      await coinflipContract.getSplitAndServiceChargeAmounts(
+        BigInt('200000000000000008'),
+        5
+      );
+
+    expect(splitAmount).to.equal(BigInt('36000000000000001'));
+    expect(serviceChargeAmount).to.equal(BigInt('20000000000000003'));
   });
 });
 
