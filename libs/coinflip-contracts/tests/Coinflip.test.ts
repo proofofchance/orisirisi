@@ -137,7 +137,7 @@ describe('playGame', () => {
           }
         );
 
-      expect(await coinflipContract.playCounts(gameId)).to.equal(2);
+      expect(await coinflipContract.playCountsSoFar(gameId)).to.equal(2);
     });
   });
 });
@@ -264,9 +264,7 @@ describe('refundExpiredGamePlayersForAllGames', () => {
 
       const balanceBeforeRefund = await walletsContract.getBalance(creator);
 
-      await expect(
-        coinflipContract.refundExpiredGamePlayersForAllGames([gameId])
-      )
+      await expect(coinflipContract.refundExpiredGamePlayersForGames([gameId]))
         .to.emit(coinflipContract, 'ExpiredGameRefunded')
         .withArgs(1, anyValue);
 

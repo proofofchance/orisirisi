@@ -19,7 +19,7 @@ contract Coinflip is
     UsingServiceProvider
 {
     uint public minWager;
-    mapping(uint gameID => uint wager) wagers;
+    mapping(uint gameID => uint wager) public wagers;
     uint16 public maxNumberOfPlayers;
     uint public gamesCount;
     Wallets public wallets;
@@ -161,7 +161,7 @@ contract Coinflip is
         mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
     {
         Coin.Side flipOutcome;
-        for (uint16 i; i < playCounts[gameID]; ) {
+        for (uint16 i; i < numberOfPlayersForGameWith[gameID]; ) {
             bytes calldata chanceAndSalt = chanceAndSalts[i];
 
             uint16 gamePlayID = i + 1;
@@ -184,8 +184,7 @@ contract Coinflip is
                     } else {
                         flipOutcome = Coin.Side.Head;
                     }
-                }
-                unchecked {
+
                     ++j;
                 }
             }
@@ -203,9 +202,11 @@ contract Coinflip is
 
     /// @notice Batch refunds expired game players
     /// @param gameIDs game IDs of expired games
-    function refundExpiredGamePlayersForAllGames(
+    /// @dev Everyone's authorized to remove the possibility of locking
+    /// wagers forever if an owner loses access to their private keys
+    function refundExpiredGamePlayersForGames(
         uint[] calldata gameIDs
-    ) external onlyOwner {
+    ) external {
         for (uint8 i; i < gameIDs.length; ) {
             _refundExpiredGamePlayers(gameIDs[i]);
             unchecked {
@@ -216,7 +217,7 @@ contract Coinflip is
 
     /// @notice Refund wagers of an expired game to its players
     /// @param gameID game ID of expired game
-    function refundExpiredGamePlayers(uint gameID) public onlyOwner {
+    function refundExpiredGamePlayers(uint gameID) external {
         _refundExpiredGamePlayers(gameID);
     }
 
@@ -253,7 +254,7 @@ contract Coinflip is
         address[] memory winners
     ) private returns (uint amountForEachWinner) {
         uint gameWager = wagers[gameID];
-        uint totalWager = gameWager * playCounts[gameID];
+        uint totalWager = gameWager * playCountsSoFar[gameID];
         (
             uint amountForEachPlayer,
             uint serviceChargeAmount
@@ -288,8 +289,8 @@ contract Coinflip is
     }
 
     function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
-        uint16 playCount = playCounts[gameID];
-        uint16 numberOfPlayers = numberOfPlayersPerGame[gameID];
+        uint16 playCount = playCountsSoFar[gameID];
+        uint16 numberOfPlayers = numberOfPlayersForGameWith[gameID];
 
         if (playCount == numberOfPlayers) {
             setGameStatus(gameID, Game.Status.AwaitingChancesUpload);
