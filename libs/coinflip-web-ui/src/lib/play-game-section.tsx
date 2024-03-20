@@ -108,7 +108,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
       currentChain!.id
     );
 
-    const awaitingApprovalToastId = toast.loading('Awaiting approval', {
+    const awaitingApprovalToastId = toast.loading('Awaiting approval...', {
       position: 'bottom-right',
     });
 
@@ -122,7 +122,7 @@ export function PlayGameSection({ game }: { game: CoinflipGame }) {
 
       toast.dismiss(awaitingApprovalToastId);
 
-      const loadingToastId = toast.loading('Placing your Bet', {
+      const loadingToastId = toast.loading('Placing your Bet...', {
         position: 'bottom-right',
       });
 

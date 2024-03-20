@@ -22,4 +22,4 @@ export {
   type UpdateMyGamePlayParams as UpdateMyCoinflipGamePlayParams,
 } from './lib/http-service';
 
-export const COINFLIP_INDEXING_RATE_MS = 18_000;
+export const COINFLIP_INDEXING_RATE_MS = 24_000;

@@ -56,7 +56,7 @@ export function WalletBalanceButton({
       currentChain!.id
     );
 
-    const awaitingApprovalToastId = toast.loading('Awaiting approval', {
+    const awaitingApprovalToastId = toast.loading('Awaiting approval...', {
       position: 'bottom-right',
     });
     try {
@@ -64,7 +64,7 @@ export function WalletBalanceButton({
 
       toast.dismiss(awaitingApprovalToastId);
 
-      const loadingToastId = toast.loading('Withdrawing balance', {
+      const loadingToastId = toast.loading('Withdrawing balance...', {
         position: 'bottom-right',
       });
 

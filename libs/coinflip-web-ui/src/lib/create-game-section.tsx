@@ -140,7 +140,7 @@ export function CreateGameSection() {
       currentChain!.id
     );
 
-    const awaitingApprovalToastId = toast.loading('Awaiting approval', {
+    const awaitingApprovalToastId = toast.loading('Awaiting approval...', {
       position: 'bottom-right',
     });
 
@@ -155,7 +155,7 @@ export function CreateGameSection() {
 
       toast.dismiss(awaitingApprovalToastId);
 
-      const loadingToastId = toast.loading('Creating Game', {
+      const loadingToastId = toast.loading('Creating Game...', {
         position: 'bottom-right',
       });
 
