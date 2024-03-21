@@ -25,9 +25,12 @@ export function UploadProofMainButton({
         await readFileAsync(proofOfChancefile)
       );
 
-      const loadingToastId = toast.loading('Uploading your Game Play Proof', {
-        position: 'bottom-right',
-      });
+      const loadingToastId = toast.loading(
+        'Uploading your proof of chance...',
+        {
+          position: 'bottom-right',
+        }
+      );
 
       const response = await CoinflipHTTPService.updateMyGamePlay({
         game_id: game!.id,
@@ -39,7 +42,7 @@ export function UploadProofMainButton({
       toast.dismiss(loadingToastId);
 
       if (response.ok) {
-        toast.success('Uploaded game play proof successfully', {
+        toast.success('Uploaded proof successfully!', {
           position: 'bottom-right',
           duration: 1000,
         });
