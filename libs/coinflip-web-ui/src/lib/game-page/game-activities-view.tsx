@@ -158,10 +158,10 @@ function WonOrLostCard({
       return (
         <span className="text-lg">
           <span role="img" aria-label="congrats-text">
-            Congrats 🎊
+            🎊
           </span>
           <span>
-            You won{' '}
+            Congrats! You won{' '}
             <b className="tracking-wide">
               {game.amount_for_each_winner} {game.getChain().getCurrency()} ~
               {formatCurrency(game.amount_for_each_winner_usd!, {
@@ -169,6 +169,9 @@ function WonOrLostCard({
               })}
             </b>{' '}
             from this game.
+          </span>
+          <span role="img" aria-label="congrats-text">
+            🎊
           </span>
         </span>
       );
