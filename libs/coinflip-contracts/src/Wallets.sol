@@ -16,11 +16,12 @@ contract Wallets is UsingReentrancyGuard {
         _credit(msg.sender, msg.value);
     }
 
-    /// @dev Credits account. You could credit yourself or someone using this.
+    /// @notice Credits account. You can credit someone using this.
     function creditAccount(address account) external payable {
         _credit(account, msg.value);
     }
 
+    /// @notice Credits your account.
     function credit() external payable {
         _credit(msg.sender, msg.value);
     }

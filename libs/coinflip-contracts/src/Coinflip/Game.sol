@@ -7,7 +7,7 @@ library Game {
     enum Status {
         AwaitingPlayers,
         Expired,
-        AwaitingChancesUpload,
+        AwaitingChancesReveal,
         /// Concluded games are Completed/Expired games have been paid_out/refunded
         Concluded
     }
