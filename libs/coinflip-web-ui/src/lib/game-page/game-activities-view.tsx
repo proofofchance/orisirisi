@@ -159,7 +159,7 @@ function WonOrLostCard({
         <span className="text-lg">
           <span role="img" aria-label="congrats-text">
             🎊
-          </span>
+          </span>{' '}
           <span>
             Congrats! You won{' '}
             <b className="tracking-wide">
@@ -169,7 +169,7 @@ function WonOrLostCard({
               })}
             </b>{' '}
             from this game.
-          </span>
+          </span>{' '}
           <span role="img" aria-label="congrats-text">
             🎊
           </span>
@@ -184,7 +184,7 @@ function WonOrLostCard({
     }
 
     return (
-      <span className="text-center break-words">
+      <span>
         <span role="img" aria-label="congrats-text">
           🎊
         </span>{' '}
@@ -203,7 +203,9 @@ function WonOrLostCard({
 
   return (
     <div className="flex flex-col rounded-lg bg-[rgba(0,0,0,0.25)] p-6 transition-all mb-2">
-      <div className="flex flex-col items-center">{getWonOrLostContent()}</div>
+      <div className="flex flex-col items-center text-center">
+        {getWonOrLostContent()}
+      </div>
     </div>
   );
 }
