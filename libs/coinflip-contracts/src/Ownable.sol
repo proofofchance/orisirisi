@@ -8,7 +8,7 @@ abstract contract Ownable {
     error OwnableUnauthorizedAccount(address account);
 
     event OwnershipTransferred(
-        address indexed previousOwner,
+        address indexed oldOwner,
         address indexed newOwner
     );
 

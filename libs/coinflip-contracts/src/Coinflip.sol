@@ -67,7 +67,7 @@ contract Coinflip is
         wallets.creditAccount{value: msg.value}(msg.sender);
     }
 
-    /// @notice Allow updating Wallets conrtact in case a PPV is ever discovered
+    /// @notice Allow updating Wallets contract in case a PPV is ever discovered
     function updateWallets(address payable wallets_) external onlyOwner {
         wallets = Wallets(wallets_);
     }
@@ -143,7 +143,7 @@ contract Coinflip is
             revert IncorrectGameWager();
         }
         createGamePlay(msg.sender, gameID, coinSide, proofOfChance);
-        maybeSetGameStatusAsAwaitingChancesUpload(gameID);
+        maybeSetGameStatusAsAwaitingChancesReveal(gameID);
     }
 
     /// @notice Reveals the chances (lucky words) of all plays for a given game.
@@ -158,7 +158,7 @@ contract Coinflip is
     )
         external
         onlyOwner
-        mustMatchGameStatus(gameID, Game.Status.AwaitingChancesUpload)
+        mustMatchGameStatus(gameID, Game.Status.AwaitingChancesReveal)
     {
         Coin.Side flipOutcome;
         for (uint16 i; i < numberOfPlayersForGameWith[gameID]; ) {
@@ -288,12 +288,12 @@ contract Coinflip is
         emit ExpiredGameRefunded(gameID, refundAmountPerPlayer);
     }
 
-    function maybeSetGameStatusAsAwaitingChancesUpload(uint gameID) private {
+    function maybeSetGameStatusAsAwaitingChancesReveal(uint gameID) private {
         uint16 playCount = playCountsSoFar[gameID];
         uint16 numberOfPlayers = numberOfPlayersForGameWith[gameID];
 
         if (playCount == numberOfPlayers) {
-            setGameStatus(gameID, Game.Status.AwaitingChancesUpload);
+            setGameStatus(gameID, Game.Status.AwaitingChancesReveal);
         }
     }
 }
