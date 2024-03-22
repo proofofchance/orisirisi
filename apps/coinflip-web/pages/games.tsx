@@ -116,7 +116,7 @@ function GamesFiltersAndStats({
         </div>
       )}
 
-      <div className="text-sm mt-4 md:mt-0">
+      <div className="text-sm mt-4 md:mt-0 text-center">
         Completed: <b>{totalCompletedCount}</b> | Total Paid Out:{' '}
         <b>{formatCurrency(totalPaidOutAmount)}</b>
       </div>
