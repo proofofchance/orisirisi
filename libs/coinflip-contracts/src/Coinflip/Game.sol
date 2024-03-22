@@ -6,8 +6,8 @@ import {Coin} from './Coin.sol';
 library Game {
     enum Status {
         AwaitingPlayers,
-        Expired,
         AwaitingChancesReveal,
+        Expired,
         /// Concluded games are Completed/Expired games have been paid_out/refunded
         Concluded
     }

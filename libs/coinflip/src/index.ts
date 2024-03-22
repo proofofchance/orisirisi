@@ -6,6 +6,7 @@ export {
   GameActivity as CoinflipGameActivity,
   formatCurrency,
   type GameStatus as CoinflipGameStatus,
+  GameStatusEnum as CoinflipGameStatusEnum,
   type ConcludedGameStatus as CoinflipConcludedGameStatus,
   GamePlay as CoinflipGamePlay,
   type GamePlayStatus as CoinflipGamePlayStatus,

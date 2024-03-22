@@ -2,6 +2,14 @@ import { Chain, ChainID } from '@orisirisi/orisirisi-web3-chains';
 import { RevealedProofOfChance } from '@orisirisi/proof-of-chance';
 import { CoinSide } from './coin';
 
+// Must match contract's
+export enum GameStatusEnum {
+  AwaitingPlayers,
+  AwaitingChancesReveal,
+  Expired,
+  Concluded,
+}
+
 export type GameStatus =
   | 'awaiting_players'
   | 'expired'
