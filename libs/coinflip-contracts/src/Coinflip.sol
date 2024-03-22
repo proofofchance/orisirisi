@@ -80,7 +80,7 @@ contract Coinflip is
     }
 
     /// @notice Updates min wager allowed
-    function updateMinWagerPerGame(uint minWager_) external onlyOwner {
+    function updateMinWager(uint minWager_) external onlyOwner {
         minWager = minWager_;
     }
 
@@ -225,8 +225,7 @@ contract Coinflip is
         uint gameID,
         uint newExpiryTimestamp
     ) external onlyOwner {
-        setGameExpiry(gameID, newExpiryTimestamp);
-        emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
+        _adjustExpiryForGame(gameID, newExpiryTimestamp);
     }
 
     function adjustExpiryForGames(
@@ -236,12 +235,26 @@ contract Coinflip is
         for (uint8 i; i < gameIDs.length; ) {
             uint gameID = gameIDs[i];
 
-            setGameExpiry(gameID, newExpiryTimestamp);
-            emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
+            _adjustExpiryForGame(gameID, newExpiryTimestamp);
+
             unchecked {
                 ++i;
             }
         }
+    }
+
+    function _adjustExpiryForGame(
+        uint gameID,
+        uint newExpiryTimestamp
+    ) private {
+        Game.Status gameStatus = getGameStatus(gameID);
+        require(
+            gameStatus == Game.Status.AwaitingPlayers ||
+                gameStatus == Game.Status.AwaitingChancesReveal
+        );
+
+        setGameExpiry(gameID, newExpiryTimestamp);
+        emit GameExpiryAdjusted(gameID, newExpiryTimestamp);
     }
 
     /// @notice returns the ether balance of this contract i.e. total wagers staked

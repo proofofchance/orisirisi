@@ -52,6 +52,7 @@ contract UsingGamePlays {
         _;
     }
 
+    /// @notice Curbs ambiguity when players prove their chances
     modifier mustAvoidPlayingAgain(uint gameID) {
         uint16 myPlayID = playRecord[gameID][msg.sender];
 

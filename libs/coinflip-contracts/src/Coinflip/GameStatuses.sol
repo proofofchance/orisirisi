@@ -4,8 +4,9 @@ pragma solidity 0.8.25;
 import {Game} from './Game.sol';
 
 contract UsingGameStatuses {
-    mapping(uint gameID => Game.Status) statuses;
-    mapping(uint gameID => uint expiryTimestamp) expiryTimestamps;
+    mapping(uint gameID => uint expiryTimestamp) public expiryTimestamps;
+
+    mapping(uint gameID => Game.Status) private statuses;
 
     error InvalidGameStatus(
         uint gameID,
@@ -39,10 +40,17 @@ contract UsingGameStatuses {
         statuses[gameID] = status;
     }
 
-    function getGameStatus(uint gameID) private view returns (Game.Status) {
-        if (expiryTimestamps[gameID] < block.timestamp) {
+    function getGameStatus(uint gameID) public view returns (Game.Status) {
+        Game.Status status = statuses[gameID];
+
+        bool isAwaiting = status == Game.Status.AwaitingPlayers ||
+            status == Game.Status.AwaitingChancesReveal;
+        bool isExpired = expiryTimestamps[gameID] < block.timestamp;
+
+        if (isAwaiting && isExpired) {
             return Game.Status.Expired;
+        } else {
+            return status;
         }
-        return statuses[gameID];
     }
 }
