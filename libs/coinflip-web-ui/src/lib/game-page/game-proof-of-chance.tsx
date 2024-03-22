@@ -58,7 +58,6 @@ export function GameProofModal() {
 
   return (
     <Modal
-      className="top-[90px] w-[400px] max-h-[80vh] left-[calc(50vw-200px)] pb-10 overflow-y-auto"
       title={`Game #${gameId}'s Proof Of Chance`}
       show={showModal}
       close={closeModal}

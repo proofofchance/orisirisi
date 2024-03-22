@@ -71,7 +71,6 @@ export function GamePlayProofModal() {
 
   return (
     <Modal
-      className="top-[90px] w-[400px] left-[calc(50vw-200px)]"
       title={`${shortenPublicAddress(proof.player_address)}'s Proof Of Chance`}
       show={showModal}
       close={closeModal}
@@ -108,7 +107,7 @@ export function GamePlayProofModal() {
             <SmallCopyButton copyText={proof.getChanceAndSalt()} />
           </p>
           <p className="mt-4 break-words">
-            - As shown in the player's play activity, this player played with a
+            - As shown in the player's play activity, this player played with
             proof of chance: <b>{proof.proof_of_chance}</b>{' '}
             <SmallCopyButton copyText={proof.proof_of_chance} />, the SHA256
             hash of the hexadecimal chance and salt (from above).

@@ -36,11 +36,11 @@ export function Modal(props: ModalProps) {
       <div
         data-id="modal"
         className={cn(
-          'bg-[#F4F5F7] fixed z-20 rounded-2xl px-8 py-6 text-[#181C25]',
+          'bg-[#F4F5F7] fixed z-20 rounded-2xl px-6 py-6 text-[#181C25] top-[40px] w-[100vw] md:w-[400px] left-0 md:left-[calc(50vw-200px)]',
           props.className
         )}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between pb-2">
           <h4 className="font-bold letter-spacing">{props.title}</h4>
           <span
             onClick={close}
@@ -49,7 +49,9 @@ export function Modal(props: ModalProps) {
             <XMarkIcon className="h-5" />
           </span>
         </div>
-        {props.children}
+        <div className="max-h-[60vh] overflow-y-auto pb-6">
+          {props.children}
+        </div>
       </div>
     </>
   );

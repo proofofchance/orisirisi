@@ -48,7 +48,7 @@ export function ConnectWalletOptionsModal() {
 
   return (
     <Modal
-      className="top-[40px] w-[400px] left-[calc(50vw-200px)]"
+      className="px-8"
       title="Pick Your Wallet"
       show={showModal}
       close={closeModal}
