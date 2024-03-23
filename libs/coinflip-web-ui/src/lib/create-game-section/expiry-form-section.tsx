@@ -132,8 +132,8 @@ const getOtherExpiryUnit = (expiryUnit: ExpiryUnit) => {
   }
 };
 
-const MAX_HOURS = 24;
 const MAX_DAYS = 30;
+const MAX_HOURS = MAX_DAYS * 24;
 
 const getMaxExpiry = (expiryUnit: ExpiryUnit) => {
   switch (expiryUnit) {
