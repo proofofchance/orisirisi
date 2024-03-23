@@ -130,20 +130,21 @@ export class HTTPService {
     return new Result(true, null);
   }
   static async fetchAllGamesActivities(
-    publicAddress: string,
-    status: GameStatus,
-    signal: AbortSignal
+    _publicAddress: string,
+    _status: GameStatus,
+    _signal: AbortSignal
   ): Promise<GameActivity[]> {
-    const response = await fetch(
-      HTTPService.appendBaseUrl(`/game_activities/${status}/${publicAddress}`),
-      {
-        signal,
-      }
-    );
+    // TODO: Uncomment after notification feature
+    // const response = await fetch(
+    //   HTTPService.appendBaseUrl(`/game_activities/${status}/${publicAddress}`),
+    //   {
+    //     signal,
+    //   }
+    // );
 
-    const game_activities = await response.json();
+    // const game_activities = await response.json();
 
-    return GameActivity.manyFromJSON(game_activities);
+    return GameActivity.manyFromJSON([]);
   }
   static async fetchGameActivities(
     gameId: number,
