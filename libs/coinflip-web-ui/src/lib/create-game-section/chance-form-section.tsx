@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { ArrowDownTrayIcon, FaceSmileIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import {
   countCharacters,
   isAsciiString,
@@ -157,7 +157,6 @@ export function ChanceFormSection({
           />
         </div>
       </div>
-
       <div className="flex flex-row-reverse">
         <i className="mt-1 text-sm">
           Available characters left: {charactersLeft}
@@ -167,6 +166,11 @@ export function ChanceFormSection({
         className="mt-2 text-sm"
         message={errorMessage()}
       />
+
+      <div className="mt-4 text-center">
+        N/B: This will be revealed later on, so avoid using sensitive
+        information.
+      </div>
     </FormSectionShell>
   );
 }
