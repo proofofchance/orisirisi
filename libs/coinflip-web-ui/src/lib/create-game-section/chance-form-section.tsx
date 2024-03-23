@@ -167,7 +167,7 @@ export function ChanceFormSection({
         message={errorMessage()}
       />
 
-      <div className="mt-4 text-center">
+      <div className="mt-4 text-center text-sm">
         N/B: This will be revealed later on, so avoid using sensitive
         information.
       </div>
