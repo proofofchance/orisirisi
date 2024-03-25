@@ -100,7 +100,7 @@ export function ChanceFormSection({
   return (
     <FormSectionShell title="Create your chance">
       <TipCard
-        className="md:w-[500px]"
+        className="w-[400px] md:w-[500px]"
         tip={
           <span>
             The chance<i>(lucky word(s))</i> you type here will be mixed with
@@ -111,63 +111,66 @@ export function ChanceFormSection({
         }
       />
 
-      <div className="flex mt-4">
-        <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full">
-          <TextInput
-            autoComplete="off"
-            placeholder={`Feelin' lucky`}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                maybeSubmit();
+      <div className="flex flex-col items-center">
+        <div className="flex mt-4">
+          <div className="mt-7 flex justify-center items-center border-2 border-white rounded-full">
+            <TextInput
+              autoComplete="off"
+              placeholder={`Feelin' lucky`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  maybeSubmit();
 
-                e.stopPropagation();
-                e.preventDefault();
-              }
-            }}
-            maxLength={CHANCE_MAX_LENGTH}
-            className="w-2/3 md:w-[320px] border-none px-4 md:px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
-            {...register('chance', {
-              validate,
-              onChange: async () => {
-                formState.touchedFields['chance'] && (await trigger('chance'));
-                if (isProofOfChanceDownloaded) {
-                  setValue('isProofOfChanceDownloaded', false);
+                  e.stopPropagation();
+                  e.preventDefault();
                 }
-              },
-            })}
-          />
-          <InsideFormShellButton
-            disabled={disableDownloadButton}
-            className=" bg-white text-black hover:bg-slate-100 rounded-bl-none rounded-tl-none ml-7 w-28 md:w-36 text-xs md:text-sm"
-            label="Download"
-            icon={<ArrowDownTrayIcon className="h-5" />}
-            onClick={async () => {
-              Browser.downloadFile(
-                await proofOfChance!.toFileContent(),
-                proofOfChanceFileName,
-                ProofOfChance.FILE_EXTENSION
-              );
-              setValue('isProofOfChanceDownloaded', true);
-              clearErrors('isProofOfChanceDownloaded');
-              toast.success(
-                `Downloaded successfully! You will need to upload this after every player has played. DO NOT DELETE!`,
-                { position: 'bottom-right', duration: 20_000 }
-              );
-            }}
-          />
+              }}
+              maxLength={CHANCE_MAX_LENGTH}
+              className="w-2/3 md:w-[320px] border-none px-4 md:px-8 h-14 bg-transparent focus:outline-none tracking-wider text-lg placeholder-opacity-5"
+              {...register('chance', {
+                validate,
+                onChange: async () => {
+                  formState.touchedFields['chance'] &&
+                    (await trigger('chance'));
+                  if (isProofOfChanceDownloaded) {
+                    setValue('isProofOfChanceDownloaded', false);
+                  }
+                },
+              })}
+            />
+            <InsideFormShellButton
+              disabled={disableDownloadButton}
+              className=" bg-white text-black hover:bg-slate-100 rounded-bl-none rounded-tl-none ml-7 w-28 md:w-36 text-xs md:text-sm"
+              label="Download"
+              icon={<ArrowDownTrayIcon className="h-5" />}
+              onClick={async () => {
+                Browser.downloadFile(
+                  await proofOfChance!.toFileContent(),
+                  proofOfChanceFileName,
+                  ProofOfChance.FILE_EXTENSION
+                );
+                setValue('isProofOfChanceDownloaded', true);
+                clearErrors('isProofOfChanceDownloaded');
+                toast.success(
+                  `Downloaded successfully! You will need to upload this after every player has played. DO NOT DELETE!`,
+                  { position: 'bottom-right', duration: 20_000 }
+                );
+              }}
+            />
+          </div>
         </div>
+        <div className="flex flex-row-reverse place-self-end">
+          <i className="mt-1 text-sm">
+            Available characters left: {charactersLeft}
+          </i>
+        </div>
+        <ErrorMessageParagraph
+          className="mt-2 text-sm"
+          message={errorMessage()}
+        />
       </div>
-      <div className="flex flex-row-reverse">
-        <i className="mt-1 text-sm">
-          Available characters left: {charactersLeft}
-        </i>
-      </div>
-      <ErrorMessageParagraph
-        className="mt-2 text-sm"
-        message={errorMessage()}
-      />
 
-      <div className="mt-4 text-center text-sm">
+      <div className="mt-4 text-center text-xs">
         This will be revealed later on, so avoid using sensitive information.
       </div>
     </FormSectionShell>
