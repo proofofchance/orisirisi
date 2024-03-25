@@ -50,7 +50,7 @@ export class PaginatedGames {
 
 export class Game {
   static minNumberOfPlayers = 2;
-  static maxNumberOfPlayers = 5_000;
+  static maxNumberOfPlayers = 20;
 
   public readonly revealedProofOfChanceByPlayerAddress: Map<
     string,
