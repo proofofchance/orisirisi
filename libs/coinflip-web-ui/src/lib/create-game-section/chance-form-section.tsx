@@ -168,8 +168,7 @@ export function ChanceFormSection({
       />
 
       <div className="mt-4 text-center text-sm">
-        N/B: This will be revealed later on, so avoid using sensitive
-        information.
+        This will be revealed later on, so avoid using sensitive information.
       </div>
     </FormSectionShell>
   );
