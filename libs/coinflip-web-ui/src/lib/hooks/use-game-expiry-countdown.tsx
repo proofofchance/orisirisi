@@ -16,10 +16,7 @@ export function useGameExpiryCountdown(gameExpiryTimestamp: number) {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCountDown((previousCountdown) => ({
-        ...previousCountdown,
-        ...Countdown.getNext(gameExpiryTimestamp),
-      }));
+      setCountDown(Countdown.getNext(gameExpiryTimestamp));
     }, 1000);
 
     return () => clearInterval(intervalId);
