@@ -92,7 +92,7 @@ export function ChainLogo({ chain }: { chain: Chain }) {
     //   return <AvalancheLogo />;
     // case ChainID.BNB:
     //   return <BNBLogo />;
-    // case ChainID.Ethereum:
+    case ChainID.Ethereum:
     case ChainID.Local:
     case ChainID.LocalAlt:
     case ChainID.SepoliaTestNet:
