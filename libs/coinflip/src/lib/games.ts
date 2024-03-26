@@ -151,8 +151,9 @@ export class Game {
       case ChainID.Local:
       case ChainID.LocalAlt:
       case ChainID.SepoliaTestNet:
-      case ChainID.Ethereum:
         return 0.04;
+      case ChainID.Ethereum:
+        return 0.01;
       case ChainID.Polygon:
         return 10;
     }

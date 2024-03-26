@@ -17,6 +17,10 @@ const networks: NetworksUserConfig = {
     url: process.env['POLYGON_JSON_RPC_URL'],
     accounts: [process.env['POLYGON_PRIVATE_KEY']!],
   },
+  ethereum: {
+    url: process.env['ETHEREUM_JSON_RPC_URL'],
+    accounts: [process.env['ETHEREUM_PRIVATE_KEY']!],
+  },
 };
 const nonEmptyNetworks = Object.keys(networks).reduce(
   (nonEmptyNetworks, network) => {
