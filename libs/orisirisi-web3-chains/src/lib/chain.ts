@@ -24,7 +24,7 @@ export class Chain {
       case ChainID.Polygon:
         return 'MATIC';
       case ChainID.SepoliaTestNet:
-        return 'SepoliaETH';
+        return 'ETH'; // TODO: Revert
     }
   };
 

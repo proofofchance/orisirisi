@@ -170,6 +170,17 @@ export class Game {
         return 8;
     }
   }
+
+  static getMaxNumberOfPlayers(chainId: ChainID): number {
+    switch (chainId) {
+      case ChainID.Local:
+      case ChainID.LocalAlt:
+      case ChainID.SepoliaTestNet:
+      case ChainID.Ethereum:
+      case ChainID.Polygon:
+        return 20;
+    }
+  }
 }
 
 export const formatCurrency = (
